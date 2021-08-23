@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb38d9395703d6d729e476bf3720798f, type: 3}
+  m_Name: brushData
+  m_EditorClassIdentifier: 
+  brushMode: 1
+  brushRadius: 50
+  brushStrength: 0.19910084
+  brush: {fileID: 2800000, guid: c4d2236faa083a17dbd90355953e9c0e, type: 3}
+  paintTexture: {fileID: 2800000, guid: 087f3adf371514db3bd838de919a73f4, type: 3}
+  textureScale: 2.7264316
