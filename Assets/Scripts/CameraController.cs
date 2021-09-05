@@ -16,8 +16,10 @@ public class CameraController : MonoBehaviour
 
     [Header("Terrain settings")]
     [SerializeField] private BrushDataScriptable brushData;
-    [SerializeField] private Terrain brushTerrain;
     [SerializeField] private Terrain mainTerrain;
+
+    [Header("Settings")]
+    [SerializeField] private SettingsDataScriptable settingsData;
 
     //private terrain settings
     private TerrainData mainTerrainData;
@@ -51,24 +53,19 @@ public class CameraController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             camera_Rotation.x -= Input.GetAxis("Mouse Y");
             camera_Rotation.y += Input.GetAxis("Mouse X");
-            transform.eulerAngles = camera_Rotation;
+            transform.eulerAngles = camera_Rotation * settingsData.cameraSensitivity;
         } else {
             Cursor.lockState = CursorLockMode.None;
         }
 
         //Keyboard controls       
         Vector3 Cam = GetBaseInput();
+        Total_Speed = Mathf.Clamp(Total_Speed * 0.5f, 1f, 1000f);        
+        Cam = Cam * settingsData.movementSpeed;
         if (Input.GetButton("Modifier1"))
         {
-            Total_Speed += Time.deltaTime;          
-            Cam = Cam * Total_Speed * Shift_Speed;           
-            Cam.x = Mathf.Clamp(Cam.x, -Speed_Cap, Speed_Cap);           
-            Cam.y = Mathf.Clamp(Cam.y, -Speed_Cap, Speed_Cap);           
-            Cam.z = Mathf.Clamp(Cam.z, -Speed_Cap, Speed_Cap);
-        } else {                    
-            Total_Speed = Mathf.Clamp(Total_Speed * 0.5f, 1f, 1000f);        
-            Cam = Cam * Normal_Speed;
-        }
+            Cam *= 2;
+        } 
 
         Cam = Cam * Time.deltaTime;
         transform.Translate(Cam);
@@ -194,40 +191,28 @@ public class CameraController : MonoBehaviour
 
         if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
             if(raycastTarget.collider.gameObject != mainTerrain.gameObject) {
-                brushTerrain.enabled = false;            
+                mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
                 return;
             }
 
+            float radius = brushData.brushRadius / (mainTerrain.terrainData.size.x);
+
             Vector3 location = raycastTarget.point;
+            float posX = ((location.x - mainTerrain.transform.position.x) / mainTerrain.terrainData.size.x);
+            float posZ = ((location.z - mainTerrain.transform.position.z) / mainTerrain.terrainData.size.z);
 
-            float scaleFactor = 1.0f;
-            if(brushData.brushMode == BrushDataScriptable.Modes.Paint) {
-                scaleFactor = brushData.textureScale;
-            }
+//            float cusorHeight = mainTerrain.terrainData.GetHeight((int)(posX * mainTerrainMapSize), (int)(posZ * mainTerrainMapSize));
+//            Debug.Log(posX + ":" + posZ + ":" + cusorHeight);
 
-            float radius = brushData.brushRadius / scaleFactor;
-            int offset = (int)(radius /2);
+            posX -=  (radius / 2);
+            posZ -=  (radius / 2);
 
-            float posX = ((location.x - mainTerrain.transform.position.x) / scaleFactor) + mainTerrain.transform.position.x - offset;
-            float posZ = ((location.z - mainTerrain.transform.position.z) / scaleFactor) + mainTerrain.transform.position.z - offset;
-            brushTerrain.transform.position = new Vector3(posX, location.y, posZ);
-            brushTerrain.terrainData.size = new Vector3(radius, 10, radius);
-            brushTerrain.materialTemplate.mainTexture = brushData.brush;
+            //Debug.Log(posX + ":" + posZ);
+            mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(posX, posZ, radius, radius));
+            mainTerrain.materialTemplate.SetTexture("_CursorTexture", brushData.brush);
 
-            float[,] heights = mainTerrain.GetComponent<TerrainSculpter>().ReadTerrainHeights(location);
-
-            for (int xx = 0; xx < heights.GetLength(1); xx++)
-            {
-                for (int yy = 0; yy < heights.GetLength(0); yy++)
-                {                   
-                    heights[yy, xx] += 0.1f; //0.2f;
-                }
-            }
-            
-            brushTerrain.terrainData.SetHeights(0,0, heights);
-            brushTerrain.enabled = true;
         } else {
-            brushTerrain.enabled = false;            
+            mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         }
     }
 

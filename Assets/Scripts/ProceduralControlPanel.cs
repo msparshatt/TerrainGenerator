@@ -125,25 +125,6 @@ public class ProceduralControlPanel : MonoBehaviour
 
     private void SetPanels()
     {
-        if(mode == GeneratorMode.perlin) {
-            modeLabel.text = "Perlin";
-            perlinPanel.SetActive(true);
-            randomPanel.SetActive(false);
-
-            procGen.mode = mode;
-        } else if (mode == GeneratorMode.ds_perlin) {
-            modeLabel.text = "Diamon And Square + Perlin";
-            perlinPanel.SetActive(true);
-            randomPanel.SetActive(false);
-
-            procGen.mode = mode;
-        } else if (mode == GeneratorMode.ds_random) {
-            modeLabel.text = "Diamond And Square + Random";
-            perlinPanel.SetActive(false);
-            randomPanel.SetActive(true);
-
-            procGen.mode = mode;
-        }
     }
     public void RedrawButtonClick()
     {

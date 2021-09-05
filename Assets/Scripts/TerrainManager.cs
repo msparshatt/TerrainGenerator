@@ -2,10 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using WorldKit.api.procedural.Builders;
-using WorldKit.api.procedural.Layers;
-using WorldKit.api.procedural.Utils;
-//using Newtonsoft.Json;
 using Crosstales.FB;
 
 public class TerrainManager
@@ -16,6 +12,8 @@ public class TerrainManager
     public Material currentMaterial;
 
     private static TerrainManager _instance;
+
+    private int _heightmapresolution;
 
     public ComputeShader shader;
 
@@ -37,7 +35,8 @@ public class TerrainManager
 
     public void CreateFlatTerrain(float width, float length, float height)
     {
-        int _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
+        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
+
         float[,] heights = new float[_heightmapresolution, _heightmapresolution];
 
         for(int x = 0; x <_heightmapresolution; x++) {
@@ -51,6 +50,8 @@ public class TerrainManager
 
     public void CreateTerrainFromHeightmap(float width, float length, float height, string path = "")
     {
+        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
+
         float[,] heights = ReadHeightmap(path);
         
         CreateTerrain(width, length, height, heights);
@@ -58,6 +59,8 @@ public class TerrainManager
 
     public void CreateTerrainFromHeightmap(float width, float length, float height, byte[] data)
     {
+        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
+
         int arrayLength = data.Length;
         float[] result = new float[arrayLength/2];
         for(int index = 0; index < (arrayLength/2); index += 1) {
@@ -76,64 +79,38 @@ public class TerrainManager
 
     public void CreateProceduralTerrain(ProceduralGeneration procGen, TerraceSettings terrace, Erosion erosion, float width, float length, float height)
     {
-        int size = procGen.size;
+        _heightmapresolution = procGen.size;
 
-        //float[,] heights;
+        float[,] heights;
         Debug.Log("generating terrain");
         
-        HeightMapBuilder heights  = new HeightMapBuilder(shader, size);
-        //procGen.GenerateHeightMap();            
-        procGen.SetupHeightmap(heights);
+        //HeightMapBuilder heights  = new HeightMapBuilder(shader, size);
+        heights = procGen.GenerateHeightMap();            
+        //procGen.SetupHeightmap(heights);
 
         if(terrace != null) {
             Debug.Log("Applying terraces");
-            //heights = terrace.AddTerraces(heights, size);
-            terrace.SetupTerraces(heights);
+            heights = terrace.AddTerraces(heights, _heightmapresolution);
+            //terrace.SetupTerraces(heights);
         }
 
 
         if(erosion != null) { 
             Debug.Log("Eroding");
 
-            //heights = erosion.Erode(heights, size, 50000);
-            erosion.SetupErosion(heights, 10000);
+            //heights = erosion.Erode(heights, _heightmapresolution, 50000);
+            //erosion.SetupErosion(heights, 10000);
         }
 
         Debug.Log("Creating terrain");
-        CreateTerrain(width, length, height, ConvertTo2DArray(heights.HeightMap()));
+        CreateTerrain(width, length, height, heights);
 
-        heights.Release();
+        //heights.Release();
     }
-    
 
     protected void CreateTerrain(float width, float length, float height, float[,] heights)
     {
-        //GameObject newTerrain = new GameObject("Main Terrain");
-        TerrainData _TerrainData = new TerrainData();
-         
-        //x and z values are being multiplied by 16?????
-        width = width/16;
-        length = length/16;
-        //float height = 600f;
-
-        _TerrainData.size = new Vector3(width, height, length);  // * terrainSizeValue;
-        _TerrainData.heightmapResolution = 512;
-        _TerrainData.baseMapResolution = 512;
-        _TerrainData.SetDetailResolution(512, 32);
-        _TerrainData.name = "";
-
-        int _heightmapWidth = _TerrainData.heightmapResolution;
-        int _heightmapHeight = _TerrainData.heightmapResolution;
-
-        _TerrainData.SetHeights(0, 0, heights);
- 
-        TerrainCollider _TerrainCollider = currentTerrain.gameObject.GetComponent<TerrainCollider>();
-//        Terrain _TerrainComponent = newTerrain.AddComponent<Terrain>();
- 
-        _TerrainCollider.terrainData = _TerrainData;
-        currentTerrain.terrainData = _TerrainData;
-        
-        //SetActiveTerrain(terrainList.Count - 1);
+      currentTerrain.terrainData.SetHeights(0,0, heights);
     }
 
     private float[,] ReadHeightmap(string fileName)

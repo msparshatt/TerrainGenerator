@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WorldKit.api.procedural.Builders;
-using WorldKit.api.procedural.Layers;
-using WorldKit.api.procedural.Utils;
+
 public class Layer
 {
     public int terraceCount;
@@ -32,10 +30,43 @@ public class TerraceSettings
         layerList.Clear();
     }
     
-    public void SetupTerraces(HeightMapBuilder height)
+    public float[,] AddTerraces(float [,] heights, int size)
     {
-        foreach(Layer l in layerList) {
-            height.AddLayer(new Terrace(l.terraceCount, l.shape, l.smooth));
+        Debug.Log("Adding terraces");
+        if(layerList.Count != 0) {
+
+            foreach (Layer layer in layerList) {
+
+                for(int x = 0; x < size; x++) {
+                    for(int y = 0; y < size; y++) {
+                        float terraceHeight = heights[x,y] * layer.terraceCount;
+
+                        int floor = Mathf.FloorToInt(terraceHeight);
+                        float difference = terraceHeight - floor;
+
+                        float shape = layer.shape;
+
+                        float newDifference = Sigmoid(shape, difference);
+
+                        if(layer.smooth) {
+                            newDifference = (newDifference + difference) / 2;
+                        }
+
+                        float minHeight = (float)(floor) / layer.terraceCount;
+                        float maxHeight = (float)(floor + 1) / layer.terraceCount;
+
+                        heights[x, y] = Mathf.Lerp(minHeight, maxHeight, newDifference);
+                    }
+                }
+            }
+
         }
+
+        return heights;
+    }
+
+    private float Sigmoid(float k, float t)
+    {
+        return (k * t) / (1 + k - t);
     }
 }

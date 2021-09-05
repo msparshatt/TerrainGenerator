@@ -17,6 +17,7 @@ struct ObjMaterial
 {
 	public string name;
 	public Texture2D texture;
+    public Texture2D aoTexture;
     public Texture2D detailTexture;
 
 //    public Texture2D normalMap;
@@ -48,18 +49,15 @@ class ExportTerrain
             return _instance;
         }
     }
-    
-    void Start()
-    {
+      
+   public void Export(bool applyAO)
+   {
         if (terrainObject)
         {
             terrain = terrainObject.terrainData;
             terrainPos = terrainObject.transform.position;
         }
-    }
-  
-   public void Export()
-   {
+
         string fileName = FileBrowser.SaveFile("terrain.obj", "obj");
         float scalefactor = 0.02f * Mathf.Pow(2, scaleDropDown.value); //reduce the size so it isn't too large for FlowScape
 
@@ -202,6 +200,7 @@ class ExportTerrain
                     if (mat.mainTexture) {
                         Texture texture = mat.mainTexture;
                         objMaterial.texture = (Texture2D)texture;
+                        objMaterial.aoTexture = (Texture2D)mat.GetTexture("_AOTexture");
                         objMaterial.detailTexture = (Texture2D)mat.GetTexture("_OverlayTexture");
 //                        objMaterial.normalMap = (Texture2D)mat.GetTexture("_NormalMap");
                     }
@@ -237,7 +236,7 @@ class ExportTerrain
                 }
             }
 
-            MaterialsToFile(objMaterial, fileName);
+            MaterialsToFile(objMaterial, fileName, applyAO);
             Debug.Log("Finished Saving");
         }
         catch(Exception err)
@@ -250,7 +249,7 @@ class ExportTerrain
         terrain = null;
     } 
  
-	private static void MaterialsToFile(ObjMaterial material, string filename)
+	private static void MaterialsToFile(ObjMaterial material, string filename, bool applyAO)
 	{
         filename = Path.ChangeExtension(filename, "mtl");
         string folder = Path.GetDirectoryName (Path.GetFullPath(filename)) + "/";
@@ -281,13 +280,16 @@ class ExportTerrain
                     for (int yy = 0; yy < readableTexture.height; yy++)
                     {
                         //combine the base texture and the overlay
-                        float mask = material.detailTexture.GetPixel(xx, yy).a;
-                        Color basePixel = readableTexture.GetPixel(xx, yy);
+                        Color basePixel = source.GetPixel(xx, yy);
+                        if(applyAO) {
+                            basePixel *= material.aoTexture.GetPixel(xx,yy);
+                        }
                         Color overlay = material.detailTexture.GetPixel(xx, yy);
+                        float mask = overlay.a;
 
                             
                         pixel = (basePixel * (1- mask)) + (overlay * mask);
-                        readableTexture.SetPixel(xx, yy, pixel);
+                        readableTexture.SetPixel(yy, xx, pixel);
                     }
                 }        
 

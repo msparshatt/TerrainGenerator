@@ -14,7 +14,6 @@ public class GameResources
     
     public Texture2D[] brushes;
 
-
     static public GameResources instance {
         get {
             if(_instance == null)
@@ -74,11 +73,5 @@ public class GameResources
         newTexture.Apply(true);
 
         mat.SetTexture("_OverlayTexture", newTexture);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

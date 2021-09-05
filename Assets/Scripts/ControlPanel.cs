@@ -37,7 +37,12 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private RawImage textureImage;
     [SerializeField] private Button textureButton;
     [SerializeField] private Slider scaleSlider;
+    [SerializeField] private Toggle aoToggle;
     [SerializeField] private GameObject proceduralPanel;
+    [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private Button settingButton;
+    [SerializeField] private GameObject exitConfirmationPanel;
+    
 
     [Header("brush settings")]
     [SerializeField] private BrushDataScriptable brushData;
@@ -181,11 +186,13 @@ public class ControlPanel : MonoBehaviour
 
     public void FlatButtonClick()
     {
+        proceduralPanel.SetActive(false);
         TerrainManager.instance.CreateFlatTerrain(terrainSize, terrainSize, terrainHeight);
     }
 
     public void HeightmapButtonClick()
     {
+        proceduralPanel.SetActive(false);
         string filename = FileBrowser.OpenSingleFile("Open Heightmap file", "", new string[]{"raw", "png"});
 
         if(filename != "") {
@@ -209,6 +216,21 @@ public class ControlPanel : MonoBehaviour
     }
 
     public void ExitButtonClick()
+    {
+        exitConfirmationPanel.SetActive(true);
+    }
+
+    public void NoButtonClick()
+    {
+        exitConfirmationPanel.SetActive(false);
+    }
+
+    public void YesButtonClick()
+    {
+        DoExit();
+    }
+
+    public void DoExit()
     {
         Application.Quit();
         #if UNITY_EDITOR
@@ -235,6 +257,13 @@ public class ControlPanel : MonoBehaviour
         bool active = !texturePanel.activeSelf;
         CloseAllPanels();
         texturePanel.SetActive(active);
+    }
+
+    public void SettingsButtonClick()
+    {
+        bool active = !settingsPanel.activeSelf;
+        CloseAllPanels();
+        settingsPanel.SetActive(active);
     }
 
     public void HelpButtonClick()
@@ -277,6 +306,15 @@ public class ControlPanel : MonoBehaviour
     public void SelectMaterialIcon(int buttonIndex)
     {
         currentMaterial = gameResources.materials[buttonIndex];
+
+        if(currentMaterial.GetTexture("_AOTexture") == null) {
+            aoToggle.interactable = false;            
+        } else {
+            aoToggle.interactable = true;
+
+            AOToggleChange(aoToggle.isOn);
+        }
+
         currentMaterialIndex = buttonIndex;
         materialImage.texture = currentMaterial.mainTexture;
         TerrainManager.instance.SetTerrainMaterial(gameResources.materials[buttonIndex]);
@@ -348,6 +386,7 @@ public class ControlPanel : MonoBehaviour
         brushPanel.SetActive(false);
         texturePanel.SetActive(false);
         helpPanel.SetActive(false);
+        settingsPanel.SetActive(false);
     }
 
     public void SaveButtonClick()
@@ -392,7 +431,7 @@ public class ControlPanel : MonoBehaviour
 
     public void ExportButtonClick()
     {
-        exportTerrain.Export();
+        exportTerrain.Export(aoToggle.isOn);
     }
 
     public void ExportHmButtonClick()
@@ -403,5 +442,14 @@ public class ControlPanel : MonoBehaviour
     public void ResetTilingButtonClick()
     {
         scaleSlider.value = 1.0f;
+    }
+
+    public void AOToggleChange(bool isOn)
+    {
+        if(isOn) {
+            currentMaterial.SetInt("_ApplyAO", 1);
+        } else {
+            currentMaterial.SetInt("_ApplyAO", 0);
+        }
     }
 }
