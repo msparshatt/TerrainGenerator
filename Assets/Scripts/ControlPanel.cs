@@ -510,9 +510,11 @@ public class ControlPanel : MonoBehaviour
 
     public void LoadCustomBrush(string filename)
     {
-        WWW www = new WWW("file://" + filename);                  // "download" the first file from disk
-        Texture2D texture = new Texture2D(128,128);               // create a new Texture2D (you could use a gloabaly defined array of Texture2D )
-        www.LoadImageIntoTexture(texture);              
+        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
+        byte[] bytes = File.ReadAllBytes(filename);
+
+        texture.filterMode = FilterMode.Trilinear;
+        texture.LoadImage(bytes);
 
         gameResources.brushes.Add(texture);
 
