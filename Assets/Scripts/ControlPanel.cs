@@ -28,6 +28,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Button brushDeleteButton;
     [SerializeField] private GameObject materialScrollView;
     [SerializeField] private GameObject materialPanel;
+    [SerializeField] private Button materialDeleteButton;
     [SerializeField] private GameObject textureScrollView;
     [SerializeField] private GameObject texturePanel;
     [SerializeField] private Button textureDeleteButton;
@@ -42,7 +43,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private Button settingButton;
     [SerializeField] private GameObject exitConfirmationPanel;
-    
+    [SerializeField] private Shader terrainShader;
 
     [Header("brush settings")]
     [SerializeField] private BrushDataScriptable brushData;
@@ -54,6 +55,7 @@ public class ControlPanel : MonoBehaviour
     //The currently used Material
     private Material currentMaterial;
     private int currentMaterialIndex;
+    private List<string> customMaterials;
 
     //buttons created to select brushes,materials and textures
     private List<GameObject> brushIcons;
@@ -116,6 +118,8 @@ public class ControlPanel : MonoBehaviour
         LoadCustomBrushes();
         customTextures = new List<string>();
         LoadCustomTextures();
+        customMaterials = new List<string>();
+        LoadCustomMaterials();
 
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
         SelectMaterialIcon(0);
@@ -193,28 +197,6 @@ public class ControlPanel : MonoBehaviour
             return NewObj;
     }    
 
-    //create a new transparent texture and add it to the material in the _OverlayTexture slot
-    private void CreateOverlayTexture(Material mat, Vector2 size)
-    {
-        Texture2D newTexture = new Texture2D((int)size.x, (int)size.y);// GraphicsFormat.R8G8B8A8_UNorm, true);
-
-        Color[] data = new Color[(int)size.x * (int)size.y];
-
-        int index = 0;
-        //set the every pixel to be transparent
-        for(int x = 0; x < size.x; x++) {
-            for(int y = 0; y < size.y; y++) {                        
-                data[index] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-                index++;
-            }
-        }
-
-        newTexture.SetPixels(0, 0, (int)size.x, (int)size.y, data);
-        newTexture.Apply(true);
-
-        mat.SetTexture("_OverlayTexture", newTexture);
-    }
-
     public void FlatButtonClick()
     {
         proceduralPanel.SetActive(false);
@@ -265,6 +247,8 @@ public class ControlPanel : MonoBehaviour
     {
         SaveCustomBrushes();
         SaveCustomTextures();
+        SaveCustomMaterials();
+
         Application.Quit();
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false; 
@@ -361,6 +345,12 @@ public class ControlPanel : MonoBehaviour
 
             AOToggleChange(aoToggle.isOn);
         }
+
+        if(buttonIndex >= (gameResources.materials.Count - customMaterials.Count)) {
+            materialDeleteButton.interactable = true;
+        } else {
+            materialDeleteButton.interactable = false;
+        }        
 
         currentMaterialIndex = buttonIndex;
         materialImage.texture = currentMaterial.mainTexture;
@@ -632,4 +622,89 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
+    public void MaterialImportButtonClick()
+    {
+        string filename = FileBrowser.OpenSingleFile("Open brush file", "", "png");
+        
+        if(filename != "") {
+            LoadCustomMaterial(filename);
+            customMaterials.Add(filename);
+        }
+    }
+
+    public void MaterialDeleteButtonClick()
+    {
+        int customMaterialIndex = currentMaterialIndex + customMaterials.Count - gameResources.materials.Count;
+
+        customMaterials.RemoveAt(customMaterialIndex);
+        gameResources.materials.RemoveAt(currentMaterialIndex);
+        Destroy(materialIcons[currentMaterialIndex]);
+        materialIcons.RemoveAt(currentMaterialIndex);
+        
+        SelectMaterialIcon(0);
+    }
+
+    public void LoadCustomMaterial(string filename)
+    {
+        Material material = new Material(terrainShader); 
+        Texture2D materialTexture = new Texture2D(128,128, TextureFormat.RGB24, false);
+        byte[] bytes = File.ReadAllBytes(filename);
+
+        materialTexture.filterMode = FilterMode.Trilinear;
+        materialTexture.LoadImage(bytes);
+        material.mainTexture = materialTexture;
+
+        Texture2D newTexture = new Texture2D(materialTexture.width, materialTexture.height);// GraphicsFormat.R8G8B8A8_UNorm, true);
+
+        Color[] data = new Color[materialTexture.width * materialTexture.height];
+
+        int index = 0;
+        //set the every pixel to be transparent
+        for(int x = 0; x < materialTexture.width; x++) {
+            for(int y = 0; y < materialTexture.height; y++) {                        
+                data[index] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                index++;
+            }
+        }
+
+        newTexture.SetPixels(0, 0, materialTexture.width, materialTexture.height, data);
+        newTexture.Apply(true);
+
+        material.SetTexture("_OverlayTexture", newTexture);
+
+        gameResources.materials.Add(material);
+
+        //Add the brush to the  brush selection panel          
+        GameObject newButton;
+        int ObjectIndex = materialIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = MakeButton(materialTexture, delegate {SelectMaterialIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(materialScrollView.transform);
+        materialIcons.Add(newButton);
+    }
+
+    public void SaveCustomMaterials()
+    {        
+        PlayerPrefs.SetInt("CustomMaterialCount", customMaterials.Count);
+
+        if(customMaterials.Count > 0) {
+            for(int i = 0; i < customMaterials.Count; i++)
+                PlayerPrefs.SetString("CustomMaterial_" + i, customMaterials[i]);
+        }        
+    }
+
+    public void LoadCustomMaterials()
+    {
+        int count = PlayerPrefs.GetInt("CustomMaterialCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomMaterial_" + i);
+
+                LoadCustomMaterial(name);
+                customMaterials.Add(name);
+            }
+        }
+    }
 }
