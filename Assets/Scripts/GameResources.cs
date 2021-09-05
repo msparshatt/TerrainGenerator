@@ -12,7 +12,8 @@ public class GameResources
     public Material[] materials;
     public Texture2D[] icons;
     
-    public Texture2D[] brushes;
+    //public Texture2D[] brushes;
+    public List<Texture2D> brushes;
 
     static public GameResources instance {
         get {
@@ -31,7 +32,7 @@ public class GameResources
     private void LoadResources()
     {
         Debug.Log("loading brushes " + Time.realtimeSinceStartup);
-        brushes = Resources.LoadAll<Texture2D>("Brushes");
+        brushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("Brushes"));
         Debug.Log("loading materials " + Time.realtimeSinceStartup);
         materials = Resources.LoadAll<Material>("Materials");
         Debug.Log("loading material icons " + Time.realtimeSinceStartup);

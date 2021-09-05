@@ -6,9 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Crosstales.FB;
 using UnityEngine.Events;
-//using UnityEngine.JSONSerializeModule;
 
-//[Serializable]
 public struct SaveData
 {
     public byte[] heightmap;
@@ -27,6 +25,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Text modeText;
     [SerializeField] private GameObject brushScrollView;
     [SerializeField] private GameObject brushPanel;
+    [SerializeField] private Button brushDeleteButton;
     [SerializeField] private GameObject materialScrollView;
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private GameObject textureScrollView;
@@ -59,6 +58,8 @@ public class ControlPanel : MonoBehaviour
     private List<GameObject> brushIcons;
     private List<GameObject> materialIcons;
     private List<GameObject> textureIcons;
+    private List<string> customBrushes;
+    private int brushIndex;
 
     //UI colours
     private Color selectedColor;
@@ -107,6 +108,9 @@ public class ControlPanel : MonoBehaviour
         //create selection panels
         SetupPanels();
 
+        customBrushes = new List<string>();
+        LoadCustomBrushes();
+
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
         SelectMaterialIcon(0);
         SelectBrushIcon(0);
@@ -146,6 +150,27 @@ public class ControlPanel : MonoBehaviour
         return buttons;
     }
 
+
+    private List<GameObject> SetupIcons(List<Texture2D> images, Transform parent, Action<int> onClickFunction)
+    {
+        //populate material selection panel          
+        GameObject newButton;
+        List<GameObject> buttons = new List<GameObject>();
+        int ObjectIndex = 0;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        foreach (Texture2D icon in images)
+        {
+            int oi = ObjectIndex; //need this to make sure the closure gets the right value
+ 
+            newButton = MakeButton(icon, delegate {onClickFunction(oi); }, oi);
+            newButton.transform.SetParent(parent);
+            buttons.Add(newButton);
+            ObjectIndex++;
+        }
+
+        return buttons;
+    }
     //create an image button. It will call the passed onClickListener action when clicked
     private GameObject MakeButton(Texture2D icon, UnityAction onClickListener, int index=0)
     {
@@ -232,6 +257,7 @@ public class ControlPanel : MonoBehaviour
 
     public void DoExit()
     {
+        SaveCustomBrushes();
         Application.Quit();
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false; 
@@ -277,6 +303,13 @@ public class ControlPanel : MonoBehaviour
     {
         brushData.brush = gameResources.brushes[buttonIndex];
         brushImage.texture = brushData.brush;
+        brushIndex = buttonIndex;
+
+        if(buttonIndex >= (gameResources.brushes.Count - customBrushes.Count)) {
+            brushDeleteButton.interactable = true;
+        } else {
+            brushDeleteButton.interactable = false;
+        }        
 
         for (int i = 0; i < brushIcons.Count; i++) {
             if(i == buttonIndex) {
@@ -450,6 +483,70 @@ public class ControlPanel : MonoBehaviour
             currentMaterial.SetInt("_ApplyAO", 1);
         } else {
             currentMaterial.SetInt("_ApplyAO", 0);
+        }
+    }
+
+    public void BrushImportButtonclick()
+    {
+        string filename = FileBrowser.OpenSingleFile("Open brush file", "", "png");
+        
+        if(filename != "") {
+            LoadCustomBrush(filename);
+            customBrushes.Add(filename);
+        }
+    }
+
+    public void BrushDeleteButtonClick()
+    {
+        int customBrushIndex = brushIndex + customBrushes.Count - gameResources.brushes.Count;
+
+        customBrushes.RemoveAt(customBrushIndex);
+        gameResources.brushes.RemoveAt(brushIndex);
+        Destroy(brushIcons[brushIndex]);
+        brushIcons.RemoveAt(brushIndex);
+        
+        SelectBrushIcon(0);
+    }
+
+    public void LoadCustomBrush(string filename)
+    {
+        WWW www = new WWW("file://" + filename);                  // "download" the first file from disk
+        Texture2D texture = new Texture2D(128,128);               // create a new Texture2D (you could use a gloabaly defined array of Texture2D )
+        www.LoadImageIntoTexture(texture);              
+
+        gameResources.brushes.Add(texture);
+
+        //Add the brush to the  brush selection panel          
+        GameObject newButton;
+        int ObjectIndex = brushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(brushScrollView.transform);
+        brushIcons.Add(newButton);
+    }
+
+    public void SaveCustomBrushes()
+    {        
+        PlayerPrefs.SetInt("CustomBrushCount", customBrushes.Count);
+
+        if(customBrushes.Count > 0) {
+            for(int i = 0; i < customBrushes.Count; i++)
+                PlayerPrefs.SetString("CustomBrushes_" + i, customBrushes[i]);
+        }        
+    }
+
+    public void LoadCustomBrushes()
+    {
+        int count = PlayerPrefs.GetInt("CustomBrushCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomBrushes_" + i);
+
+                LoadCustomBrush(name);
+                customBrushes.Add(name);
+            }
         }
     }
 }
