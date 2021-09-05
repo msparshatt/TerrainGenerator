@@ -30,6 +30,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private GameObject textureScrollView;
     [SerializeField] private GameObject texturePanel;
+    [SerializeField] private Button textureDeleteButton;
     [SerializeField] private GameObject helpPanel;
     [SerializeField] private RawImage materialImage;
     [SerializeField] private RawImage brushImage;
@@ -60,6 +61,9 @@ public class ControlPanel : MonoBehaviour
     private List<GameObject> textureIcons;
     private List<string> customBrushes;
     private int brushIndex;
+
+    private List<string>customTextures;
+    private int textureIndex;
 
     //UI colours
     private Color selectedColor;
@@ -110,6 +114,8 @@ public class ControlPanel : MonoBehaviour
 
         customBrushes = new List<string>();
         LoadCustomBrushes();
+        customTextures = new List<string>();
+        LoadCustomTextures();
 
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
         SelectMaterialIcon(0);
@@ -258,6 +264,7 @@ public class ControlPanel : MonoBehaviour
     public void DoExit()
     {
         SaveCustomBrushes();
+        SaveCustomTextures();
         Application.Quit();
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false; 
@@ -323,8 +330,15 @@ public class ControlPanel : MonoBehaviour
 
     public void SelectTextureIcon(int buttonIndex)
     {
-        brushData.paintTexture = (Texture2D)gameResources.materials[buttonIndex].mainTexture;
+        brushData.paintTexture = (Texture2D)gameResources.textures[buttonIndex];
         textureImage.texture = brushData.paintTexture;
+        textureIndex = buttonIndex;
+
+        if(buttonIndex >= (gameResources.icons.Count - customTextures.Count)) {
+            textureDeleteButton.interactable = true;
+        } else {
+            textureDeleteButton.interactable = false;
+        }        
 
         for (int i = 0; i < textureIcons.Count; i++) {
             if(i == buttonIndex) {
@@ -534,7 +548,7 @@ public class ControlPanel : MonoBehaviour
 
         if(customBrushes.Count > 0) {
             for(int i = 0; i < customBrushes.Count; i++)
-                PlayerPrefs.SetString("CustomBrushes_" + i, customBrushes[i]);
+                PlayerPrefs.SetString("CustomBrush_" + i, customBrushes[i]);
         }        
     }
 
@@ -544,11 +558,78 @@ public class ControlPanel : MonoBehaviour
 
         if(count > 0) {
             for(int i = 0; i < count; i++) {
-                string name = PlayerPrefs.GetString("CustomBrushes_" + i);
+                string name = PlayerPrefs.GetString("CustomBrush_" + i);
 
                 LoadCustomBrush(name);
                 customBrushes.Add(name);
             }
         }
     }
+
+    public void TextureImportButtonClick()
+    {
+        string filename = FileBrowser.OpenSingleFile("Open brush file", "", "png");
+        
+        if(filename != "") {
+            LoadCustomTexture(filename);
+            customTextures.Add(filename);
+        }
+    }
+
+    public void TextureDeleteButtonClick()
+    {
+        int customTextureIndex = textureIndex + customTextures.Count - gameResources.textures.Count;
+
+        customTextures.RemoveAt(customTextureIndex);
+        gameResources.textures.RemoveAt(textureIndex);
+        Destroy(textureIcons[textureIndex]);
+        textureIcons.RemoveAt(textureIndex);
+        
+        SelectTextureIcon(0);
+    }
+
+    public void LoadCustomTexture(string filename)
+    {
+        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
+        byte[] bytes = File.ReadAllBytes(filename);
+
+        texture.filterMode = FilterMode.Trilinear;
+        texture.LoadImage(bytes);
+
+        gameResources.textures.Add(texture);
+
+        //Add the brush to the  brush selection panel          
+        GameObject newButton;
+        int ObjectIndex = textureIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = MakeButton(texture, delegate {SelectTextureIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(textureScrollView.transform);
+        textureIcons.Add(newButton);
+    }
+
+    public void SaveCustomTextures()
+    {        
+        PlayerPrefs.SetInt("CustomTextureCount", customTextures.Count);
+
+        if(customTextures.Count > 0) {
+            for(int i = 0; i < customTextures.Count; i++)
+                PlayerPrefs.SetString("CustomTexture_" + i, customTextures[i]);
+        }        
+    }
+
+    public void LoadCustomTextures()
+    {
+        int count = PlayerPrefs.GetInt("CustomTextureCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomTexture_" + i);
+
+                LoadCustomTexture(name);
+                customTextures.Add(name);
+            }
+        }
+    }
+
 }

@@ -9,8 +9,9 @@ public class GameResources
     static private GameResources _instance;
 
     //material settings
-    public Material[] materials;
-    public Texture2D[] icons;
+    public List<Material> materials;
+    public List<Texture2D> textures;
+    public List<Texture2D> icons;
     
     //public Texture2D[] brushes;
     public List<Texture2D> brushes;
@@ -34,9 +35,14 @@ public class GameResources
         Debug.Log("loading brushes " + Time.realtimeSinceStartup);
         brushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("Brushes"));
         Debug.Log("loading materials " + Time.realtimeSinceStartup);
-        materials = Resources.LoadAll<Material>("Materials");
+        materials = new List<Material>(Resources.LoadAll<Material>("Materials"));
+        Debug.Log("loading textures " + Time.realtimeSinceStartup);
+        textures = new List<Texture2D>();
+        foreach(Material mat in materials) {
+            textures.Add((Texture2D)mat.mainTexture);
+        }
         Debug.Log("loading material icons " + Time.realtimeSinceStartup);
-        icons = Resources.LoadAll<Texture2D>("Icons");        
+        icons = new List<Texture2D>(Resources.LoadAll<Texture2D>("Icons"));        
 
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
