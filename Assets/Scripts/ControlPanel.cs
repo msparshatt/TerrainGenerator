@@ -249,6 +249,10 @@ public class ControlPanel : MonoBehaviour
         SaveCustomTextures();
         SaveCustomMaterials();
 
+        //reset material settings before exitting
+        currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0, 0, 0, 0));
+        currentTerrain.materialTemplate.SetInt("_ApllyAO", 0);
+
         Application.Quit();
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false; 
