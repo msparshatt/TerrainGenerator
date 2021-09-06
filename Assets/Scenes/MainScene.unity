@@ -16925,14 +16925,14 @@ MonoBehaviour:
     Base Material - change the terrains main material
 
     Tiling
-    - scale the main material. Note when the tiling is set to a value other than
-    1 the paint cursor and the mouse cursor won''t line up
+    - scale the main material. Note unlike in previous versions this will only affect
+    the base material and not any painted textures
 
-    Reset Tiling - returns
-    the tiling slider back to 1
+    Reset Tiling - returns the
+    tiling slider back to 1
 
-    Ambient Occlusion - Will apply the material''s
-    ambient occlusion map if there is one
+    Ambient Occlusion - Will apply the material''s ambient
+    occlusion map if there is one
 
 
     Radius - size of the brush when sculpting
@@ -16980,18 +16980,18 @@ MonoBehaviour:
     control + left click to flatten the terrain
 
 
-    Painting (it is recommended
-    to only paint with tiling set to 1)
+    Painting
 
-    Left click to paint
+    Left click to
+    paint
 
-    Left shift
-    + left click to erase
+    Left shift + left click to erase
 
 
     Control + Z -> Undo
 
-    Control + Y -> Redo'
+    Control
+    + Y -> Redo'
 --- !u!222 &1581628106
 CanvasRenderer:
   m_ObjectHideFlags: 0

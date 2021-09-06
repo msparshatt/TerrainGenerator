@@ -35,6 +35,7 @@ Shader "Unlit/TerrainShader"
             struct v2f
             {
                 float2 uv : TEXCOORD0;
+                float2 uv2 : TEXCOORD1;
                 float4 vertex : SV_POSITION;
             };
 
@@ -43,6 +44,7 @@ Shader "Unlit/TerrainShader"
             sampler2D _AOTexture;
             sampler2D _OverlayTexture;
             float4 _MainTex_ST;
+            float4 _OverlayTexture_ST;
             int _ApplyAO;
             float4 _CursorLocation;
             sampler2D _CursorTexture;
@@ -53,6 +55,7 @@ Shader "Unlit/TerrainShader"
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv2 = TRANSFORM_TEX(v.uv, _OverlayTexture);
                 
                 return o;
             }
@@ -66,14 +69,14 @@ Shader "Unlit/TerrainShader"
                     col *= tex2D(_AOTexture, i.uv);
                 } 
 
-                fixed4 overlay =  tex2D(_OverlayTexture, i.uv);
+                fixed4 overlay =  tex2D(_OverlayTexture, i.uv2);
 
                 col = (col * (1 - overlay.a)) + (overlay * overlay.a);
 
-                if((i.uv.x >= _CursorLocation.x && i.uv.x <= _CursorLocation.x +  _CursorLocation.z) && 
-                    (i.uv.y >= _CursorLocation.y && i.uv.y <= _CursorLocation.y + _CursorLocation.w)) {
-                        float uvX = (i.uv.x - _CursorLocation.x) / _CursorLocation.z;
-                        float uvY = (i.uv.y - _CursorLocation.y) / _CursorLocation.w;
+                if((i.uv2.x >= _CursorLocation.x && i.uv2.x <= _CursorLocation.x +  _CursorLocation.z) && 
+                    (i.uv2.y >= _CursorLocation.y && i.uv2.y <= _CursorLocation.y + _CursorLocation.w)) {
+                        float uvX = (i.uv2.x - _CursorLocation.x) / _CursorLocation.z;
+                        float uvY = (i.uv2.y - _CursorLocation.y) / _CursorLocation.w;
                         fixed4 brushCol = {0, 0, tex2D(_CursorTexture, float2(uvX, uvY)).b, 0};
                         brushCol.a = brushCol.b * 0.7;
                         col = (col * (1 - brushCol.a)) + (brushCol * brushCol.a);

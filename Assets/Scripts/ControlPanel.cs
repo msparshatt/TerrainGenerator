@@ -374,7 +374,6 @@ public class ControlPanel : MonoBehaviour
     {
         Vector2 scale = new Vector2(value, value);
         currentMaterial.mainTextureScale = scale;
-        currentMaterial.SetTextureScale("_OverlayTexture", scale);
         brushData.textureScale = value;
     }
 
