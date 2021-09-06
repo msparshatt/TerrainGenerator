@@ -50,7 +50,7 @@ class ExportTerrain
         }
     }
       
-   public void Export(bool applyAO)
+   public void Export(bool applyAO, float tiling)
    {
         if (terrainObject)
         {
@@ -236,7 +236,7 @@ class ExportTerrain
                 }
             }
 
-            MaterialsToFile(objMaterial, fileName, applyAO);
+            MaterialsToFile(objMaterial, fileName, applyAO, tiling);
             Debug.Log("Finished Saving");
         }
         catch(Exception err)
@@ -249,7 +249,7 @@ class ExportTerrain
         terrain = null;
     } 
  
-	private static void MaterialsToFile(ObjMaterial material, string filename, bool applyAO)
+	private static void MaterialsToFile(ObjMaterial material, string filename, bool applyAO, float tiling)
 	{
         filename = Path.ChangeExtension(filename, "mtl");
         string folder = Path.GetDirectoryName (Path.GetFullPath(filename)) + "/";
@@ -279,10 +279,13 @@ class ExportTerrain
                 {
                     for (int yy = 0; yy < readableTexture.height; yy++)
                     {
+                        int xpos = (int)((xx * tiling) % readableTexture.width);
+                        int ypos = (int)((yy * tiling) % readableTexture.height);
+
                         //combine the base texture and the overlay
-                        Color basePixel = source.GetPixel(xx, yy);
+                        Color basePixel = source.GetPixel(xpos , ypos);
                         if(applyAO) {
-                            basePixel *= material.aoTexture.GetPixel(xx,yy);
+                            basePixel *= material.aoTexture.GetPixel(xpos,ypos);
                         }
                         Color overlay = material.detailTexture.GetPixel(xx, yy);
                         float mask = overlay.a;

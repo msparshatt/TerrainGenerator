@@ -472,7 +472,7 @@ public class ControlPanel : MonoBehaviour
 
     public void ExportButtonClick()
     {
-        exportTerrain.Export(aoToggle.isOn);
+        exportTerrain.Export(aoToggle.isOn, brushData.textureScale);
     }
 
     public void ExportHmButtonClick()
