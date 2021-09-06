@@ -33,6 +33,7 @@ public class TerrainManager
         currentTerrain.materialTemplate = material;
     }
 
+    //copy the terrain data object so that the master file won't be modified by any changes when running the program
     public void setupTerrain()
     {
         TerrainData data = new TerrainData();
@@ -41,8 +42,6 @@ public class TerrainManager
         data.alphamapResolution = original.alphamapResolution;
         data.baseMapResolution = original.baseMapResolution;
 
-        //data.detailPrototypes = CloneDetailPrototypes(original.detailPrototypes);
-
         // The resolutionPerPatch is not publicly accessible so
         // it can not be cloned properly, thus the recommendet default
         // number of 16
@@ -50,8 +49,6 @@ public class TerrainManager
 
         data.heightmapResolution = original.heightmapResolution;
         data.size = original.size;
-
-        data.thickness = original.thickness; //needed to ensure the cursor is drawn in the right spot
 
         data.wavingGrassAmount = original.wavingGrassAmount;
         data.wavingGrassSpeed = original.wavingGrassSpeed;
@@ -66,10 +63,8 @@ public class TerrainManager
             data.SetDetailLayer(0, 0, n, original.GetDetailLayer(0, 0, original.detailWidth, original.detailHeight, n));
         }
 
-        //data.treePrototypes = CloneTreePrototypes(data.treePrototypes);
-        //data.treeInstances = CloneTreeInstances(original.treeInstances);
-
         currentTerrain.terrainData = data;
+        currentTerrain.GetComponent<TerrainCollider>().terrainData = data;
     }
 
     public void CreateFlatTerrain()
