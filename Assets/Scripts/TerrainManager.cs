@@ -51,9 +51,8 @@ public class TerrainManager
         data.heightmapResolution = original.heightmapResolution;
         data.size = original.size;
 
-        //data.splatPrototypes = CloneSplatPrototypes(original.splatPrototypes);
+        data.thickness = original.thickness; //needed to ensure the cursor is drawn in the right spot
 
-        //data.thickness = original.thickness;
         data.wavingGrassAmount = original.wavingGrassAmount;
         data.wavingGrassSpeed = original.wavingGrassSpeed;
         data.wavingGrassStrength = original.wavingGrassStrength;
