@@ -11,6 +11,7 @@ public struct SaveData
 {
     public byte[] heightmap;
     public int baseTexture;
+    public float tiling;
     public byte[] overlayTexture;
 } 
 
@@ -438,6 +439,7 @@ public class ControlPanel : MonoBehaviour
 
             data.heightmap = exportHeightmap.GetHeightmap();
             data.baseTexture = currentMaterialIndex;
+            data.tiling = scaleSlider.value;
             Texture2D texture = (Texture2D)currentMaterial.GetTexture("_OverlayTexture");
             data.overlayTexture = texture.EncodeToPNG();
 
@@ -462,6 +464,11 @@ public class ControlPanel : MonoBehaviour
 
             TerrainManager.instance.CreateTerrainFromHeightmap(terrainSize, terrainSize, terrainHeight, data.heightmap);
             SelectMaterialIcon(data.baseTexture);
+
+            if(data.tiling == 0)
+                data.tiling = 1;
+            scaleSlider.value = data.tiling;
+
             Texture2D texture = new Texture2D(10,10);
             ImageConversion.LoadImage(texture, data.overlayTexture);
 
