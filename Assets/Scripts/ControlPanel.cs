@@ -72,10 +72,6 @@ public class ControlPanel : MonoBehaviour
     private Color selectedColor;
     private Color deselectedColor;
 
-    //terrain dimensions    
-    private int terrainSize;
-    private int terrainHeight;
-
     //assets from the resource folder used by the game
     private GameResources gameResources;
 
@@ -99,13 +95,12 @@ public class ControlPanel : MonoBehaviour
         selectedColor = Color.green;
         deselectedColor = Color.white;
 
-        terrainSize = 1000;
-        terrainHeight = 1000;
-
         Debug.Log("creating terrain " + Time.realtimeSinceStartup);
         TerrainManager.instance.currentMaterial = currentMaterial;
         TerrainManager.instance.currentTerrain = currentTerrain;
-        TerrainManager.instance.CreateFlatTerrain(terrainSize, terrainSize, terrainHeight);
+
+        TerrainManager.instance.setupTerrain();
+        TerrainManager.instance.CreateFlatTerrain();
 
         //set up brush settings
         brushData.brushRadius = 50;
@@ -201,7 +196,7 @@ public class ControlPanel : MonoBehaviour
     public void FlatButtonClick()
     {
         proceduralPanel.SetActive(false);
-        TerrainManager.instance.CreateFlatTerrain(terrainSize, terrainSize, terrainHeight);
+        TerrainManager.instance.CreateFlatTerrain();
     }
 
     public void HeightmapButtonClick()
@@ -210,7 +205,7 @@ public class ControlPanel : MonoBehaviour
         string filename = FileBrowser.OpenSingleFile("Open Heightmap file", "", new string[]{"raw", "png"});
 
         if(filename != "") {
-            TerrainManager.instance.CreateTerrainFromHeightmap(terrainSize, terrainSize, terrainHeight, filename);
+            TerrainManager.instance.CreateTerrainFromHeightmap(filename);
         }
     }
 
@@ -249,10 +244,6 @@ public class ControlPanel : MonoBehaviour
         SaveCustomBrushes();
         SaveCustomTextures();
         SaveCustomMaterials();
-
-        //reset material settings before exitting
-        currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0, 0, 0, 0));
-        currentTerrain.materialTemplate.SetInt("_ApllyAO", 0);
 
         Application.Quit();
         #if UNITY_EDITOR
@@ -462,7 +453,7 @@ public class ControlPanel : MonoBehaviour
 
             SaveData data = JsonUtility.FromJson<SaveData>(fileContents);
 
-            TerrainManager.instance.CreateTerrainFromHeightmap(terrainSize, terrainSize, terrainHeight, data.heightmap);
+            TerrainManager.instance.CreateTerrainFromHeightmap(data.heightmap);
             SelectMaterialIcon(data.baseTexture);
 
             if(data.tiling == 0)

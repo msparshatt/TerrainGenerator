@@ -51,10 +51,6 @@ public class ProceduralControlPanel : MonoBehaviour
 
     int resolution;
 
-    private float width;
-    private float length;
-    private float height;
-
     private GeneratorMode mode;
 
     public ComputeShader shader;
@@ -64,7 +60,6 @@ public class ProceduralControlPanel : MonoBehaviour
     {
         Debug.Log("start");
         mode = GeneratorMode.perlin;
-        width = length = height = 1000f;
         resolution = currentTerrain.terrainData.heightmapResolution;
         TerrainManager.instance.shader = shader;
         procGen = new ProceduralGeneration(mode, resolution);
@@ -111,7 +106,7 @@ public class ProceduralControlPanel : MonoBehaviour
             }
         }
 
-        TerrainManager.instance.CreateProceduralTerrain(procGen, terrace, erosion, width, length, height);
+        TerrainManager.instance.CreateProceduralTerrain(procGen, terrace, erosion);
     }
 
     public void ModeButtonClick()

@@ -33,7 +33,47 @@ public class TerrainManager
         currentTerrain.materialTemplate = material;
     }
 
-    public void CreateFlatTerrain(float width, float length, float height)
+    public void setupTerrain()
+    {
+        TerrainData data = new TerrainData();
+        TerrainData original = currentTerrain.terrainData;
+
+        data.alphamapResolution = original.alphamapResolution;
+        data.baseMapResolution = original.baseMapResolution;
+
+        //data.detailPrototypes = CloneDetailPrototypes(original.detailPrototypes);
+
+        // The resolutionPerPatch is not publicly accessible so
+        // it can not be cloned properly, thus the recommendet default
+        // number of 16
+        data.SetDetailResolution(original.detailResolution, 16);
+
+        data.heightmapResolution = original.heightmapResolution;
+        data.size = original.size;
+
+        //data.splatPrototypes = CloneSplatPrototypes(original.splatPrototypes);
+
+        //data.thickness = original.thickness;
+        data.wavingGrassAmount = original.wavingGrassAmount;
+        data.wavingGrassSpeed = original.wavingGrassSpeed;
+        data.wavingGrassStrength = original.wavingGrassStrength;
+        data.wavingGrassTint = original.wavingGrassTint;
+
+        data.SetAlphamaps(0, 0, original.GetAlphamaps(0, 0, original.alphamapWidth, original.alphamapHeight));
+        data.SetHeights(0, 0, original.GetHeights(0, 0, original.heightmapResolution, original.heightmapResolution));
+
+        for (int n = 0; n < original.detailPrototypes.Length; n++)
+        {
+            data.SetDetailLayer(0, 0, n, original.GetDetailLayer(0, 0, original.detailWidth, original.detailHeight, n));
+        }
+
+        //data.treePrototypes = CloneTreePrototypes(data.treePrototypes);
+        //data.treeInstances = CloneTreeInstances(original.treeInstances);
+
+        currentTerrain.terrainData = data;
+    }
+
+    public void CreateFlatTerrain()
     {
         _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
 
@@ -45,19 +85,19 @@ public class TerrainManager
             }
         }
 
-        CreateTerrain(width, length, height, heights);
+        CreateTerrain(heights);
     }
 
-    public void CreateTerrainFromHeightmap(float width, float length, float height, string path = "")
+    public void CreateTerrainFromHeightmap(string path = "")
     {
         _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
 
         float[,] heights = ReadHeightmap(path);
         
-        CreateTerrain(width, length, height, heights);
+        CreateTerrain(heights);
     }
 
-    public void CreateTerrainFromHeightmap(float width, float length, float height, byte[] data)
+    public void CreateTerrainFromHeightmap(byte[] data)
     {
         _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
 
@@ -74,10 +114,10 @@ public class TerrainManager
 
         float[,] heights = ConvertTo2DArray(result);
 
-        CreateTerrain(width, length, height, heights);
+        CreateTerrain(heights);
     }
 
-    public void CreateProceduralTerrain(ProceduralGeneration procGen, TerraceSettings terrace, Erosion erosion, float width, float length, float height)
+    public void CreateProceduralTerrain(ProceduralGeneration procGen, TerraceSettings terrace, Erosion erosion)
     {
         _heightmapresolution = procGen.size;
 
@@ -103,12 +143,12 @@ public class TerrainManager
         }
 
         Debug.Log("Creating terrain");
-        CreateTerrain(width, length, height, heights);
+        CreateTerrain(heights);
 
         //heights.Release();
     }
 
-    protected void CreateTerrain(float width, float length, float height, float[,] heights)
+    protected void CreateTerrain(float[,] heights)
     {
       currentTerrain.terrainData.SetHeights(0,0, heights);
     }

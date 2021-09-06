@@ -35,12 +35,16 @@ public class GameResources
         Debug.Log("loading brushes " + Time.realtimeSinceStartup);
         brushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("Brushes"));
         Debug.Log("loading materials " + Time.realtimeSinceStartup);
-        materials = new List<Material>(Resources.LoadAll<Material>("Materials"));
-        Debug.Log("loading textures " + Time.realtimeSinceStartup);
+        Material[] loadedMaterials = Resources.LoadAll<Material>("Materials");
+
+        materials = new List<Material>();
         textures = new List<Texture2D>();
-        foreach(Material mat in materials) {
+
+        foreach(Material mat in loadedMaterials) {
+            materials.Add(new Material(mat));
             textures.Add((Texture2D)mat.mainTexture);
         }
+
         Debug.Log("loading material icons " + Time.realtimeSinceStartup);
         icons = new List<Texture2D>(Resources.LoadAll<Texture2D>("Icons"));        
 
