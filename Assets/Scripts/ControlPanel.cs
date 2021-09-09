@@ -14,6 +14,7 @@ public struct SaveData
     public float tiling;
     public bool aoActive;
     public byte[] overlayTexture;
+    public float paintTiling;
 } 
 
 
@@ -41,6 +42,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Button textureButton;
     [SerializeField] private Slider scaleSlider;
     [SerializeField] private Toggle aoToggle;
+    [SerializeField] private Slider paintScaleSlider;
     [SerializeField] private GameObject proceduralPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private Button settingButton;
@@ -367,7 +369,22 @@ public class ControlPanel : MonoBehaviour
     {
         Vector2 scale = new Vector2(value, value);
         currentMaterial.mainTextureScale = scale;
+        //brushData.textureScale = value;
+    }
+
+    public void ResetTilingButtonClick()
+    {
+        scaleSlider.value = 1.0f;
+    }
+
+    public void PaintScaleSliderChange(float value)
+    {
         brushData.textureScale = value;
+    }
+
+    public void PaintResetTilingButtonClick()
+    {
+        paintScaleSlider.value = 1.0f;
     }
 
     public void SwitchMode(BrushDataScriptable.Modes newMode)
@@ -435,6 +452,7 @@ public class ControlPanel : MonoBehaviour
             data.aoActive = aoToggle.isOn;
             Texture2D texture = (Texture2D)currentMaterial.GetTexture("_OverlayTexture");
             data.overlayTexture = texture.EncodeToPNG();
+            data.paintTiling = paintScaleSlider.value;
 
             string json = JsonUtility.ToJson(data);
 
@@ -462,6 +480,10 @@ public class ControlPanel : MonoBehaviour
                 data.tiling = 1;
             scaleSlider.value = data.tiling;
 
+            if(data.paintTiling == 0)
+                data.paintTiling = 1;
+            paintScaleSlider.value = data.paintTiling;
+
             aoToggle.isOn = data.aoActive;
             
             Texture2D texture = new Texture2D(10,10);
@@ -473,17 +495,12 @@ public class ControlPanel : MonoBehaviour
 
     public void ExportButtonClick()
     {
-        exportTerrain.Export(aoToggle.isOn, brushData.textureScale);
+        exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
     }
 
     public void ExportHmButtonClick()
     {
         exportHeightmap.Export();
-    }
-
-    public void ResetTilingButtonClick()
-    {
-        scaleSlider.value = 1.0f;
     }
 
     public void AOToggleChange(bool isOn)

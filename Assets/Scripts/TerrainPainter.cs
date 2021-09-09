@@ -55,14 +55,14 @@ public class TerrainPainter : MonoBehaviour
         }
 
         Color[] pixels = texture.GetPixels(startX, startY, width, length); 
-        //Color[] paint_old = brushData.paintTexture.GetPixels(startX, startY, width, length);
+
         int arrayLength = width * length;
         Color[] paint = new Color[arrayLength];
         int count = 0;
         for(int i = 0; i < length; i++) {
-            int y = (startY + i) % brushData.paintTexture.height;
+            int y = (int)((startY + i) * brushData.textureScale % brushData.paintTexture.height);
             for(int j = 0; j < width; j++) {
-                int x = (startX + j) % brushData.paintTexture.width;
+                int x = (int)((startX + j) * brushData.textureScale % brushData.paintTexture.width);
 
                 paint[count] = brushData.paintTexture.GetPixel(x, y);                
                 count++;
