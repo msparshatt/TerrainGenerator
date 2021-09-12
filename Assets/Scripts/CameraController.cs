@@ -3,17 +3,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Experimental.Rendering;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    [Header("Movement settings")]
-    public float Normal_Speed = 40.0f; //Normal movement speed
-    public float Shift_Speed = 80.0f; //multiplies movement speed by how long shift is held down.
-    public float Speed_Cap = 80.0f; //Max cap for speed when shift is held down
-    public float Camera_Sensitivity = 0.6f; //How sensitive it with mouse
-    private Vector3 camera_Rotation = new Vector3(0, 0, 0); //Mouse location on screen during play (Set to near the middle of the screen)    
-    private float Total_Speed = 1.0f; //Total speed variable for shift
-
     [Header("Terrain settings")]
     [SerializeField] private BrushDataScriptable brushData;
     [SerializeField] private Terrain mainTerrain;
@@ -37,6 +30,16 @@ public class CameraController : MonoBehaviour
     //store the operation which is currently being performed
     private Operation operation;
 
+    //variables used by new input system
+    Vector3 moveValue;
+    Vector2 rotation;
+
+    bool modifier1;
+    bool modifier2;
+
+    //true when the interact button is held down
+    bool interact;
+
     void Start()
     {
         mainTerrainData = mainTerrain.terrainData;
@@ -44,144 +47,163 @@ public class CameraController : MonoBehaviour
         mainTerrainMapSize = mainTerrainData.heightmapResolution;
 
         operation = null;
+
+        moveValue = new Vector3();
+        rotation = new Vector2();
+
+        Cursor.lockState = CursorLockMode.None;
+        modifier1 = false;
+        modifier2 = false;
     }
+
+    //Callback functions for new input system
+    void OnMove(InputValue input)
+    {
+        Vector2 movement = input.Get<Vector2>().normalized;
+        moveValue.x = movement.x;
+        moveValue.z = movement.y;
+    }
+
+    void OnUpDown(InputValue input)
+    {
+        float movement = input.Get<float>();
+        moveValue.y = movement; //new Vector3(0, movement, 0);
+    }
+
+    void OnLook(InputValue input)
+    {
+        rotation = (Cursor.lockState == CursorLockMode.Locked) ? input.Get<Vector2>().normalized * settingsData.cameraSensitivity: Vector2.zero;
+        //  Debug.Log(rotation);
+    }
+
+    public void OnLookToggle(InputValue input)
+    {
+        Cursor.lockState = input.isPressed ? CursorLockMode.Locked : CursorLockMode.None;
+    }
+
+    public void OnModifier1(InputValue input)
+    {
+        modifier1 = input.isPressed;
+    }
+
+    public void OnModifier2(InputValue input)
+    {
+        modifier2 = input.isPressed;
+    }
+
+    public void OnHideUI(InputValue input)
+    {
+        uiVisible = !uiVisible;
+        userInterface.SetActive(uiVisible);
+    }
+
+    public void OnMouseWheel(InputValue input)
+    {
+        float value = input.Get<float>();
+
+        if(value > 0) {
+            value = 1;
+        } else if (value < 0) {
+            value = -1;
+        }
+
+        if(modifier1)
+            strengthSlider.value -= value / 50;
+        else
+            radiusSlider.value -= value * 50;
+    }
+
+    public void OnInteract(InputValue input)
+    {
+        interact = input.isPressed;
+    }
+
+    public void OnUndo(InputValue input)
+    {
+        if(modifier2)
+            gameObject.GetComponent<OperationList>().UndoCommand();
+    }
+
+    public void OnRedo(InputValue input)
+    {
+        if(modifier2)
+            gameObject.GetComponent<OperationList>().RedoCommand();
+    }
+
 
     void Update()
     {
-        //Camera angles based on mouse position while holding right mouse button
-        if(Input.GetButton("Look")) {
-            Cursor.lockState = CursorLockMode.Locked;
-            camera_Rotation.x -= Input.GetAxis("Mouse Y");
-            camera_Rotation.y += Input.GetAxis("Mouse X");
-            transform.eulerAngles = camera_Rotation * settingsData.cameraSensitivity;
-        } else {
-            Cursor.lockState = CursorLockMode.None;
-        }
+        transform.Rotate(new Vector3(-rotation.y, rotation.x, 0f));
 
-        //Keyboard controls       
-        Vector3 Cam = GetBaseInput();
-        Total_Speed = Mathf.Clamp(Total_Speed * 0.5f, 1f, 1000f);        
-        Cam = Cam * settingsData.movementSpeed;
-        if (Input.GetButton("Modifier1"))
-        {
-            Cam *= 2;
-        } 
+        Vector3 movement = settingsData.movementSpeed * moveValue * Time.deltaTime;
 
-        Cam = Cam * Time.deltaTime;
-        transform.Translate(Cam);
+        if(modifier1)
+            movement *= 10;
 
-        if(Input.GetButtonDown("Hide UI")) {
-            uiVisible = !uiVisible;
-            userInterface.SetActive(uiVisible);
-        }
+        transform.position += movement;
 
-        float scrollWheel = Input.GetAxis("Mouse ScrollWheel"); //Input for horizontal movement        
-
-        if(scrollWheel != 0.0f) {
-            if(Input.GetButton("Modifier1"))
-                strengthSlider.value += scrollWheel / 5;
-            else
-                radiusSlider.value += scrollWheel * 100;
-        }
-
-        //start recording undo information on mouse down
-        if(Input.GetButtonDown("Interact")) {
-            RaycastHit raycastTarget;
-
-            //detect if the ray hits an object
-            if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
-                //access the hit object
-                GameObject targetObject = raycastTarget.collider.gameObject;
-                if (targetObject == mainTerrain.gameObject)
-                {
-                    operation = new Operation();
-                }
-            }
-        }
-
-        //undo/redo
-        #if UNITY_EDITOR
-            if(Input.GetKeyDown(KeyCode.Z))
-        #else
-            if((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetKeyDown(KeyCode.Z))
-        #endif    
-        {
-            gameObject.GetComponent<OperationList>().UndoCommand();
-        }        
-        
-        //use y for undo when running in editor, ctrl+y when standalone
-        #if UNITY_EDITOR
-            if(Input.GetKeyDown(KeyCode.Y))
-        #else
-            if((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetKeyDown(KeyCode.Y))
-        #endif    
-        {
-            gameObject.GetComponent<OperationList>().RedoCommand();
-        }        
-
-        //don't allow interaction with the terrain if over the UI
+        //don't allow interaction with the terrain if the mouse is over the UI
         if (EventSystem.current.IsPointerOverGameObject())
-        {
             return;
-        }
+
+        projectImage(); 
 
         //sculpt/paint on left mouse button       
-        if(Input.GetButton("Interact") && operation != null) {
-            //variable to hold the data for a raycast collision
-            RaycastHit raycastTarget;
+        if(interact) {
+            //start recording undo information on mouse down
+            if(operation == null) {
+                RaycastHit raycastTarget;
 
-            //detect if the ray hits an object
-            if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
-                //access the hit object
-                GameObject targetObject = raycastTarget.collider.gameObject;
-                if (targetObject != mainTerrain.gameObject)
-                {
-                    return;
+                //detect if the ray hits an object
+                if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
+                    //access the hit object
+                    GameObject targetObject = raycastTarget.collider.gameObject;
+                    if (targetObject == mainTerrain.gameObject)
+                    {
+                        operation = new Operation();
+                    }
                 }
-            
-                if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt) {
-                    TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
-                    if(Input.GetButton("Modifier1")) {
-                        mode = TerrainSculpter.SculptMode.Lower;
-                    } else if(Input.GetButton("Modifier2")) {
-                        mode = TerrainSculpter.SculptMode.Flatten;
-                    }
+            } else {
+                //variable to hold the data for a raycast collision
+                RaycastHit raycastTarget;
 
-                    mainTerrain.GetComponent<TerrainSculpter>().SculptTerrain(mode, raycastTarget.point, operation);
-                } else {
-                    TerrainPainter painter = mainTerrain.GetComponent<TerrainPainter>();
-                    TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;
-                    if(Input.GetButton("Modifier1")) {
-                        mode = TerrainPainter.PaintMode.Erase;
+                //detect if the ray hits an object
+                if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
+                    //access the hit object
+                    GameObject targetObject = raycastTarget.collider.gameObject;
+                    if (targetObject != mainTerrain.gameObject)
+                    {
+                        return;
                     }
-                    Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
+                
+                    if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt) {
+                        TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
+                        if(modifier1) {
+                            mode = TerrainSculpter.SculptMode.Lower;
+                        } else if(modifier2) {
+                            mode = TerrainSculpter.SculptMode.Flatten;
+                        }
 
-                    painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
+                        mainTerrain.GetComponent<TerrainSculpter>().SculptTerrain(mode, raycastTarget.point, operation);
+                    } else {
+                        TerrainPainter painter = mainTerrain.GetComponent<TerrainPainter>();
+                        TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;
+                        if(modifier1) {
+                            mode = TerrainPainter.PaintMode.Erase;
+                        }
+                        Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
+
+                        painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
+                    }
                 }
             }
         }
 
         //store undo information to the undo list on mouse up
-        if(Input.GetButtonUp("Interact")) {
-            if(operation != null) {
-                gameObject.GetComponent<OperationList>().AddOperation(operation);
-                operation = null;
-            }
+        if(!interact && operation != null) {
+            gameObject.GetComponent<OperationList>().AddOperation(operation);
+            operation = null;
         }
-
-        //project an image of the brush onto the terrain
-        projectImage();
-    }
-
-    private Vector3 GetBaseInput()
-    {   
-        Vector3 Camera_Velocity = new Vector3();        
-        float leftRight = Input.GetAxis("Left/Right"); //Input for horizontal movement        
-        float forwardBack = Input.GetAxis("Forward/Back"); //Input for Vertical movement        
-        float upDown = Input.GetAxis("Up/Down"); //Input for Vertical movement        
-        Camera_Velocity += new Vector3(leftRight, upDown, forwardBack);
-        //Camera_Velocity += new Vector3(0, 0, VerticalInput);       
-        return Camera_Velocity;
     }
 
     private void projectImage()
@@ -220,8 +242,9 @@ public class CameraController : MonoBehaviour
     //send a raycast out towards the mousepointer
     private bool SendRaycastFromCameraToMousePointer(out RaycastHit raycastTarget) 
     {
-        Vector3 target = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-        Ray ray = Camera.main.ScreenPointToRay(target); 
+        //Vector3 target = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+        //Ray ray = Camera.main.ScreenPointToRay(target); 
+        Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Mouse.current.position.ReadValue());
 
         return Physics.Raycast(ray, out raycastTarget, Mathf.Infinity);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class ShowValueasTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -11,9 +12,8 @@ public class ShowValueasTooltip : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        float posX = Input.mousePosition.x + 50;
-        float posY = Input.mousePosition.y - 50;
-        tooltipPanel.transform.position = new Vector2(posX, posY);
+        Vector2 pos = Mouse.current.position.ReadValue();
+        tooltipPanel.transform.position = new Vector2(pos.x + 50 , pos.y - 50);
 
         Text tooltip = tooltipPanel.transform.GetChild(0).gameObject.GetComponent<Text>();
         tooltip.text = text + ": " + gameObject.GetComponent<Slider>().value.ToString();
