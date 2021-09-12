@@ -92,14 +92,6 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
-                },
-                {
-                    "name": "ForwardBack",
-                    "type": "Value",
-                    "id": "ea1a08a1-88b7-40cf-9460-9882a7c530cb",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -127,7 +119,7 @@
                 },
                 {
                     "name": "up",
-                    "id": "e2062cb9-1b15-46a2-838c-2f8d72a0bdd9",
+                    "id": "7092d742-b34b-470f-8f42-3287e1d51799",
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",

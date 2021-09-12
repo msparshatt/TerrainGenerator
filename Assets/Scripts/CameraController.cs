@@ -67,13 +67,12 @@ public class CameraController : MonoBehaviour
     void OnUpDown(InputValue input)
     {
         float movement = input.Get<float>();
-        moveValue.y = movement; //new Vector3(0, movement, 0);
+        moveValue.y = movement; 
     }
 
     void OnLook(InputValue input)
     {
         rotation = (Cursor.lockState == CursorLockMode.Locked) ? input.Get<Vector2>().normalized * settingsData.cameraSensitivity: Vector2.zero;
-        //  Debug.Log(rotation);
     }
 
     public void OnLookToggle(InputValue input)
@@ -242,8 +241,6 @@ public class CameraController : MonoBehaviour
     //send a raycast out towards the mousepointer
     private bool SendRaycastFromCameraToMousePointer(out RaycastHit raycastTarget) 
     {
-        //Vector3 target = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-        //Ray ray = Camera.main.ScreenPointToRay(target); 
         Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Mouse.current.position.ReadValue());
 
         return Physics.Raycast(ray, out raycastTarget, Mathf.Infinity);
