@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
 
@@ -134,6 +135,14 @@ public class CameraController : MonoBehaviour
             gameObject.GetComponent<OperationList>().RedoCommand();
     }
 
+
+    public void OnScreenshot()
+    {
+        DateTime now = DateTime.Now;
+        string filename = Application.persistentDataPath + "/" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".png";
+        ScreenCapture.CaptureScreenshot(filename);
+        Debug.Log(filename);
+    }
 
     void Update()
     {
