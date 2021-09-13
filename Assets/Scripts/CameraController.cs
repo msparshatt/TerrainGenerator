@@ -137,7 +137,8 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(new Vector3(-rotation.y, rotation.x, 0f));
+        transform.Rotate(new Vector3(-rotation.y, 0f, 0f), Space.Self); 
+        transform.Rotate(new Vector3(0f, rotation.x, 0f), Space.World); 
 
         Vector3 movement = settingsData.movementSpeed * moveValue * Time.deltaTime;
 
