@@ -2583,6 +2583,7 @@ GameObject:
   - component: {fileID: 187062321}
   - component: {fileID: 187062320}
   - component: {fileID: 187062319}
+  - component: {fileID: 187062322}
   m_Layer: 5
   m_Name: MDeleteButton
   m_TagString: Untagged
@@ -2704,6 +2705,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187062317}
   m_CullTransparentMesh: 1
+--- !u!114 &187062322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 187062317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Delete the selected material
 --- !u!1 &193064192
 GameObject:
   m_ObjectHideFlags: 0
@@ -11128,6 +11143,7 @@ GameObject:
   - component: {fileID: 782116050}
   - component: {fileID: 782116049}
   - component: {fileID: 782116048}
+  - component: {fileID: 782116051}
   m_Layer: 5
   m_Name: BDeleteButton
   m_TagString: Untagged
@@ -11249,6 +11265,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782116046}
   m_CullTransparentMesh: 1
+--- !u!114 &782116051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782116046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Delete the selected brush
 --- !u!1 &788705922
 GameObject:
   m_ObjectHideFlags: 0
@@ -18573,6 +18603,7 @@ GameObject:
   - component: {fileID: 1365877504}
   - component: {fileID: 1365877503}
   - component: {fileID: 1365877502}
+  - component: {fileID: 1365877505}
   m_Layer: 5
   m_Name: TDeleteButton
   m_TagString: Untagged
@@ -18694,6 +18725,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1365877500}
   m_CullTransparentMesh: 1
+--- !u!114 &1365877505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365877500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Delete the selected texture
 --- !u!1 &1389357314
 GameObject:
   m_ObjectHideFlags: 0
@@ -19997,6 +20042,7 @@ GameObject:
   - component: {fileID: 1488483531}
   - component: {fileID: 1488483530}
   - component: {fileID: 1488483529}
+  - component: {fileID: 1488483532}
   m_Layer: 5
   m_Name: TImportButton
   m_TagString: Untagged
@@ -20118,6 +20164,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1488483527}
   m_CullTransparentMesh: 1
+--- !u!114 &1488483532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488483527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Import a new texture
 --- !u!1 &1490786217
 GameObject:
   m_ObjectHideFlags: 0
@@ -23436,6 +23496,7 @@ GameObject:
   - component: {fileID: 1737531387}
   - component: {fileID: 1737531386}
   - component: {fileID: 1737531385}
+  - component: {fileID: 1737531388}
   m_Layer: 5
   m_Name: MImportButton
   m_TagString: Untagged
@@ -23557,6 +23618,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1737531383}
   m_CullTransparentMesh: 1
+--- !u!114 &1737531388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737531383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Import a new material
 --- !u!1 &1737619456
 GameObject:
   m_ObjectHideFlags: 0
@@ -24479,6 +24554,7 @@ GameObject:
   - component: {fileID: 1824543246}
   - component: {fileID: 1824543245}
   - component: {fileID: 1824543244}
+  - component: {fileID: 1824543247}
   m_Layer: 5
   m_Name: BImportButton
   m_TagString: Untagged
@@ -24600,6 +24676,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1824543242}
   m_CullTransparentMesh: 1
+--- !u!114 &1824543247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824543242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Import a new brush
 --- !u!1 &1839529920
 GameObject:
   m_ObjectHideFlags: 0
