@@ -164,51 +164,40 @@ public class CameraController : MonoBehaviour
 
         //sculpt/paint on left mouse button       
         if(interact) {
-            //start recording undo information on mouse down
-            if(operation == null) {
-                RaycastHit raycastTarget;
+            //variable to hold the data for a raycast collision
+            RaycastHit raycastTarget;
 
-                //detect if the ray hits an object
-                if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
-                    //access the hit object
-                    GameObject targetObject = raycastTarget.collider.gameObject;
-                    if (targetObject == mainTerrain.gameObject)
-                    {
-                        operation = new Operation();
-                    }
+            //detect if the ray hits an object
+            if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
+                //access the hit object
+                GameObject targetObject = raycastTarget.collider.gameObject;
+                if (targetObject != mainTerrain.gameObject)
+                {
+                    return;
                 }
-            } else {
-                //variable to hold the data for a raycast collision
-                RaycastHit raycastTarget;
+            
+                //start recording undo information on mouse down
+                if(operation == null)
+                    operation = new Operation();
 
-                //detect if the ray hits an object
-                if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
-                    //access the hit object
-                    GameObject targetObject = raycastTarget.collider.gameObject;
-                    if (targetObject != mainTerrain.gameObject)
-                    {
-                        return;
+                if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt) {
+                    TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
+                    if(modifier1) {
+                        mode = TerrainSculpter.SculptMode.Lower;
+                    } else if(modifier2) {
+                        mode = TerrainSculpter.SculptMode.Flatten;
                     }
-                
-                    if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt) {
-                        TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
-                        if(modifier1) {
-                            mode = TerrainSculpter.SculptMode.Lower;
-                        } else if(modifier2) {
-                            mode = TerrainSculpter.SculptMode.Flatten;
-                        }
 
-                        mainTerrain.GetComponent<TerrainSculpter>().SculptTerrain(mode, raycastTarget.point, operation);
-                    } else {
-                        TerrainPainter painter = mainTerrain.GetComponent<TerrainPainter>();
-                        TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;
-                        if(modifier1) {
-                            mode = TerrainPainter.PaintMode.Erase;
-                        }
-                        Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
-
-                        painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
+                    mainTerrain.GetComponent<TerrainSculpter>().SculptTerrain(mode, raycastTarget.point, operation);
+                } else {
+                    TerrainPainter painter = mainTerrain.GetComponent<TerrainPainter>();
+                    TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;
+                    if(modifier1) {
+                        mode = TerrainPainter.PaintMode.Erase;
                     }
+                    Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
+
+                    painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
                 }
             }
         }
