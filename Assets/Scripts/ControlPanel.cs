@@ -447,6 +447,12 @@ public class ControlPanel : MonoBehaviour
         string filename = FileBrowser.SaveFile("save.json", "json");
 
         if(filename != "") {
+            Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+            //force the cursor to update
+            Cursor.visible = false;
+            Cursor.visible = true;
+
             SaveData data = new SaveData();
             Texture2D texture;
 
@@ -473,6 +479,8 @@ public class ControlPanel : MonoBehaviour
             var sr = File.CreateText(filename);
             sr.WriteLine (json);
             sr.Close();
+
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
     }
 
@@ -481,6 +489,12 @@ public class ControlPanel : MonoBehaviour
         string filename = FileBrowser.OpenSingleFile("Open Heightmap file", "", "json");
 
         if(filename != "") {
+            Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+            //force the cursor to update
+            Cursor.visible = false;
+            Cursor.visible = true;
+
             var sr = new StreamReader(filename);
             string fileContents = sr.ReadToEnd();
             sr.Close();        
@@ -565,6 +579,8 @@ public class ControlPanel : MonoBehaviour
             ImageConversion.LoadImage(texture, data.overlayTexture);
 
             currentMaterial.SetTexture("_OverlayTexture", texture);
+
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }        
     }
 
