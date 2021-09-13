@@ -594,6 +594,8 @@ public class ControlPanel : MonoBehaviour
         if(filename != "") {
             LoadCustomBrush(filename);
             customBrushes.Add(filename);
+
+            SelectBrushIcon(gameResources.brushes.Count - 1);
         }
     }
 
@@ -660,6 +662,8 @@ public class ControlPanel : MonoBehaviour
         if(filename != "") {
             LoadCustomTexture(filename);
             customTextures.Add(filename);
+
+            SelectTextureIcon(gameResources.textures.Count - 1);
         }
     }
 
@@ -726,6 +730,8 @@ public class ControlPanel : MonoBehaviour
         if(filename != "") {
             LoadCustomMaterial(filename);
             customMaterials.Add(filename);
+
+            SelectMaterialIcon(gameResources.materials.Count - 1);
         }
     }
 
