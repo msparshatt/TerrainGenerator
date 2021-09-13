@@ -57,17 +57,22 @@ public class CameraController : MonoBehaviour
     }
 
     //Callback functions for new input system
-    void OnMove(InputValue input)
+    void OnLeftRight(InputValue input)
     {
-        Vector2 movement = input.Get<Vector2>().normalized;
-        moveValue.x = movement.x;
-        moveValue.z = movement.y;
+        float movement = input.Get<float>();
+        moveValue.x = movement;
     }
 
     void OnUpDown(InputValue input)
     {
         float movement = input.Get<float>();
         moveValue.y = movement; 
+    }
+
+    void OnForwardBack(InputValue input)
+    {
+        float movement = input.Get<float>();
+        moveValue.z = movement; 
     }
 
     void OnLook(InputValue input)
