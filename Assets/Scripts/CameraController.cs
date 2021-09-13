@@ -144,7 +144,7 @@ public class CameraController : MonoBehaviour
         if(modifier1)
             movement *= 10;
 
-        transform.position += movement;
+        transform.position += transform.TransformDirection(movement);
 
         //don't allow interaction with the terrain if the mouse is over the UI
         if (EventSystem.current.IsPointerOverGameObject())
