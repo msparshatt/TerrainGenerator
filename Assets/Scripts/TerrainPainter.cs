@@ -35,7 +35,7 @@ public class TerrainPainter : MonoBehaviour
         int width = (int)((brushData.brushRadius * textureSizeX) / terrainSize.x);
         int length = (int)((brushData.brushRadius * textureSizeY) / terrainSize.y);
 
-        float[,] mask = brushData.getMask(width, length);
+        float[,] mask = brushData.getMask(length, width);
         int maskOffsetX = 0;
         int maskOffsetY = 0;
 
