@@ -142,6 +142,9 @@ public class CameraController : MonoBehaviour
         string filename = Application.persistentDataPath + "/" + now.ToString("yyyy-MM-dd_HH-mm-ss") + ".png";
         ScreenCapture.CaptureScreenshot(filename);
         Debug.Log(filename);
+
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.Play();
     }
 
     void Update()
