@@ -340,6 +340,9 @@ public class ControlPanel : MonoBehaviour
     {
         currentMaterial = gameResources.materials[buttonIndex];
 
+        Vector2 scale = new Vector2(scaleSlider.value, scaleSlider.value);
+        currentMaterial.mainTextureScale = scale;
+
         if(currentMaterial.GetTexture("_AOTexture") == null) {
             aoToggle.interactable = false;            
         } else {
