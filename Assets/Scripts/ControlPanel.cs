@@ -452,6 +452,7 @@ public class ControlPanel : MonoBehaviour
 
     public void SaveButtonClick()
     {
+        Debug.Log("SAVE: Opening file browser");
         string filename = FileBrowser.SaveFile("save.json", "json");
 
         if(filename != "") {
