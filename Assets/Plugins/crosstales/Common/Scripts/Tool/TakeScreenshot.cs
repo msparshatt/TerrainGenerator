@@ -36,10 +36,10 @@ namespace Crosstales.Common.Util
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode))
+/*            if (Input.GetKeyDown(KeyCode))
             {
                 Capture();
-            }
+            }*/
         }
 
         #endregion

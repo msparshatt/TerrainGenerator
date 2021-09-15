@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Crosstales.UI
 {
@@ -30,14 +31,14 @@ namespace Crosstales.UI
         ///<summary>Drag started.</summary>
         public void BeginDrag()
         {
-            offsetX = tf.position.x - Input.mousePosition.x;
-            offsetY = tf.position.y - Input.mousePosition.y;
+            offsetX = tf.position.x - Mouse.current.position.ReadValue().x;
+            offsetY = tf.position.y - Mouse.current.position.ReadValue().y;
         }
 
         ///<summary>While dragging.</summary>
         public void OnDrag()
         {
-            tf.position = new Vector3(offsetX + Input.mousePosition.x, offsetY + Input.mousePosition.y);
+            tf.position = new Vector3(offsetX + Mouse.current.position.ReadValue().x, offsetY + Mouse.current.position.ReadValue().y);
         }
 
         #endregion
