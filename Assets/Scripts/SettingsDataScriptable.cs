@@ -7,4 +7,5 @@ public class SettingsDataScriptable : ScriptableObject
 {
     public float movementSpeed = 40.0f;
     public float cameraSensitivity = 1.0f;
+    public int defaultTerrainResolution = 1025;
 }

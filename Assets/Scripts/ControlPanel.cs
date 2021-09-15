@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public struct SaveData
 {
     public int version;
+    public int terrainResolution;
     public byte[] heightmap;
     public int baseTexture;
 
@@ -59,6 +60,9 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Dropdown scaleDropdown;
     [SerializeField] private Texture2D busyCursor;
 
+    [Header("settings")]
+    [SerializeField] private SettingsDataScriptable settingsData;
+
     //The currently used Material
     private Material currentMaterial;
     private int currentMaterialIndex;
@@ -104,6 +108,7 @@ public class ControlPanel : MonoBehaviour
         Debug.Log("creating terrain " + Time.realtimeSinceStartup);
         TerrainManager.instance.currentMaterial = currentMaterial;
         TerrainManager.instance.currentTerrain = currentTerrain;
+        TerrainManager.instance.settingsData = settingsData;
 
         TerrainManager.instance.setupTerrain();
         TerrainManager.instance.CreateFlatTerrain();
@@ -460,6 +465,7 @@ public class ControlPanel : MonoBehaviour
             Texture2D texture;
 
             data.version = 1;
+            data.terrainResolution = currentTerrain.terrainData.heightmapResolution;
 
             data.heightmap = exportHeightmap.GetHeightmap();
             if(currentMaterialIndex >= (gameResources.materials.Count - customMaterials.Count)) {
@@ -575,6 +581,11 @@ public class ControlPanel : MonoBehaviour
             if(data.paintTiling == 0)
                 data.paintTiling = 1;
             paintScaleSlider.value = data.paintTiling;
+
+            if(data.terrainResolution == 0)
+                data.terrainResolution = 513;
+
+            currentTerrain.terrainData.heightmapResolution = data.terrainResolution;
 
             aoToggle.isOn = data.aoActive;
             

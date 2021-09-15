@@ -44,6 +44,9 @@ public class ProceduralControlPanel : MonoBehaviour
 
     public Terrain currentTerrain;
 
+    [Header("Settings")]
+    public SettingsDataScriptable settingsData;
+
     //objects to handle the stages of generation
     ProceduralGeneration procGen;
     TerraceSettings terrace;
@@ -62,7 +65,7 @@ public class ProceduralControlPanel : MonoBehaviour
         mode = GeneratorMode.perlin;
         resolution = currentTerrain.terrainData.heightmapResolution;
         TerrainManager.instance.shader = shader;
-        procGen = new ProceduralGeneration(mode, resolution);
+        procGen = new ProceduralGeneration(mode, settingsData.defaultTerrainResolution);
         terrace = new TerraceSettings();
         erosion = new Erosion();
 

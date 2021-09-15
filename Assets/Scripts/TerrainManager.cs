@@ -11,6 +11,8 @@ public class TerrainManager
     public Terrain currentTerrain = null;
     public Material currentMaterial;
 
+    public SettingsDataScriptable settingsData;
+
     private static TerrainManager _instance;
 
     private int _heightmapresolution;
@@ -69,7 +71,7 @@ public class TerrainManager
 
     public void CreateFlatTerrain()
     {
-        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
+        _heightmapresolution = settingsData.defaultTerrainResolution;
 
         float[,] heights = new float[_heightmapresolution, _heightmapresolution];
 
@@ -84,17 +86,14 @@ public class TerrainManager
 
     public void CreateTerrainFromHeightmap(string path = "")
     {
-        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
-
         float[,] heights = ReadHeightmap(path);
+        _heightmapresolution = heights.GetLength(0);
         
         CreateTerrain(heights);
     }
 
     public void CreateTerrainFromHeightmap(byte[] data)
     {
-        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
-
         int arrayLength = data.Length;
         float[] result = new float[arrayLength/2];
         for(int index = 0; index < (arrayLength/2); index += 1) {
@@ -107,6 +106,7 @@ public class TerrainManager
         }
 
         float[,] heights = ConvertTo2DArray(result);
+        _heightmapresolution = heights.GetLength(0);
 
         CreateTerrain(heights);
     }
@@ -144,7 +144,8 @@ public class TerrainManager
 
     protected void CreateTerrain(float[,] heights)
     {
-      currentTerrain.terrainData.SetHeights(0,0, heights);
+        currentTerrain.terrainData.heightmapResolution = _heightmapresolution;
+        currentTerrain.terrainData.SetHeights(0,0, heights);
     }
 
     private float[,] ReadHeightmap(string fileName)
