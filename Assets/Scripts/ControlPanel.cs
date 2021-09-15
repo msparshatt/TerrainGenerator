@@ -455,19 +455,23 @@ public class ControlPanel : MonoBehaviour
         string filename = FileBrowser.SaveFile("save.json", "json");
 
         if(filename != "") {
+            Debug.Log("Saving to " + filename);
             Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
             //force the cursor to update
             Cursor.visible = false;
             Cursor.visible = true;
 
+            Debug.Log("SAVE: Creating SaveData object");
             SaveData data = new SaveData();
             Texture2D texture;
 
             data.version = 1;
             data.terrainResolution = currentTerrain.terrainData.heightmapResolution;
 
+            Debug.Log("SAVE: Store heightmap");
             data.heightmap = exportHeightmap.GetHeightmap();
+            Debug.Log("SAVE: Store base texture");
             if(currentMaterialIndex >= (gameResources.materials.Count - customMaterials.Count)) {
                 data.baseTexture = -1;
                 texture = (Texture2D)currentMaterial.mainTexture;
@@ -479,15 +483,20 @@ public class ControlPanel : MonoBehaviour
 
             data.tiling = scaleSlider.value;
             data.aoActive = aoToggle.isOn;
+
+            Debug.Log("SAVE: Store overlay texture");
             texture = (Texture2D)currentMaterial.GetTexture("_OverlayTexture");
             data.overlayTexture = texture.EncodeToPNG();
             data.paintTiling = paintScaleSlider.value;
 
+            Debug.Log("SAVE: Create json string");
             string json = JsonUtility.ToJson(data);
 
+            Debug.Log("SAVE: Write to file");
             var sr = File.CreateText(filename);
             sr.WriteLine (json);
             sr.Close();
+            Debug.Log("SAVE: Finish");
 
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
