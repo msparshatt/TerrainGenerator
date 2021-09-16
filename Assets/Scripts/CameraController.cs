@@ -105,7 +105,7 @@ public class CameraController : MonoBehaviour
 
     public void OnMouseWheel(InputValue input)
     {
-        if(!FileBrowser.IsOpen) {
+        if(!EventSystem.current.IsPointerOverGameObject()) {
             float value = input.Get<float>();
 
             if(value > 0) {
