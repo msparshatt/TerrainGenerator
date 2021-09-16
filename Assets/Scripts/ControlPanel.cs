@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using Crosstales.FB;
+//using Crosstales.FB;
 using UnityEngine.Events;
+using SimpleFileBrowser;
 
 public struct SaveData
 {
@@ -213,11 +214,16 @@ public class ControlPanel : MonoBehaviour
     public void HeightmapButtonClick()
     {
         proceduralPanel.SetActive(false);
-        string filename = FileBrowser.OpenSingleFile("Open Heightmap file", "", new string[]{"raw", "png"});
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "heightmap files", ".png", ".raw"));
+        FileBrowser.SetDefaultFilter( ".raw" );
+
+        FileBrowser.ShowLoadDialog((filenames) => { TerrainManager.instance.CreateTerrainFromHeightmap(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+
+/*        string filename = ""; //FileBrowser.OpenSingleFile("Open Heightmap file", "", new string[]{"raw", "png"});
 
         if(filename != "") {
             TerrainManager.instance.CreateTerrainFromHeightmap(filename);
-        }
+        }*/
     }
 
     public void ProceduralButtonClick()
@@ -453,9 +459,14 @@ public class ControlPanel : MonoBehaviour
     public void SaveButtonClick()
     {
         Debug.Log("SAVE: Opening file browser");
-        string filename = FileBrowser.SaveFile("save.json", "json");
+		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Save files", ".json"));
 
-        if(filename != "") {
+        FileBrowser.ShowSaveDialog((filenames) => { OnSave(filenames[0]);}, () => {Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnSave(string filename)
+    {
+        if(filename != null && filename != "") {
             Debug.Log("Saving to " + filename);
             Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
@@ -499,14 +510,20 @@ public class ControlPanel : MonoBehaviour
             sr.Close();
             Debug.Log("SAVE: Finish");
 
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
     public void LoadButtonClick()
     {
-        string filename = FileBrowser.OpenSingleFile("Open Heightmap file", "", "json");
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Save files", ".json"));
+        FileBrowser.SetDefaultFilter( ".json" );
 
+        FileBrowser.ShowLoadDialog((filenames) => { OnLoad(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnLoad(String filename)
+    {
         if(filename != "") {
             Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
@@ -610,12 +627,18 @@ public class ControlPanel : MonoBehaviour
 
     public void ExportButtonClick()
     {
-        exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
+		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Obj files", ".obj"));
+
+        FileBrowser.ShowSaveDialog((filenames) => { exportTerrain.Export(filenames[0], aoToggle.isOn, scaleSlider.value);}, () => {Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+
+        //exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
     }
 
     public void ExportHmButtonClick()
     {
-        exportHeightmap.Export();
+		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Raw heightmap", ".raw"));
+
+        FileBrowser.ShowSaveDialog((filenames) => { exportHeightmap.Export(filenames[0]);}, () => {Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
     }
 
     public void AOToggleChange(bool isOn)
@@ -629,8 +652,14 @@ public class ControlPanel : MonoBehaviour
 
     public void BrushImportButtonclick()
     {
-        string filename = FileBrowser.OpenSingleFile("Open brush file", "", "png");
-        
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
+        FileBrowser.SetDefaultFilter( ".png" );
+
+        FileBrowser.ShowLoadDialog((filenames) => { OnBrushImport(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnBrushImport(String filename)
+    {      
         if(filename != "") {
             LoadCustomBrush(filename);
             customBrushes.Add(filename);
@@ -697,8 +726,14 @@ public class ControlPanel : MonoBehaviour
 
     public void TextureImportButtonClick()
     {
-        string filename = FileBrowser.OpenSingleFile("Open brush file", "", "png");
-        
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
+        FileBrowser.SetDefaultFilter( ".png" );
+
+        FileBrowser.ShowLoadDialog((filenames) => { OnTextureImport(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnTextureImport(String filename)        
+    {       
         if(filename != "") {
             LoadCustomTexture(filename);
             customTextures.Add(filename);
@@ -765,8 +800,14 @@ public class ControlPanel : MonoBehaviour
 
     public void MaterialImportButtonClick()
     {
-        string filename = FileBrowser.OpenSingleFile("Open brush file", "", "png");
-        
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
+        FileBrowser.SetDefaultFilter( ".png" );
+
+        FileBrowser.ShowLoadDialog((filenames) => { OnMaterialImport(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnMaterialImport(string filename)
+    {
         if(filename != "") {
             LoadCustomMaterial(filename);
             customMaterials.Add(filename);

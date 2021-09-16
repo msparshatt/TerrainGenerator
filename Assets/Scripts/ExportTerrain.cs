@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-using Crosstales.FB;
 using System.Collections.Generic;
  
 enum SaveFormat { Triangles, Quads }
@@ -50,19 +49,18 @@ class ExportTerrain
         }
     }
       
-   public void Export(bool applyAO, float tiling)
+   public void Export(string fileName, bool applyAO, float tiling)
    {
+        if(fileName == "")
+            return;
+
         if (terrainObject)
         {
             terrain = terrainObject.terrainData;
             terrainPos = terrainObject.transform.position;
         }
 
-        string fileName = FileBrowser.SaveFile("terrain.obj", "obj");
         float scalefactor = 0.02f * Mathf.Pow(2, scaleDropDown.value); //reduce the size so it isn't too large for FlowScape
-
-        if(fileName == "")
-            return;
 
         Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 

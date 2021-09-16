@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Crosstales.FB;
 
 public class ExportHeightmap 
 {
@@ -16,10 +15,8 @@ public class ExportHeightmap
         }
     }
 
-    public void Export()
+    public void Export(string fileName)
     {
-        string fileName = FileBrowser.SaveFile("terrain.raw", "raw");
-
         if(fileName == "")
             return;
 
