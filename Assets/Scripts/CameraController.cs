@@ -5,6 +5,7 @@ using System.Collections;
 using System;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
+using SimpleFileBrowser;
 
 public class CameraController : MonoBehaviour
 {
@@ -104,18 +105,20 @@ public class CameraController : MonoBehaviour
 
     public void OnMouseWheel(InputValue input)
     {
-        float value = input.Get<float>();
+        if(!FileBrowser.IsOpen) {
+            float value = input.Get<float>();
 
-        if(value > 0) {
-            value = 1;
-        } else if (value < 0) {
-            value = -1;
+            if(value > 0) {
+                value = 1;
+            } else if (value < 0) {
+                value = -1;
+            }
+
+            if(modifier1)
+                strengthSlider.value -= value / 50;
+            else
+                radiusSlider.value -= value * 50;
         }
-
-        if(modifier1)
-            strengthSlider.value -= value / 50;
-        else
-            radiusSlider.value -= value * 50;
     }
 
     public void OnInteract(InputValue input)
