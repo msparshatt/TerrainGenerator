@@ -108,6 +108,9 @@ public class CameraController : MonoBehaviour
         if(!EventSystem.current.IsPointerOverGameObject()) {
             float value = input.Get<float>();
 
+            if (Application.platform == RuntimePlatform.WindowsPlayer)
+                value *= -1;
+
             if(value > 0) {
                 value = 1;
             } else if (value < 0) {
