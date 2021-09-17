@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-//using Crosstales.FB;
 using UnityEngine.Events;
 using SimpleFileBrowser;
+using UnityEngine.InputSystem;
 
 public struct SaveData
 {
@@ -53,6 +53,8 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Button settingButton;
     [SerializeField] private GameObject exitConfirmationPanel;
     [SerializeField] private Shader terrainShader;
+
+    [SerializeField] private PlayerInput playerInput;
 
     [Header("brush settings")]
     [SerializeField] private BrushDataScriptable brushData;
@@ -217,7 +219,8 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "heightmap files", ".png", ".raw"));
         FileBrowser.SetDefaultFilter( ".raw" );
 
-        FileBrowser.ShowLoadDialog((filenames) => { TerrainManager.instance.CreateTerrainFromHeightmap(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; TerrainManager.instance.CreateTerrainFromHeightmap(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
 
 /*        string filename = ""; //FileBrowser.OpenSingleFile("Open Heightmap file", "", new string[]{"raw", "png"});
 
@@ -474,7 +477,8 @@ public class ControlPanel : MonoBehaviour
         Debug.Log("SAVE: Opening file browser");
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Save files", ".json"));
 
-        FileBrowser.ShowSaveDialog((filenames) => { OnSave(filenames[0]);}, () => {Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true; OnSave(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
     }
 
     public void OnSave(string filename)
@@ -530,7 +534,8 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Save files", ".json"));
         FileBrowser.SetDefaultFilter( ".json" );
 
-        FileBrowser.ShowLoadDialog((filenames) => { OnLoad(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; OnLoad(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
     }
 
     public void OnLoad(String filename)
@@ -635,7 +640,8 @@ public class ControlPanel : MonoBehaviour
     {
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Obj files", ".obj"));
 
-        FileBrowser.ShowSaveDialog((filenames) => { exportTerrain.Export(filenames[0], aoToggle.isOn, scaleSlider.value);}, () => {Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  exportTerrain.Export(filenames[0], aoToggle.isOn, scaleSlider.value);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
 
         //exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
     }
@@ -644,7 +650,8 @@ public class ControlPanel : MonoBehaviour
     {
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Raw heightmap", ".raw"));
 
-        FileBrowser.ShowSaveDialog((filenames) => { exportHeightmap.Export(filenames[0]);}, () => {Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
+        playerInput.enabled = false;
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  exportHeightmap.Export(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
     }
 
     public void AOToggleChange(bool isOn)
@@ -661,7 +668,8 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
         FileBrowser.SetDefaultFilter( ".png" );
 
-        FileBrowser.ShowLoadDialog((filenames) => { OnBrushImport(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnBrushImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
     }
 
     public void OnBrushImport(String filename)
@@ -735,7 +743,8 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
         FileBrowser.SetDefaultFilter( ".png" );
 
-        FileBrowser.ShowLoadDialog((filenames) => { OnTextureImport(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnTextureImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
     }
 
     public void OnTextureImport(String filename)        
@@ -809,7 +818,8 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
         FileBrowser.SetDefaultFilter( ".png" );
 
-        FileBrowser.ShowLoadDialog((filenames) => { OnMaterialImport(filenames[0]);}, () => {Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnMaterialImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
     }
 
     public void OnMaterialImport(string filename)
