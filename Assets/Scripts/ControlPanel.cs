@@ -479,8 +479,6 @@ public class ControlPanel : MonoBehaviour
             Texture2D texture;
 
             data.version = 1;
-            data.terrainResolution = currentTerrain.terrainData.heightmapResolution;
-
             Debug.Log("SAVE: Store heightmap");
             data.heightmap = exportHeightmap.GetHeightmap();
             Debug.Log("SAVE: Store base texture");
@@ -608,11 +606,6 @@ public class ControlPanel : MonoBehaviour
             if(data.paintTiling == 0)
                 data.paintTiling = 1;
             paintScaleSlider.value = data.paintTiling;
-
-            if(data.terrainResolution == 0)
-                data.terrainResolution = 513;
-
-            currentTerrain.terrainData.heightmapResolution = data.terrainResolution;
 
             aoToggle.isOn = data.aoActive;
             
