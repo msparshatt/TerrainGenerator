@@ -101,10 +101,10 @@ public class ControlPanel : MonoBehaviour
         exportTerrain.scaleDropDown = scaleDropdown;
         exportTerrain.busyCursor = busyCursor;
 
-        CloseAllPanels();
-
         selectedColor = Color.green;
         deselectedColor = Color.white;
+
+        CloseAllPanels();
 
         Debug.Log("creating terrain " + Time.realtimeSinceStartup);
         TerrainManager.instance.currentMaterial = currentMaterial;
@@ -273,6 +273,9 @@ public class ControlPanel : MonoBehaviour
         bool active = !brushPanel.activeSelf;
         CloseAllPanels();
         brushPanel.SetActive(active);
+
+        if(active)
+            brushImage.color = selectedColor;
     }
 
     public void MaterialButtonClick()
@@ -280,6 +283,9 @@ public class ControlPanel : MonoBehaviour
         bool active = !materialPanel.activeSelf;
         CloseAllPanels();
         materialPanel.SetActive(active);
+
+        if(active)
+            materialImage.color = selectedColor;
     }
 
     public void TextureButtonClick()
@@ -287,6 +293,9 @@ public class ControlPanel : MonoBehaviour
         bool active = !texturePanel.activeSelf;
         CloseAllPanels();
         texturePanel.SetActive(active);
+
+        if(active)
+            textureImage.color = selectedColor;
     }
 
     public void SettingsButtonClick()
@@ -454,6 +463,10 @@ public class ControlPanel : MonoBehaviour
         texturePanel.SetActive(false);
         helpPanel.SetActive(false);
         settingsPanel.SetActive(false);
+
+        brushImage.color = deselectedColor;
+        materialImage.color = deselectedColor;
+        textureImage.color = deselectedColor;
     }
 
     public void SaveButtonClick()
