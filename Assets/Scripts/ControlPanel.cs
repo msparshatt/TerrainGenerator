@@ -890,4 +890,14 @@ public class ControlPanel : MonoBehaviour
             }
         }
     }
+
+    public void ResetButtonClick()
+    {
+        FlatButtonClick();
+        ClearButtonClick();
+
+        SelectBrushIcon(0);
+        SelectMaterialIcon(0);
+        SelectTextureIcon(1);
+    }
 }
