@@ -5,42 +5,29 @@ using UnityEngine.UI;
 
 public class HelpPanel : MonoBehaviour
 {
-    [SerializeField] private GameObject generalText;
-    [SerializeField] private GameObject controlText;
-    [SerializeField] private GameObject interactionText;
-    [SerializeField] private GameObject systemText;
+    [SerializeField] private GameObject[] panels;
+    [SerializeField] private Button[] buttons;
+    [SerializeField] private Sprite selectedTab;
+    [SerializeField] private Sprite unselectedTab;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        HideAllText();
-        generalText.SetActive(true);
+        ButtonClick(0);
     }
 
     public void ButtonClick(int index)
     {
         HideAllText();
-        switch(index)
-        {
-            case 0:
-                generalText.SetActive(true);
-                break;
-            case 1:
-                controlText.SetActive(true);
-                break;
-            case 2:
-                interactionText.SetActive(true);
-                break;
-            case 3:
-                systemText.SetActive(true);
-                break;
-        }
+        panels[index].SetActive(true);
+        buttons[index].GetComponent<Image>().sprite = selectedTab;
     }
     private void HideAllText()
     {
-        generalText.SetActive(false);
-        controlText.SetActive(false);
-        interactionText.SetActive(false);
-        systemText.SetActive(false);
+        for(int i = 0; i < panels.Length; i++) {
+            panels[i].SetActive(false);
+            buttons[i].GetComponent<Image>().sprite = unselectedTab;
+        }
     }
 }
