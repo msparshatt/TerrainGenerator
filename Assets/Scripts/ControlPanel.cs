@@ -113,7 +113,7 @@ public class ControlPanel : MonoBehaviour
         TerrainManager.instance.currentTerrain = currentTerrain;
         TerrainManager.instance.settingsData = settingsData;
 
-        TerrainManager.instance.setupTerrain();
+        TerrainManager.instance.SetupTerrain();
         TerrainManager.instance.CreateFlatTerrain();
 
         //set up brush settings
@@ -232,6 +232,9 @@ public class ControlPanel : MonoBehaviour
     public void ProceduralButtonClick()
     {
         proceduralPanel.SetActive(!proceduralPanel.activeSelf);
+
+        if(proceduralPanel.activeSelf == false)
+            proceduralPanel.GetComponent<ProceduralControlPanel>().CancelButtonClick();
     }
 
     public void RadiusSliderChange(float value)

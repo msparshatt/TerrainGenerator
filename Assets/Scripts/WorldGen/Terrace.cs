@@ -6,13 +6,11 @@ public class Layer
 {
     public int terraceCount;
     public float shape;
-    public bool smooth;
 
-    public Layer(int _terraceCount, float _shape, bool _smooth)
+    public Layer(int _terraceCount, float _shape)
     {
         terraceCount = _terraceCount;
         shape = _shape;
-        smooth = _smooth;
     }
 }
 
@@ -20,9 +18,9 @@ public class TerraceSettings
 {
     private List<Layer> layerList = new List<Layer>();
 
-    public void AddLayer(int _terraceCount, float _shape, bool _smooth)
+    public void AddLayer(int _terraceCount, float _shape)
     {
-        layerList.Add(new Layer(_terraceCount, _shape, _smooth));
+        layerList.Add(new Layer(_terraceCount, _shape));
     }
 
     public void ClearLayers()
@@ -47,10 +45,6 @@ public class TerraceSettings
                         float shape = layer.shape;
 
                         float newDifference = Sigmoid(shape, difference);
-
-                        if(layer.smooth) {
-                            newDifference = (newDifference + difference) / 2;
-                        }
 
                         float minHeight = (float)(floor) / layer.terraceCount;
                         float maxHeight = (float)(floor + 1) / layer.terraceCount;

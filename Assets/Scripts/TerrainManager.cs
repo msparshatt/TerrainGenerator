@@ -16,7 +16,9 @@ public class TerrainManager
 
     private int _heightmapresolution;
 
-    public ComputeShader shader;
+    private TerrainData originalData;
+    private TerrainData copyData;
+    private int multiplier;
 
     public static TerrainManager instance {
         get {
@@ -34,11 +36,44 @@ public class TerrainManager
         currentTerrain.materialTemplate = material;
     }
 
+    public void SetupChanges()
+    {
+        copyData = CopyTerrain(originalData);
+        copyData.heightmapResolution = 257;
+
+        copyData.size = new Vector3(1000, 1000, 1000);
+
+        currentTerrain.terrainData = copyData;
+        currentTerrain.GetComponent<TerrainCollider>().terrainData = copyData;    
+        multiplier = 4;
+    }
+
+    public void RevertChanges()
+    {
+        currentTerrain.terrainData = originalData;
+    }
+
+    public void ApplyChanges(ProceduralGeneration procGen, TerraceSettings terraces, Erosion erosion)
+    {
+        currentTerrain.terrainData = originalData;
+        currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
+        multiplier = 1;
+
+        CreateProceduralTerrain(procGen, terraces, erosion);
+    }
+
+    public void SetupTerrain()
+    {
+        originalData = CopyTerrain(currentTerrain.terrainData);
+
+        currentTerrain.terrainData = originalData;
+        currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
+    }
+
     //copy the terrain data object so that the master file won't be modified by any changes when running the program
-    public void setupTerrain()
+    private TerrainData CopyTerrain(TerrainData original)
     {
         TerrainData data = new TerrainData();
-        TerrainData original = currentTerrain.terrainData;
 
         data.alphamapResolution = original.alphamapResolution;
         data.baseMapResolution = original.baseMapResolution;
@@ -64,8 +99,7 @@ public class TerrainManager
             data.SetDetailLayer(0, 0, n, original.GetDetailLayer(0, 0, original.detailWidth, original.detailHeight, n));
         }
 
-        currentTerrain.terrainData = data;
-        currentTerrain.GetComponent<TerrainCollider>().terrainData = data;
+        return data;
     }
 
     public void CreateFlatTerrain()
@@ -112,38 +146,34 @@ public class TerrainManager
 
     public void CreateProceduralTerrain(ProceduralGeneration procGen, TerraceSettings terrace, Erosion erosion)
     {
-        _heightmapresolution = procGen.size;
+        _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
 
         float[,] heights;
         Debug.Log("generating terrain");
         
         //HeightMapBuilder heights  = new HeightMapBuilder(shader, size);
-        heights = procGen.GenerateHeightMap();            
-        //procGen.SetupHeightmap(heights);
+        heights = procGen.GenerateHeightMap(_heightmapresolution, multiplier);            
 
         if(terrace != null) {
             Debug.Log("Applying terraces");
             heights = terrace.AddTerraces(heights, _heightmapresolution);
-            //terrace.SetupTerraces(heights);
         }
 
 
         if(erosion != null) { 
             Debug.Log("Eroding");
 
-            //heights = erosion.Erode(heights, _heightmapresolution, 50000);
-            //erosion.SetupErosion(heights, 10000);
+            heights = erosion.Erode(heights, _heightmapresolution);
         }
 
         Debug.Log("Creating terrain");
         CreateTerrain(heights);
 
-        //heights.Release();
     }
 
     protected void CreateTerrain(float[,] heights)
     {
-        currentTerrain.terrainData.heightmapResolution = _heightmapresolution;
+        //currentTerrain.terrainData.heightmapResolution = _heightmapresolution;
         currentTerrain.terrainData.SetHeights(0,0, heights);
     }
 
@@ -267,5 +297,8 @@ public class TerrainManager
         }
         return nmbsBytes;
     }    
-
+    public RenderTexture GetHeightmapTexture()
+    {
+        return currentTerrain.terrainData.heightmapTexture;
+    }
 }

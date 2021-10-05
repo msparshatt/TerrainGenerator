@@ -6,124 +6,178 @@ using UnityEngine.UI;
 public enum GeneratorMode {perlin, ds_perlin, ds_random, maxVal};
 public class ProceduralControlPanel : MonoBehaviour
 {
-    [Header("UI")]
-    public Text modeLabel;
-    public GameObject perlinPanel;
-    public GameObject randomPanel;
+    [Header("Tabs")]
+    public GameObject[] panels;
+    public Button[] buttons;
+    public Sprite unselectedTab;
+    public Sprite selectedTab;
 
-    [Header("Perlin UI")]
+
+    [Header("Perlin")]
     public Slider xOffsetSlider;
     public Slider yOffsetSlider;
     public Slider scaleSlider;
-
-    public Toggle clampToggle;
-
     public Slider iterationSlider;
 
-    public InputField seedinput;
+    [Header("Voronoi")]
+    public Slider voronoiXOffsetSlider;
+    public Slider voronoiyOffsetSlider;
+    public Slider voronoiCellSizeSlider;
+    public Slider voronoiRandomSlider;
+
+    [Header("Factor")]
+    public Slider factorSlider;
+
+    [Header("Settings")]
+    public Slider minimumHeightSlider;
+    public Toggle clampToggle;
+
 
     [Header("Terrace UI")]
     public Toggle terraceToggle;
     public Toggle layer1Toggle;
     public Slider layer1CountSlider;
     public Slider layer1ShaperSlider;
-    public Toggle layer1SmoothToggle;
 
     public Toggle layer2Toggle;
     public Slider layer2CountSlider;
     public Slider layer2ShaperSlider;
-    public Toggle layer2SmoothToggle;
 
     public Toggle layer3Toggle;
     public Slider layer3CountSlider;
     public Slider layer3ShaperSlider;
-    public Toggle layer3SmoothToggle;
 
     [Header("Erosion UI")]
     public Toggle erodeToggle;
+    public Slider erosionIterationsSlider;
+    public Slider erosionFactorsetSlider;
 
+    [Header("Terrain")]
     public Terrain currentTerrain;
 
-    [Header("Settings")]
+    [Header("Other")]
     public SettingsDataScriptable settingsData;
+
+    public Texture2D busyCursor;
+    public RawImage heightmapImage;
 
     //objects to handle the stages of generation
     ProceduralGeneration procGen;
     TerraceSettings terrace;
     Erosion erosion;
 
-    int resolution;
+    private TerrainManager manager;
 
     private GeneratorMode mode;
-
-    public ComputeShader shader;
 
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("start");
-        mode = GeneratorMode.perlin;
-        resolution = currentTerrain.terrainData.heightmapResolution;
-        TerrainManager.instance.shader = shader;
-        procGen = new ProceduralGeneration(mode, settingsData.defaultTerrainResolution);
+        //resolution = currentTerrain.terrainData.heightmapResolution;
+        procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
         terrace = new TerraceSettings();
         erosion = new Erosion();
-
-        SetPanels();
+        manager = TerrainManager.instance;
 
         gameObject.SetActive(false);
     }
 
     public void OnEnable()
     {
-        if(procGen != null)
-            UpdateTerrain();
+        TabButtonClick(0);
+
+        if(manager != null) {
+            manager.SetupChanges();
+
+            if(procGen != null)
+                UpdateTerrain();
+        }
     }
 
+    public void TabButtonClick(int index)
+    {
+        CloseAllTabs();
+        panels[index].SetActive(true);
+        buttons[index].GetComponent<Image>().sprite = selectedTab;
+    }
+
+    private void CloseAllTabs()
+    {
+        for(int index = 0; index < panels.Length; index++) {
+            panels[index].SetActive(false);
+            buttons[index].GetComponent<Image>().sprite = unselectedTab;
+        }
+    }
     public void UpdateTerrain()
     {
+
         procGen.perlinOffset = new Vector2(xOffsetSlider.value, yOffsetSlider.value);
         procGen.scale = scaleSlider.value;
-        procGen.clampEdges = clampToggle.isOn;
         procGen.iterations = (int)iterationSlider.value;
 
-        if(seedinput.text != "")
-            procGen.seed = seedinput.text.GetHashCode();
+        procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiXOffsetSlider.value);
+        procGen.cellSize = voronoiCellSizeSlider.value; // * 100;
+        procGen.noiseAmplitude = voronoiRandomSlider.value;
+
+        procGen.factor = factorSlider.value;
+
+        procGen.clampEdges = clampToggle.isOn;
+        procGen.minHeight = minimumHeightSlider.value;
 
         if(erodeToggle.isOn) {
             erosion.isOn = true;
+            erosion.iterationCount = (int)erosionIterationsSlider.value;
+            erosion.factor = erosionFactorsetSlider.value;
         } else {
             erosion.isOn = false;
+            erosion.iterationCount = 0;
+            erosion.factor = 0f;
         }
 
         terrace.ClearLayers();
         if(terraceToggle.isOn) {
             if(layer1Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer1CountSlider.value), layer1ShaperSlider.value, layer1SmoothToggle.isOn);
+                terrace.AddLayer(Mathf.FloorToInt(layer1CountSlider.value), layer1ShaperSlider.value);
             }
             if(layer2Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer2CountSlider.value), layer2ShaperSlider.value, layer2SmoothToggle.isOn);
+                terrace.AddLayer(Mathf.FloorToInt(layer2CountSlider.value), layer2ShaperSlider.value);
             }
             if(layer3Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer3CountSlider.value), layer3ShaperSlider.value, layer3SmoothToggle.isOn);
+                terrace.AddLayer(Mathf.FloorToInt(layer3CountSlider.value), layer3ShaperSlider.value);
             }
         }
 
-        TerrainManager.instance.CreateProceduralTerrain(procGen, terrace, erosion);
+        manager.CreateProceduralTerrain(procGen, terrace, erosion);
+
+        heightmapImage.GetComponent<RawImage>().texture = manager.GetHeightmapTexture();
     }
 
-    public void ModeButtonClick()
+    public void CancelButtonClick()
     {
-        mode = (GeneratorMode)(((int)mode + 1) % (int)GeneratorMode.maxVal );
-
-        SetPanels();
-
-        UpdateTerrain();
+        manager.RevertChanges();
+        gameObject.SetActive(false);
     }
 
-    private void SetPanels()
+    public void ApplyButtonClick()
     {
+        Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+        //force the cursor to update
+        Cursor.visible = false;
+        Cursor.visible = true;
+
+        manager.ApplyChanges(procGen, terrace, erosion);
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
+
+        //force the cursor to update
+        Cursor.visible = false;
+        Cursor.visible = true;
+
+        gameObject.SetActive(false);
     }
+
     public void RedrawButtonClick()
     {
         UpdateTerrain();
