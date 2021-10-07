@@ -565,9 +565,9 @@ public class TerrainManager
         return exportHeightmap.GetHeightmap();
     }
 
-    public void ExportTerrainAsObj(string fileName, bool applyAO, float tiling)
+    public void ExportTerrainAsObj(string fileName, bool applyAO, float scalefactor)
     {
-        exportTerrain.Export(fileName, applyAO, tiling);
+        exportTerrain.Export(fileName, applyAO, scalefactor);
     }
 
     public void ExportTerrainAsRaw(string fileName)

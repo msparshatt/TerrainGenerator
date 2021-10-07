@@ -635,10 +635,11 @@ public class ControlPanel : MonoBehaviour
 
     public void ExportButtonClick()
     {
+        float scalefactor = 0.02f * Mathf.Pow(2, scaleDropdown.value); //reduce the size so it isn't too large for FlowScape
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Obj files", ".obj"));
 
         playerInput.enabled = false;
-        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  manager.ExportTerrainAsObj(filenames[0], aoToggle.isOn, scaleSlider.value);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  manager.ExportTerrainAsObj(filenames[0], aoToggle.isOn, scalefactor);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
 
         //exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
     }

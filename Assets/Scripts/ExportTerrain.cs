@@ -49,7 +49,7 @@ class ExportTerrain
         }
     }
       
-   public void Export(string fileName, bool applyAO, float tiling)
+   public void Export(string fileName, bool applyAO, float scalefactor)
    {
         if(fileName == "")
             return;
@@ -60,7 +60,7 @@ class ExportTerrain
             terrainPos = terrainObject.transform.position;
         }
 
-        float scalefactor = 0.02f * Mathf.Pow(2, scaleDropDown.value); //reduce the size so it isn't too large for FlowScape
+        //float scalefactor = 0.02f; // * Mathf.Pow(2, scaleDropDown.value); //reduce the size so it isn't too large for FlowScape
 
         Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
@@ -234,7 +234,7 @@ class ExportTerrain
                 }
             }
 
-            MaterialsToFile(objMaterial, fileName, applyAO, tiling);
+            MaterialsToFile(objMaterial, fileName, applyAO);
             Debug.Log("Finished Saving");
         }
         catch(Exception err)
@@ -247,7 +247,7 @@ class ExportTerrain
         terrain = null;
     } 
  
-	private static void MaterialsToFile(ObjMaterial material, string filename, bool applyAO, float tiling)
+	private static void MaterialsToFile(ObjMaterial material, string filename, bool applyAO)
 	{
         filename = Path.ChangeExtension(filename, "mtl");
         string folder = Path.GetDirectoryName (Path.GetFullPath(filename)) + "/";
@@ -277,13 +277,10 @@ class ExportTerrain
                 {
                     for (int yy = 0; yy < readableTexture.height; yy++)
                     {
-                        int xpos = (int)((xx * tiling) % readableTexture.width);
-                        int ypos = (int)((yy * tiling) % readableTexture.height);
-
                         //combine the base texture and the overlay
-                        Color basePixel = source.GetPixel(xpos , ypos);
+                        Color basePixel = source.GetPixel(xx , yy);
                         if(applyAO) {
-                            basePixel *= material.aoTexture.GetPixel(xpos,ypos);
+                            basePixel *= material.aoTexture.GetPixel(xx,yy);
                         }
                         Color overlay = material.detailTexture.GetPixel(xx, yy);
                         float mask = overlay.a;
