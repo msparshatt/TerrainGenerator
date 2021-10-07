@@ -213,6 +213,7 @@ public class CameraController : MonoBehaviour
 
         //store undo information to the undo list on mouse up
         if(!interact && operation != null) {
+            //TerrainManager.instance.
             gameObject.GetComponent<OperationList>().AddOperation(operation);
             operation = null;
         }

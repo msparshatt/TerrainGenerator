@@ -7,18 +7,37 @@ public class TerrainManager
 {
     //scriptable object containing any terrain data    
     //[SerializeField] private TerrainScriptable terrainData;
-    public Terrain currentTerrain = null;
-    public Material currentMaterial;
+    private Terrain currentTerrain = null;
+    private Material[] baseMaterials;
 
-    public SettingsDataScriptable settingsData;
+    private Material terrainMaterial;
+    private Texture2D aoTexture;
+    private SettingsDataScriptable settingsData;
+
+    //references to the export classes
+    private ExportHeightmap exportHeightmap;
+    private ExportTerrain exportTerrain;
+
+    //how to mix the two base materials
+    public int mixType;
+    public float mixFactor;
+
+    private Vector2 textureScale;
 
     private static TerrainManager _instance;
 
     private int _heightmapresolution;
 
     private TerrainData originalData;
+
+    //copy used for procedural generation
     private TerrainData copyData;
     private int multiplier;
+
+    private TerrainPainter painter;
+    private TerrainSculpter sculpter;
+
+    private Texture2D busyCursor;
 
     public static TerrainManager instance {
         get {
@@ -29,11 +48,112 @@ public class TerrainManager
         }
     }
 
-    //return an array of the names of all the current terrains
-    public void SetTerrainMaterial(Material material)
+    public TerrainManager()
     {
-        currentMaterial = material;
-        currentTerrain.materialTemplate = material;
+        currentTerrain = Terrain.activeTerrain;
+
+        exportHeightmap = ExportHeightmap.instance;
+        exportHeightmap.terrainObject = currentTerrain;
+
+        terrainMaterial = currentTerrain.materialTemplate;
+
+        painter = currentTerrain.GetComponent<TerrainPainter>();
+        sculpter = currentTerrain.GetComponent<TerrainSculpter>();
+
+        baseMaterials = new Material[2];
+        
+        CreateTextures();
+
+        originalData = CopyTerrain(currentTerrain.terrainData);
+
+        currentTerrain.terrainData = originalData;
+        currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
+
+        mixFactor = 0.5f;
+        mixType = 0;
+        textureScale = new Vector2(1,1);
+    }
+
+    public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor)
+    {
+        settingsData = _settingsData;
+        exportTerrain = ExportTerrain.instance;
+        exportTerrain.terrainObject = currentTerrain;
+        //exportTerrain.scaleDropDown = scaleDropdown;
+        busyCursor = _busyCursor;
+        exportTerrain.busyCursor = busyCursor;
+
+    }
+
+    //create a new transparent texture and add it to the material in the _OverlayTexture slot
+    private void CreateTextures()
+    {
+        int sizeX = 2048;
+        int sizeY = 2048;
+
+        Texture2D newTexture = new Texture2D((int)sizeX, (int)sizeY);// GraphicsFormat.R8G8B8A8_UNorm, true);
+
+        painter.ClearTexture(newTexture);
+
+        terrainMaterial.mainTexture = newTexture;
+        terrainMaterial.mainTextureScale = new Vector2(1f, 1f);
+
+        aoTexture = new Texture2D((int)sizeX, (int)sizeY);// GraphicsFormat.R8G8B8A8_UNorm, true);
+        painter.ClearTexture(aoTexture);
+
+        newTexture = new Texture2D((int)sizeX, (int)sizeY);// GraphicsFormat.R8G8B8A8_UNorm, true);
+
+        painter.ClearTexture(newTexture);
+
+        terrainMaterial.SetTexture("_OverlayTexture", newTexture);
+    }
+
+    //return an array of the names of all the current terrains
+    public void SetBaseMaterials(int index, Material material)
+    {
+        baseMaterials[index] = material;
+
+        if(baseMaterials[0] != null && baseMaterials[1] != null)
+            ApplyTextures();
+    }
+
+    public void SetMixType(int type)
+    {
+        mixType = type;
+
+        if(baseMaterials[0] != null && baseMaterials[1] != null)
+            ApplyTextures();
+    }
+
+    public void ScaleMaterial(float value)
+    {
+        Vector2 scale = new Vector2(value, value);
+        //terrainMaterial.mainTextureScale = scale;
+        textureScale = scale;
+    }
+
+    public void SetAO(bool isOn)
+    {
+        if(isOn)
+            terrainMaterial.SetTexture("_AOTexture", aoTexture);
+        else
+            terrainMaterial.SetTexture("_AOTexture", null);
+
+    }
+
+    public void ClearOverlay()
+    {
+        painter.ClearTexture((Texture2D)terrainMaterial.GetTexture("_OverlayTexture"));
+    }
+
+    public Texture2D GetOverlay()
+    {
+        return (Texture2D)terrainMaterial.GetTexture("_OverlayTexture");
+    }
+
+    public void SetOverlay(Texture texture)
+    {
+        terrainMaterial.SetTexture("_OverlayTexture", texture);
     }
 
     public void SetupChanges()
@@ -60,14 +180,7 @@ public class TerrainManager
         multiplier = 1;
 
         CreateProceduralTerrain(procGen, terraces, erosion);
-    }
-
-    public void SetupTerrain()
-    {
-        originalData = CopyTerrain(currentTerrain.terrainData);
-
-        currentTerrain.terrainData = originalData;
-        currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
+        ApplyTextures();
     }
 
     //copy the terrain data object so that the master file won't be modified by any changes when running the program
@@ -300,5 +413,181 @@ public class TerrainManager
     public RenderTexture GetHeightmapTexture()
     {
         return currentTerrain.terrainData.heightmapTexture;
+    }
+
+    public void ApplyTextures()
+    {
+        Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+        //force the cursor to update
+        Cursor.visible = false;
+        Cursor.visible = true;
+
+        Texture2D overlay = (Texture2D)terrainMaterial.GetTexture("_OverlayTexture");
+        int size = currentTerrain.terrainData.heightmapResolution;
+
+        float[,] heights = currentTerrain.terrainData.GetHeights(0, 0, size, size);
+
+        Texture2D texture1 = (Texture2D)(baseMaterials[0].mainTexture);
+        Texture2D texture2 = (Texture2D)(baseMaterials[1].mainTexture);
+        Texture2D aoTexture1 = (Texture2D)(baseMaterials[0].GetTexture("_AOTexture"));
+        Texture2D aoTexture2 = (Texture2D)(baseMaterials[1].GetTexture("_AOTexture"));
+        Texture2D mainTexture = (Texture2D)(terrainMaterial.mainTexture);
+
+        int sizeX = mainTexture.width;
+        int sizeY = mainTexture.height;
+//        Vector2 scale = terrainMaterial.mainTextureScale;
+
+        ////Color32[] data = new Color32[sizeX * sizeY];
+        var data = mainTexture.GetRawTextureData<Color32>();
+        var aoData = aoTexture.GetRawTextureData<Color32>();
+
+        Color32[] color1 = texture1.GetPixels32();
+        Color32[] aoColor1 = null;
+        if(aoTexture1 != null)
+            aoColor1 = aoTexture1.GetPixels32();
+
+        Color32[] color2 = texture2.GetPixels32();
+        Color32[] aoColor2= null;
+        if(aoTexture2 != null)
+            aoColor2 = aoTexture2.GetPixels32();
+
+        Vector2Int xy;
+        Color col;
+        float factor;
+
+        int index = 0;
+
+        Color aoCol1 = new Color(1,1,1,1);
+        Color aoCol2 = new Color(1,1,1,1);
+
+        for(int v = 0; v < sizeY; v++) {
+            int vPos = (int)((v * textureScale.y) % sizeY);
+            for(int u = 0; u < sizeX; u++) {
+                int uPos = (int)((u * textureScale.x) % sizeX);
+
+                int pos = (int)(uPos + v * sizeX);
+                switch(mixType)
+                {
+                case 0:
+                    data[index] = color1[pos];
+                    if(aoColor1 != null)
+                        aoData[index] = aoColor1[pos];
+                    else
+                        aoData[index] = new Color(1,1,1,1);
+                    break;
+                case 1:
+                    xy = TranslateCoordinates(u, v);
+
+                    factor = 0f;
+                    float height = heights[xy.y, xy.x];
+
+                    if(height > mixFactor + 0.1f) {
+                        factor = 1f;
+                    } else if(height > mixFactor) {
+                        factor = (height - mixFactor) * 10;
+                    }
+
+                    data[index] = Color.Lerp(color1[pos], color2[pos], factor);
+
+                    if(aoColor1 != null)
+                        aoCol1 = aoColor1[pos];
+                    if(aoColor2 != null)
+                        aoCol2 = aoColor2[pos];
+
+                    aoData[index] = Color.Lerp(aoCol1, aoCol2, factor);
+                    break;
+                case 2:
+                    factor = 0f;
+                    xy = TranslateCoordinates(u, v);
+
+                    float maxHeight = -1;
+                    float minHeight = 10;
+
+                    for(int x = -1; x <=1; x++) {
+                        for(int y = -1; y <= 1; y++) {
+                            if((xy.x + x < 0) || (xy.x + x >= size) || (xy.y + y < 0) || (xy.y + y >= size)) {
+                                continue;
+                            }
+                            height = heights[xy.y + y, xy.x + x];
+                            if(height > maxHeight)
+                                maxHeight = height;
+                            if(height < minHeight)
+                                minHeight = height;
+                        }
+                    }
+
+                    float steepness = (maxHeight - minHeight) * 100;
+
+                    if(steepness > mixFactor + 0.1f) {
+                        factor = 1f;
+                    } else if(steepness > mixFactor) {
+                        factor = (steepness - mixFactor) * 10;
+                    }
+
+                    data[index] = Color.Lerp(color1[pos], color2[pos], factor);
+
+                    if(aoColor1 != null)
+                        aoCol1 = aoColor1[pos];
+                    if(aoColor2 != null)
+                        aoCol2 = aoColor2[pos];
+
+                    aoData[index] = Color.Lerp(aoCol1, aoCol2, factor);
+                    //data[index] = Color.Lerp(Color.red, Color.blue, steepness);
+                    break;
+                }
+                index++;
+            }
+        }
+
+        //mainTexture.SetPixels32(0, 0, sizeX, sizeY, data);
+        mainTexture.Apply();
+        aoTexture.Apply();
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
+    }
+
+    public Color GetPixel(Texture2D texture, int u, int v)
+    {
+        u = u % texture.width;
+        v = v % texture.height;
+        return texture.GetPixel(u, v);
+    }
+
+    public float[,] GetHeightmap()
+    {
+        int resolution = currentTerrain.terrainData.heightmapResolution;
+        return currentTerrain.terrainData.GetHeights(0, 0, resolution, resolution);
+    }
+
+    public byte[] GetHeightmapAsBytes()
+    {
+        return exportHeightmap.GetHeightmap();
+    }
+
+    public void ExportTerrainAsObj(string fileName, bool applyAO, float tiling)
+    {
+        exportTerrain.Export(fileName, applyAO, tiling);
+    }
+
+    public void ExportTerrainAsRaw(string fileName)
+    {
+        exportHeightmap.Export(fileName);
+    }
+
+    //translate texture uv coords into heightmap coords
+    private Vector2Int TranslateCoordinates(int u, int v)
+    {
+        int heightmapSize = currentTerrain.terrainData.heightmapResolution;
+        Terrain terrain = currentTerrain;
+        Texture2D texture = (Texture2D)currentTerrain.materialTemplate.mainTexture;
+
+        int textureWidth = texture.width;
+        int textureHeight = texture.height;
+
+        int x = (int)(u * heightmapSize / (textureWidth));
+        int y = (int)(v * heightmapSize / (textureHeight));
+
+        return new Vector2Int(x, y);
     }
 }

@@ -129,6 +129,24 @@ public class TerrainPainter : MonoBehaviour
         texture.Apply(true);        
     }
 
+    public void ClearTexture(Texture2D texture)
+    {
+        int sizeX = texture.width;
+        int sizeY = texture.height;
+        Color[] data = new Color[sizeX * sizeY];
+        int index = 0;
+
+        for(int u = 0; u < sizeX; u++) {
+            for(int v = 0; v < sizeY; v++) {
+                data[index] = new Color(0, 0, 0, 0);
+                index++;
+            }
+        }
+
+        texture.SetPixels(0,0, sizeX, sizeY, data);
+        texture.Apply(true);
+    }
+
     //utility functions
     //translate coordinate from gamespace to heightmap/texture space
     private Vector2 TranslateCoordinates(Vector2 coords, Vector2 terrainSize, Vector2 mapSize)

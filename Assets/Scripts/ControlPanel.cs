@@ -8,40 +8,20 @@ using UnityEngine.Events;
 using SimpleFileBrowser;
 using UnityEngine.InputSystem;
 
-public struct SaveData
-{
-    public int version;
-    public int terrainResolution;
-    public byte[] heightmap;
-    public int baseTexture;
-
-    public byte[] baseTexture_colors;
-    public float tiling;
-    public bool aoActive;
-    public byte[] overlayTexture;
-    public float paintTiling;
-} 
-
 
 public class ControlPanel : MonoBehaviour
 {
-    //object that handles exporting the terrain data
-    [SerializeField] private Terrain currentTerrain;
-
-
     [Header("UI elements")]
     [SerializeField] private Text modeText;
     [SerializeField] private GameObject brushScrollView;
     [SerializeField] private GameObject brushPanel;
     [SerializeField] private Button brushDeleteButton;
-    [SerializeField] private GameObject materialScrollView;
-    [SerializeField] private GameObject materialPanel;
-    [SerializeField] private Button materialDeleteButton;
     [SerializeField] private GameObject textureScrollView;
     [SerializeField] private GameObject texturePanel;
     [SerializeField] private Button textureDeleteButton;
     [SerializeField] private GameObject helpPanel;
     [SerializeField] private RawImage materialImage;
+    [SerializeField] private RawImage material2Image;
     [SerializeField] private RawImage brushImage;
     [SerializeField] private RawImage textureImage;
     [SerializeField] private Button textureButton;
@@ -56,6 +36,14 @@ public class ControlPanel : MonoBehaviour
 
     [SerializeField] private PlayerInput playerInput;
 
+    [Header("Materials Panel")]
+    [SerializeField] private Button panel1Button;
+    [SerializeField] private Button panel2Button;
+    [SerializeField] private GameObject materialScrollView;
+    [SerializeField] private GameObject materialPanel;
+    [SerializeField] private Button materialDeleteButton;
+
+
     [Header("brush settings")]
     [SerializeField] private BrushDataScriptable brushData;
 
@@ -66,9 +54,14 @@ public class ControlPanel : MonoBehaviour
     [Header("settings")]
     [SerializeField] private SettingsDataScriptable settingsData;
 
-    //The currently used Material
-    private Material currentMaterial;
-    private int currentMaterialIndex;
+
+    [Header("Sprites")]
+    [SerializeField] private Sprite selectedTabSprite;
+    [SerializeField] private Sprite deselectedTabSprite;
+
+    private TerrainManager manager;
+    private int[] currentMaterialIndices;
+    private int materialPanelIndex;
     private List<string> customMaterials;
 
     //buttons created to select brushes,materials and textures
@@ -78,7 +71,7 @@ public class ControlPanel : MonoBehaviour
     private List<string> customBrushes;
     private int brushIndex;
 
-    private List<string>customTextures;
+    private List<string> customTextures;
     private int textureIndex;
 
     //UI colours
@@ -88,33 +81,18 @@ public class ControlPanel : MonoBehaviour
     //assets from the resource folder used by the game
     private GameResources gameResources;
 
-    //export objects
-    private ExportHeightmap exportHeightmap;
-    private ExportTerrain exportTerrain;
-
     public void Start() 
     {
         //cache the instance of the GameResources object
         gameResources = GameResources.instance;
-        exportHeightmap = ExportHeightmap.instance;
-        exportHeightmap.terrainObject = currentTerrain;
-        exportTerrain = ExportTerrain.instance;
-        exportTerrain.terrainObject = currentTerrain;
-        exportTerrain.scaleDropDown = scaleDropdown;
-        exportTerrain.busyCursor = busyCursor;
+
+        //cache an instant of the terrain manager
+        manager = TerrainManager.instance;
 
         selectedColor = Color.green;
         deselectedColor = Color.white;
 
         CloseAllPanels();
-
-        Debug.Log("creating terrain " + Time.realtimeSinceStartup);
-        TerrainManager.instance.currentMaterial = currentMaterial;
-        TerrainManager.instance.currentTerrain = currentTerrain;
-        TerrainManager.instance.settingsData = settingsData;
-
-        TerrainManager.instance.SetupTerrain();
-        TerrainManager.instance.CreateFlatTerrain();
 
         //set up brush settings
         brushData.brushRadius = 50;
@@ -131,11 +109,22 @@ public class ControlPanel : MonoBehaviour
         customMaterials = new List<string>();
         LoadCustomMaterials();
 
+        currentMaterialIndices = new int[] {0,0};
+
+        Debug.Log("creating terrain " + Time.realtimeSinceStartup);
+
+        manager.SetupTerrain(settingsData, busyCursor);
+        manager.CreateFlatTerrain();
+
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
+        materialPanelIndex = 0;
         SelectMaterialIcon(0);
+        materialPanelIndex = 1;
+        SelectMaterialIcon(1);
         SelectBrushIcon(0);
         SelectTextureIcon(1);
         SwitchMode(BrushDataScriptable.Modes.Sculpt);
+
         //Debug.Log("end of start method " + Time.realtimeSinceStartup);
     }
 
@@ -145,29 +134,6 @@ public class ControlPanel : MonoBehaviour
         materialIcons = SetupIcons(gameResources.icons, materialScrollView.transform, SelectMaterialIcon);
         textureIcons = SetupIcons(gameResources.icons, textureScrollView.transform, SelectTextureIcon);
         brushIcons = SetupIcons(gameResources.brushes, brushScrollView.transform, SelectBrushIcon);
-
-    }
-
-    //creates a list of buttons based off a list of images, parented to the passed in transform
-    private List<GameObject> SetupIcons(Texture2D[] images, Transform parent, Action<int> onClickFunction)
-    {
-        //populate material selection panel          
-        GameObject newButton;
-        List<GameObject> buttons = new List<GameObject>();
-        int ObjectIndex = 0;
-        Vector2 scale = new Vector2(1.0f, 1.0f);
-
-        foreach (Texture2D icon in images)
-        {
-            int oi = ObjectIndex; //need this to make sure the closure gets the right value
- 
-            newButton = MakeButton(icon, delegate {onClickFunction(oi); }, oi);
-            newButton.transform.SetParent(parent);
-            buttons.Add(newButton);
-            ObjectIndex++;
-        }
-
-        return buttons;
     }
 
 
@@ -221,12 +187,6 @@ public class ControlPanel : MonoBehaviour
 
         playerInput.enabled = false;
         FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; TerrainManager.instance.CreateTerrainFromHeightmap(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
-
-/*        string filename = ""; //FileBrowser.OpenSingleFile("Open Heightmap file", "", new string[]{"raw", "png"});
-
-        if(filename != "") {
-            TerrainManager.instance.CreateTerrainFromHeightmap(filename);
-        }*/
     }
 
     public void ProceduralButtonClick()
@@ -284,14 +244,67 @@ public class ControlPanel : MonoBehaviour
             brushImage.color = selectedColor;
     }
 
-    public void MaterialButtonClick()
+    public void MaterialButtonClick(int index)
     {
         bool active = !materialPanel.activeSelf;
+        if(index != materialPanelIndex)
+            active = true;
+
         CloseAllPanels();
         materialPanel.SetActive(active);
+        materialPanelIndex = index;
 
-        if(active)
-            materialImage.color = selectedColor;
+        if(active) {
+            if(index == 0) {
+                materialImage.color = selectedColor;    
+                panel1Button.GetComponent<Image>().sprite = selectedTabSprite;             
+                panel2Button.GetComponent<Image>().sprite = deselectedTabSprite;             
+            } else {
+                material2Image.color = selectedColor;
+                panel1Button.GetComponent<Image>().sprite = deselectedTabSprite;             
+                panel2Button.GetComponent<Image>().sprite = selectedTabSprite;             
+            }
+
+            for (int i = 0; i < materialIcons.Count; i++) {
+                if(i == currentMaterialIndices[materialPanelIndex]) {
+                    materialIcons[i].GetComponent<Image>().color = Color.green;
+
+                } else {
+                    materialIcons[i].GetComponent<Image>().color = Color.white;
+                }
+            }
+        }
+    }
+
+    public void MaterialPanelButtonClick(int index)
+    {
+        materialPanelIndex = index;
+
+        if(index == 0) {
+            materialImage.color = selectedColor;  
+            material2Image.color = deselectedColor;  
+            panel1Button.GetComponent<Image>().sprite = selectedTabSprite;             
+            panel2Button.GetComponent<Image>().sprite = deselectedTabSprite;             
+        } else {
+            materialImage.color = deselectedColor;  
+            material2Image.color = selectedColor;
+            panel1Button.GetComponent<Image>().sprite = deselectedTabSprite;             
+            panel2Button.GetComponent<Image>().sprite = selectedTabSprite;             
+        }
+
+        for (int i = 0; i < materialIcons.Count; i++) {
+            if(i == currentMaterialIndices[materialPanelIndex]) {
+                materialIcons[i].GetComponent<Image>().color = Color.green;
+
+            } else {
+                materialIcons[i].GetComponent<Image>().color = Color.white;
+            }
+        }
+    }
+
+    public void RegenerateButtonClick()
+    {
+        manager.ApplyTextures();
     }
 
     public void TextureButtonClick()
@@ -362,14 +375,25 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
-    public void SelectMaterialIcon(int buttonIndex)
+    public void MaterialToggleSelect(int index)
     {
-        currentMaterial = gameResources.materials[buttonIndex];
+        manager.SetMixType(index);
+    }
+
+    public void MixFactorSliderChange(float value)
+    {
+        manager.mixFactor = value;
+    }
+
+    public void SelectMaterialIcon(int buttonIndex)
+    {        
+        Material mat = gameResources.materials[buttonIndex];
+        currentMaterialIndices[materialPanelIndex] = buttonIndex;
 
         Vector2 scale = new Vector2(scaleSlider.value, scaleSlider.value);
-        currentMaterial.mainTextureScale = scale;
+        mat.mainTextureScale = scale;
 
-        if(currentMaterial.GetTexture("_AOTexture") == null) {
+        if(mat.GetTexture("_AOTexture") == null) {
             aoToggle.interactable = false;            
         } else {
             aoToggle.interactable = true;
@@ -383,9 +407,12 @@ public class ControlPanel : MonoBehaviour
             materialDeleteButton.interactable = false;
         }        
 
-        currentMaterialIndex = buttonIndex;
-        materialImage.texture = currentMaterial.mainTexture;
-        TerrainManager.instance.SetTerrainMaterial(gameResources.materials[buttonIndex]);
+        if(materialPanelIndex == 0)
+            materialImage.texture = mat.mainTexture;
+        else
+            material2Image.texture = mat.mainTexture;
+
+        manager.SetBaseMaterials(materialPanelIndex, mat);
 
         for (int i = 0; i < materialIcons.Count; i++) {
             if(i == buttonIndex) {
@@ -399,9 +426,7 @@ public class ControlPanel : MonoBehaviour
 
     public void ScaleSliderChange(float value)
     {
-        Vector2 scale = new Vector2(value, value);
-        currentMaterial.mainTextureScale = scale;
-        //brushData.textureScale = value;
+        manager.ScaleMaterial(value);
     }
 
     public void ResetTilingButtonClick()
@@ -443,23 +468,7 @@ public class ControlPanel : MonoBehaviour
 
     public void ClearButtonClick()
     {
-        Texture2D overlayTexture = (Texture2D)currentMaterial.GetTexture("_OverlayTexture");
-        int sizeX = overlayTexture.width;
-        int sizeY = overlayTexture.height;
-
-        Color[] data = new Color[sizeX * sizeY];
-
-        int index = 0;
-        //set the pixel data to transparent        
-        for(int x = 0; x < sizeX; x++) {
-            for(int y = 0; y < sizeY; y++) {                        
-                data[index] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-                index++;
-            }
-        }
-
-        overlayTexture.SetPixels(0, 0, sizeX, sizeY, data);
-        overlayTexture.Apply(true);
+        manager.ClearOverlay();
     }
 
     private void CloseAllPanels()
@@ -472,6 +481,7 @@ public class ControlPanel : MonoBehaviour
 
         brushImage.color = deselectedColor;
         materialImage.color = deselectedColor;
+        material2Image.color = deselectedColor;
         textureImage.color = deselectedColor;
     }
 
@@ -500,14 +510,14 @@ public class ControlPanel : MonoBehaviour
 
             data.version = 1;
             Debug.Log("SAVE: Store heightmap");
-            data.heightmap = exportHeightmap.GetHeightmap();
+            data.heightmap = manager.GetHeightmapAsBytes();
             Debug.Log("SAVE: Store base texture");
-            if(currentMaterialIndex >= (gameResources.materials.Count - customMaterials.Count)) {
+            if(currentMaterialIndices[0] >= (gameResources.materials.Count - customMaterials.Count)) {
                 data.baseTexture = -1;
-                texture = (Texture2D)currentMaterial.mainTexture;
-                data.baseTexture_colors = texture.EncodeToPNG();
+                //texture = (Texture2D)currentMaterials[0].mainTexture;
+                //data.baseTexture_colors = texture.EncodeToPNG();
             } else {
-                data.baseTexture = currentMaterialIndex;
+                data.baseTexture = currentMaterialIndices[0];
                 data.baseTexture_colors = null;
             }
 
@@ -515,7 +525,7 @@ public class ControlPanel : MonoBehaviour
             data.aoActive = aoToggle.isOn;
 
             Debug.Log("SAVE: Store overlay texture");
-            texture = (Texture2D)currentMaterial.GetTexture("_OverlayTexture");
+            texture = manager.GetOverlay();
             data.overlayTexture = texture.EncodeToPNG();
             data.paintTiling = paintScaleSlider.value;
 
@@ -556,7 +566,7 @@ public class ControlPanel : MonoBehaviour
 
             SaveData data = JsonUtility.FromJson<SaveData>(fileContents);
 
-            TerrainManager.instance.CreateTerrainFromHeightmap(data.heightmap);
+            manager.CreateTerrainFromHeightmap(data.heightmap);
 
             if(data.baseTexture == -1) {
                 Texture2D colorTexture = new Texture2D(10,10);
@@ -581,23 +591,7 @@ public class ControlPanel : MonoBehaviour
                     Material material = new Material(terrainShader); 
                     material.mainTexture = colorTexture;
 
-                    Texture2D newTexture = new Texture2D(colorTexture.width, colorTexture.height);
-
-                    Color[] overlayPixels = new Color[colorTexture.width * colorTexture.height];
-
-                    int pixelIndex = 0;
-                    //set the every pixel to be transparent
-                    for(int x = 0; x < colorTexture.width; x++) {
-                        for(int y = 0; y < colorTexture.height; y++) {                        
-                            overlayPixels[pixelIndex] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-                            pixelIndex++;
-                        }
-                    }
-
-                    newTexture.SetPixels(0, 0, colorTexture.width, colorTexture.height, overlayPixels);
-                    newTexture.Apply(true);
-
-                    material.SetTexture("_OverlayTexture", newTexture);
+                    Texture2D newTexture = new Texture2D(colorTexture.width, colorTexture.height);                    
 
                     gameResources.materials.Add(material);
 
@@ -633,7 +627,7 @@ public class ControlPanel : MonoBehaviour
             Texture2D texture = new Texture2D(10,10);
             ImageConversion.LoadImage(texture, data.overlayTexture);
 
-            currentMaterial.SetTexture("_OverlayTexture", texture);
+            manager.SetOverlay(texture);
 
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }        
@@ -644,7 +638,7 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Obj files", ".obj"));
 
         playerInput.enabled = false;
-        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  exportTerrain.Export(filenames[0], aoToggle.isOn, scaleSlider.value);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  manager.ExportTerrainAsObj(filenames[0], aoToggle.isOn, scaleSlider.value);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
 
         //exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
     }
@@ -654,16 +648,12 @@ public class ControlPanel : MonoBehaviour
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Raw heightmap", ".raw"));
 
         playerInput.enabled = false;
-        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  exportHeightmap.Export(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  manager.ExportTerrainAsRaw(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
     }
 
     public void AOToggleChange(bool isOn)
     {
-        if(isOn) {
-            currentMaterial.SetInt("_ApplyAO", 1);
-        } else {
-            currentMaterial.SetInt("_ApplyAO", 0);
-        }
+        manager.SetAO(isOn);
     }
 
     public void BrushImportButtonclick()
@@ -837,12 +827,12 @@ public class ControlPanel : MonoBehaviour
 
     public void MaterialDeleteButtonClick()
     {
-        int customMaterialIndex = currentMaterialIndex + customMaterials.Count - gameResources.materials.Count;
+        int customMaterialIndex = currentMaterialIndices[materialPanelIndex] + customMaterials.Count - gameResources.materials.Count;
 
         customMaterials.RemoveAt(customMaterialIndex);
-        gameResources.materials.RemoveAt(currentMaterialIndex);
-        Destroy(materialIcons[currentMaterialIndex]);
-        materialIcons.RemoveAt(currentMaterialIndex);
+        gameResources.materials.RemoveAt(currentMaterialIndices[0]);
+        Destroy(materialIcons[currentMaterialIndices[0]]);
+        materialIcons.RemoveAt(currentMaterialIndices[0]);
         
         SelectMaterialIcon(0);
     }

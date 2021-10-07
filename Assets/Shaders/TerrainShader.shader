@@ -8,10 +8,10 @@ Shader "Unlit/TerrainShader"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _AOTexture ("AmbientOcclusion", 2D) = "white" {}
-        _ApplyAO("ApplyAO", Float) = 0
         _OverlayTexture("Overlay", 2D) = "RGBA 0,0,0,0" {}
         _CursorLocation("Cursor Location", Vector) = (0, 0, 0.5, 0.5)
         _CursorTexture("Cursor Texture", 2D) = "white" {}
+
     }
     SubShader
     {
@@ -39,15 +39,14 @@ Shader "Unlit/TerrainShader"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _ShapeTexture;
             sampler2D _MainTex;
             sampler2D _AOTexture;
             sampler2D _OverlayTexture;
+            sampler2D _CursorTexture;
+
             float4 _MainTex_ST;
             float4 _OverlayTexture_ST;
-            int _ApplyAO;
             float4 _CursorLocation;
-            sampler2D _CursorTexture;
             
 
             v2f vert (appdata v)
@@ -62,12 +61,16 @@ Shader "Unlit/TerrainShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture                
-                fixed4 col = tex2D(_MainTex, i.uv);
+                // sample the texture   
+                fixed4 col;
+                float factor = 0;
 
-                if(_ApplyAO > 0) {
-                    col *= tex2D(_AOTexture, i.uv);
-                } 
+
+                col = tex2D(_MainTex, i.uv);
+
+                fixed4 AO = tex2D(_AOTexture, i.uv);
+                col *= AO;
+            
 
                 fixed4 overlay =  tex2D(_OverlayTexture, i.uv2);
 

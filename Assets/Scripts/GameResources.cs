@@ -56,33 +56,9 @@ public class GameResources
         {
             int width = mat.mainTexture.width;
             int height = mat.mainTexture.height;
-            CreateOverlayTexture(mat, new Vector2(width, height));
             mat.mainTextureScale = scale;
             mat.SetTextureScale("_OverlayTexture", scale);
-
         }
-
     }
 
-    //create a new transparent texture and add it to the material in the _OverlayTexture slot
-    private void CreateOverlayTexture(Material mat, Vector2 size)
-    {
-        Texture2D newTexture = new Texture2D((int)size.x, (int)size.y);// GraphicsFormat.R8G8B8A8_UNorm, true);
-
-        Color[] data = new Color[(int)size.x * (int)size.y];
-
-        int index = 0;
-        //set the every pixel to be transparent
-        for(int x = 0; x < size.x; x++) {
-            for(int y = 0; y < size.y; y++) {                        
-                data[index] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-                index++;
-            }
-        }
-
-        newTexture.SetPixels(0, 0, (int)size.x, (int)size.y, data);
-        newTexture.Apply(true);
-
-        mat.SetTexture("_OverlayTexture", newTexture);
-    }
 }
