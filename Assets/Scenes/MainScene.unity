@@ -15999,6 +15999,10 @@ MonoBehaviour:
   exitConfirmationPanel: {fileID: 363003986}
   terrainShader: {fileID: 4800000, guid: 02516aa0e8dd0f153bc9fc99f5cd0eff, type: 3}
   playerInput: {fileID: 963194231}
+  singeMatToggle: {fileID: 15418496}
+  heightToggle: {fileID: 164014975}
+  slopeToggle: {fileID: 1044054623}
+  mixFactorSlider: {fileID: 1810179451}
   panel1Button: {fileID: 1192846721}
   panel2Button: {fileID: 690655656}
   materialScrollView: {fileID: 133782029}

@@ -37,6 +37,10 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
 
     [Header("Materials Panel")]
+    [SerializeField] private Toggle singeMatToggle;
+    [SerializeField] private Toggle heightToggle;
+    [SerializeField] private Toggle slopeToggle;
+    [SerializeField] private Slider mixFactorSlider;
     [SerializeField] private Button panel1Button;
     [SerializeField] private Button panel2Button;
     [SerializeField] private GameObject materialScrollView;
@@ -511,16 +515,26 @@ public class ControlPanel : MonoBehaviour
             data.version = 1;
             Debug.Log("SAVE: Store heightmap");
             data.heightmap = manager.GetHeightmapAsBytes();
-            Debug.Log("SAVE: Store base texture");
+            Debug.Log("SAVE: Store base textures");
             if(currentMaterialIndices[0] >= (gameResources.materials.Count - customMaterials.Count)) {
                 data.baseTexture = -1;
-                //texture = (Texture2D)currentMaterials[0].mainTexture;
-                //data.baseTexture_colors = texture.EncodeToPNG();
+                texture = (Texture2D)gameResources.materials[currentMaterialIndices[0]].mainTexture;
+                data.baseTexture_colors = texture.EncodeToPNG();
             } else {
                 data.baseTexture = currentMaterialIndices[0];
                 data.baseTexture_colors = null;
             }
+            if(currentMaterialIndices[1] >= (gameResources.materials.Count - customMaterials.Count)) {
+                data.baseTexture2 = -1;
+                texture = (Texture2D)gameResources.materials[currentMaterialIndices[1]].mainTexture;
+                data.baseTexture2_colors = texture.EncodeToPNG();
+            } else {
+                data.baseTexture2 = currentMaterialIndices[1];
+                data.baseTexture2_colors = null;
+            }
 
+            data.mixType = manager.mixType;
+            data.mixFactor = manager.mixFactor;
             data.tiling = scaleSlider.value;
             data.aoActive = aoToggle.isOn;
 
@@ -568,51 +582,34 @@ public class ControlPanel : MonoBehaviour
 
             manager.CreateTerrainFromHeightmap(data.heightmap);
 
+            materialPanelIndex = 0;
             if(data.baseTexture == -1) {
-                Texture2D colorTexture = new Texture2D(10,10);
-                ImageConversion.LoadImage(colorTexture, data.baseTexture_colors);
-
-                int index = -1;
-                Hash128 textureHash = new Hash128();
-                textureHash.Append(colorTexture.GetPixels());
-                string hashString = textureHash.ToString();
-
-                for(int i = (gameResources.materials.Count - customMaterials.Count); i < gameResources.materials.Count; i++) {
-                    Hash128 newHash = new Hash128();
-                    Texture2D tex = (Texture2D)(gameResources.materials[i].mainTexture);
-                    newHash.Append(tex.GetPixels());
-
-                    if(hashString == newHash.ToString())
-                        index = i;
-                }
-
-                if(index == -1) {
-                    //if the material doesn't exist add it as a new one
-                    Material material = new Material(terrainShader); 
-                    material.mainTexture = colorTexture;
-
-                    Texture2D newTexture = new Texture2D(colorTexture.width, colorTexture.height);                    
-
-                    gameResources.materials.Add(material);
-
-                    //Add the brush to the  brush selection panel          
-                    GameObject newButton;
-                    int ObjectIndex = materialIcons.Count;
-                    Vector2 scale = new Vector2(1.0f, 1.0f);
-
-                    newButton = MakeButton(colorTexture, delegate {SelectMaterialIcon(ObjectIndex); }, ObjectIndex);
-                    newButton.transform.SetParent(materialScrollView.transform);
-                    materialIcons.Add(newButton);
-
-                    customMaterials.Add("");
-
-                    SelectMaterialIcon(gameResources.materials.Count - 1);
-                } else {
-                    SelectMaterialIcon(index);
-                }
+                SelectMaterialIcon(AddBaseTexture(data.baseTexture_colors));
             } else {
                 SelectMaterialIcon(data.baseTexture);
             }
+
+            materialPanelIndex = 1;
+            if(data.baseTexture2 == 0) {
+                SelectMaterialIcon(data.baseTexture);
+            } else if(data.baseTexture2 == -1) {
+                SelectMaterialIcon(AddBaseTexture(data.baseTexture2_colors));
+            } else {
+                SelectMaterialIcon(data.baseTexture2);
+            }
+
+            if(data.mixType == 0) {
+                singeMatToggle.isOn = true;
+            } else if (data.mixType == 1) {
+                heightToggle.isOn = true;
+            } else {
+                slopeToggle.isOn = true;
+            }
+
+            if(data.mixFactor == 0)
+                data.mixFactor = 0.5f;
+
+            mixFactorSlider.value = data.mixFactor;
 
             if(data.tiling == 0)
                 data.tiling = 1;
@@ -631,6 +628,51 @@ public class ControlPanel : MonoBehaviour
 
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }        
+    }
+
+    private int AddBaseTexture(byte[] pixels)
+    {
+        Texture2D colorTexture = new Texture2D(10,10);
+        ImageConversion.LoadImage(colorTexture, pixels);
+
+        int index = -1;
+        Hash128 textureHash = new Hash128();
+        textureHash.Append(colorTexture.GetPixels());
+        string hashString = textureHash.ToString();
+
+        for(int i = (gameResources.materials.Count - customMaterials.Count); i < gameResources.materials.Count; i++) {
+            Hash128 newHash = new Hash128();
+            Texture2D tex = (Texture2D)(gameResources.materials[i].mainTexture);
+            newHash.Append(tex.GetPixels());
+
+            if(hashString == newHash.ToString())
+                index = i;
+        }
+
+        if(index == -1) {
+            //if the material doesn't exist add it as a new one
+            Material material = new Material(terrainShader); 
+            material.mainTexture = colorTexture;
+
+            Texture2D newTexture = new Texture2D(colorTexture.width, colorTexture.height);                    
+
+            gameResources.materials.Add(material);
+
+            //Add the brush to the  brush selection panel          
+            GameObject newButton;
+            int ObjectIndex = materialIcons.Count;
+            Vector2 scale = new Vector2(1.0f, 1.0f);
+
+            newButton = MakeButton(colorTexture, delegate {SelectMaterialIcon(ObjectIndex); }, ObjectIndex);
+            newButton.transform.SetParent(materialScrollView.transform);
+            materialIcons.Add(newButton);
+
+            customMaterials.Add("");
+
+            index = gameResources.materials.Count - 1;
+        }
+
+        return index;
     }
 
     public void ExportButtonClick()
