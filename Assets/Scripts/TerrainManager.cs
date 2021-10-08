@@ -253,6 +253,7 @@ public class TerrainManager
 
         float[,] heights = ConvertTo2DArray(result);
         _heightmapresolution = heights.GetLength(0);
+        currentTerrain.terrainData.heightmapResolution = _heightmapresolution;
 
         CreateTerrain(heights);
     }
@@ -286,7 +287,6 @@ public class TerrainManager
 
     protected void CreateTerrain(float[,] heights)
     {
-        //currentTerrain.terrainData.heightmapResolution = _heightmapresolution;
         currentTerrain.terrainData.SetHeights(0,0, heights);
     }
 
