@@ -390,6 +390,7 @@ public class ControlPanel : MonoBehaviour
     public void MixFactorSliderChange(float value)
     {
         manager.mixFactor = value;
+        manager.ApplyTextures();        
     }
 
     public void SelectMaterialIcon(int buttonIndex)
