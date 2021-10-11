@@ -403,14 +403,6 @@ public class ControlPanel : MonoBehaviour
         Vector2 scale = new Vector2(scaleSlider.value, scaleSlider.value);
         mat.mainTextureScale = scale;
 
-        if(mat.GetTexture("_AOTexture") == null) {
-            aoToggle.interactable = false;            
-        } else {
-            aoToggle.interactable = true;
-
-            AOToggleChange(aoToggle.isOn);
-        }
-
         if(buttonIndex >= (gameResources.materials.Count - customMaterials.Count)) {
             materialDeleteButton.interactable = true;
         } else {

@@ -6,8 +6,11 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
+RWTexture2D<float4> aoResult;
 Texture2D<float4> texture1;
+Texture2D<float4> aotexture1;
 Texture2D<float4> texture2;
+Texture2D<float4> aotexture2;
 Texture2D<float4> heightMap;
 float tiling;
 int width;
@@ -21,6 +24,7 @@ void SingleMaterial (uint3 id : SV_DispatchThreadID)
     int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
 
     Result[id.xy] = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);
+    aoResult[id.xy] = float4(aotexture1[pos].x, aotexture1[pos].y, aotexture1[pos].z, 1.0);
 }
 
 [numthreads(8,8,1)]
@@ -40,6 +44,7 @@ void ByHeight (uint3 id : SV_DispatchThreadID)
     float4 val2 = float4(texture2[pos].x, texture2[pos].y, texture2[pos].z, 1.0);    
 
     Result[id.xy] = val1 * (1 - f) + val2 * f;
+    aoResult[id.xy] = float4(aotexture1[pos].x, aotexture1[pos].y, aotexture1[pos].z, 1.0) * (1 - f) + float4(aotexture2[pos].x, aotexture2[pos].y, aotexture2[pos].z, 1.0) * f;
 }
 
 [numthreads(8,8,1)]
@@ -73,4 +78,5 @@ void BySlope (uint3 id : SV_DispatchThreadID)
     float4 val2 = float4(texture2[pos].x, texture2[pos].y, texture2[pos].z, 1.0);    
 
     Result[id.xy] = val1 * (1 - f) + val2 * f;
+    aoResult[id.xy] = float4(aotexture1[pos].x, aotexture1[pos].y, aotexture1[pos].z, 1.0) * (1 - f) + float4(aotexture2[pos].x, aotexture2[pos].y, aotexture2[pos].z, 1.0) * f;
 }
