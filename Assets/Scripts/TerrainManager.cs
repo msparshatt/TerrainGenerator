@@ -131,8 +131,6 @@ public class TerrainManager
         Vector2 scale = new Vector2(value, value);
         //terrainMaterial.mainTextureScale = scale;
         textureScale = scale;
-
-        ApplyTextures();
     }
 
     public void SetAO(bool isOn)

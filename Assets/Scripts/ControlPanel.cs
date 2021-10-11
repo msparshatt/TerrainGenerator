@@ -390,7 +390,9 @@ public class ControlPanel : MonoBehaviour
     public void MixFactorSliderChange(float value)
     {
         manager.mixFactor = value;
-        manager.ApplyTextures();        
+
+        Camera.main.GetComponent<CameraController>().sliderChanged = true;
+            //manager.ApplyTextures();        
     }
 
     public void SelectMaterialIcon(int buttonIndex)
@@ -434,12 +436,18 @@ public class ControlPanel : MonoBehaviour
 
     public void ScaleSliderChange(float value)
     {
+        Camera currentCamera = Camera.main;
+        CameraController con = currentCamera.GetComponent<CameraController>();
+        con.sliderChanged = true;
         manager.ScaleMaterial(value);
     }
 
     public void ResetTilingButtonClick()
     {
         scaleSlider.value = 1.0f;
+        //Camera.main.GetComponent<CameraController>().sliderChanged = true;
+
+        manager.ApplyTextures();
     }
 
     public void PaintScaleSliderChange(float value)

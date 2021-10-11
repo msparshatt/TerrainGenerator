@@ -28,6 +28,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider radiusSlider;
     [SerializeField] private Slider strengthSlider;
 
+    public bool sliderChanged;
 
     //store the operation which is currently being performed
     private Operation operation;
@@ -39,8 +40,8 @@ public class CameraController : MonoBehaviour
     bool modifier1;
     bool modifier2;
 
-    //true when the interact button is held down
-    bool interact;
+    //true when the mouseDown button is held down
+    private bool mouseDown;
 
     void Start()
     {
@@ -56,6 +57,8 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         modifier1 = false;
         modifier2 = false;
+
+        sliderChanged = false;
     }
 
     //Callback functions for new input system
@@ -126,7 +129,12 @@ public class CameraController : MonoBehaviour
 
     public void OnInteract(InputValue input)
     {
-        interact = input.isPressed;
+        mouseDown = input.isPressed;
+
+        if(!mouseDown && sliderChanged) {
+            TerrainManager.instance.ApplyTextures();
+            sliderChanged = false;
+        }
     }
 
     public void OnUndo(InputValue input)
@@ -165,14 +173,14 @@ public class CameraController : MonoBehaviour
 
         transform.position += transform.TransformDirection(movement);
 
-        //don't allow interaction with the terrain if the mouse is over the UI
+        //don't allow mouseDownion with the terrain if the mouse is over the UI
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
         projectImage(); 
 
         //sculpt/paint on left mouse button       
-        if(interact) {
+        if(mouseDown) {
             //variable to hold the data for a raycast collision
             RaycastHit raycastTarget;
 
@@ -212,7 +220,7 @@ public class CameraController : MonoBehaviour
         }
 
         //store undo information to the undo list on mouse up
-        if(!interact && operation != null) {
+        if(!mouseDown && operation != null) {
             //TerrainManager.instance.
             gameObject.GetComponent<OperationList>().AddOperation(operation);
             operation = null;
@@ -260,5 +268,11 @@ public class CameraController : MonoBehaviour
         Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Mouse.current.position.ReadValue());
 
         return Physics.Raycast(ray, out raycastTarget, Mathf.Infinity);
+    }
+
+    public bool IsMouseButtonDown()
+    {
+        Debug.Log(mouseDown);
+        return mouseDown;
     }
 }
