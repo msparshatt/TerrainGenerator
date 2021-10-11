@@ -23,6 +23,7 @@ public class GameLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        progressBar.value = Mathf.Clamp01(loadingOperation.progress / 0.9f);
+        if(progressBar != null)
+            progressBar.value = Mathf.Clamp01(loadingOperation.progress / 0.9f);
     }
 }

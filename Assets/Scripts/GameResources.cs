@@ -40,25 +40,15 @@ public class GameResources
         materials = new List<Material>();
         textures = new List<Texture2D>();
 
+        Vector2 scale = new Vector2(1.0f, 1.0f);
         foreach(Material mat in loadedMaterials) {
+            mat.mainTextureScale = scale;
             materials.Add(new Material(mat));
             textures.Add((Texture2D)mat.mainTexture);
         }
 
         Debug.Log("loading material icons " + Time.realtimeSinceStartup);
         icons = new List<Texture2D>(Resources.LoadAll<Texture2D>("Icons"));        
-
-        Vector2 scale = new Vector2(1.0f, 1.0f);
-
-        //Debug.Log("creating overlay textures " + Time.realtimeSinceStartup);
-        //create the overlay texture and reset tiling values for each material
-        foreach (Material mat in materials)
-        {
-            int width = mat.mainTexture.width;
-            int height = mat.mainTexture.height;
-            mat.mainTextureScale = scale;
-            mat.SetTextureScale("_OverlayTexture", scale);
-        }
     }
 
 }
