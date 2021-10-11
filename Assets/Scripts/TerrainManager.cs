@@ -38,6 +38,7 @@ public class TerrainManager
     private TerrainSculpter sculpter;
 
     private Texture2D busyCursor;
+    private ComputeShader textureShader;
 
     public static TerrainManager instance {
         get {
@@ -74,7 +75,7 @@ public class TerrainManager
         textureScale = new Vector2(1,1);
     }
 
-    public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor)
+    public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor, ComputeShader _textureShader)
     {
         settingsData = _settingsData;
         exportTerrain = ExportTerrain.instance;
@@ -82,7 +83,7 @@ public class TerrainManager
         //exportTerrain.scaleDropDown = scaleDropdown;
         busyCursor = _busyCursor;
         exportTerrain.busyCursor = busyCursor;
-
+        textureShader = _textureShader;
     }
 
     //create a new transparent texture and add it to the material in the _OverlayTexture slot
@@ -130,6 +131,8 @@ public class TerrainManager
         Vector2 scale = new Vector2(value, value);
         //terrainMaterial.mainTextureScale = scale;
         textureScale = scale;
+
+        ApplyTextures();
     }
 
     public void SetAO(bool isOn)
@@ -417,16 +420,7 @@ public class TerrainManager
 
     public void ApplyTextures()
     {
-        Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
-
-        //force the cursor to update
-        Cursor.visible = false;
-        Cursor.visible = true;
-
-        Texture2D overlay = (Texture2D)terrainMaterial.GetTexture("_OverlayTexture");
-        int size = currentTerrain.terrainData.heightmapResolution;
-
-        float[,] heights = currentTerrain.terrainData.GetHeights(0, 0, size, size);
+        int hmResolution = currentTerrain.terrainData.heightmapResolution;
 
         Texture2D texture1 = (Texture2D)(baseMaterials[0].mainTexture);
         Texture2D texture2 = (Texture2D)(baseMaterials[1].mainTexture);
@@ -434,117 +428,61 @@ public class TerrainManager
         Texture2D aoTexture2 = (Texture2D)(baseMaterials[1].GetTexture("_AOTexture"));
         Texture2D mainTexture = (Texture2D)(terrainMaterial.mainTexture);
 
-        int sizeX = mainTexture.width;
-        int sizeY = mainTexture.height;
-//        Vector2 scale = terrainMaterial.mainTextureScale;
+        int width = baseMaterials[0].mainTexture.width;
+        int height = baseMaterials[0].mainTexture.height;
 
-        ////Color32[] data = new Color32[sizeX * sizeY];
-        var data = mainTexture.GetRawTextureData<Color32>();
-        var aoData = aoTexture.GetRawTextureData<Color32>();
+        RenderTexture tex = new RenderTexture(width,height,24);
+        tex.enableRandomWrite = true;
+        tex.Create();
 
-        Color32[] color1 = texture1.GetPixels32();
-        Color32[] aoColor1 = null;
-        if(aoTexture1 != null)
-            aoColor1 = aoTexture1.GetPixels32();
+        textureShader.SetFloat("tiling", textureScale.x);
+        textureShader.SetInt("width", width);
+        textureShader.SetInt("height", height);
+        textureShader.SetFloat("factor", mixFactor);
+        textureShader.SetInt("heightMapResolution", hmResolution);
 
-        Color32[] color2 = texture2.GetPixels32();
-        Color32[] aoColor2= null;
-        if(aoTexture2 != null)
-            aoColor2 = aoTexture2.GetPixels32();
+        if(mixType == 0) {
+            int kernelHandle = textureShader.FindKernel("SingleMaterial");
 
-        Vector2Int xy;
-        Color col;
-        float factor;
 
-        int index = 0;
+            textureShader.SetTexture(kernelHandle, "Result", tex);
+            textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
 
-        Color aoCol1 = new Color(1,1,1,1);
-        Color aoCol2 = new Color(1,1,1,1);
+            textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
-        for(int v = 0; v < sizeY; v++) {
-            int vPos = (int)((v * textureScale.y) % sizeY);
-            for(int u = 0; u < sizeX; u++) {
-                int uPos = (int)((u * textureScale.x) % sizeX);
+        } else if(mixType == 1) {
+            int kernelHandle = textureShader.FindKernel("ByHeight");
 
-                int pos = (int)(uPos + v * sizeX);
-                switch(mixType)
-                {
-                case 0:
-                    data[index] = color1[pos];
-                    if(aoColor1 != null)
-                        aoData[index] = aoColor1[pos];
-                    else
-                        aoData[index] = new Color(1,1,1,1);
-                    break;
-                case 1:
-                    xy = TranslateCoordinates(u, v);
+            textureShader.SetTexture(kernelHandle, "Result", tex);
+            textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
+            textureShader.SetTexture(kernelHandle, "texture2", baseMaterials[1].mainTexture);
+            textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
 
-                    factor = 0f;
-                    float height = heights[xy.y, xy.x];
 
-                    if(height > mixFactor + 0.1f) {
-                        factor = 1f;
-                    } else if(height > mixFactor) {
-                        factor = (height - mixFactor) * 10;
-                    }
+            textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
-                    data[index] = Color.Lerp(color1[pos], color2[pos], factor);
+        } else if(mixType == 2) {
+            int kernelHandle = textureShader.FindKernel("BySlope");
 
-                    if(aoColor1 != null)
-                        aoCol1 = aoColor1[pos];
-                    if(aoColor2 != null)
-                        aoCol2 = aoColor2[pos];
+            textureShader.SetTexture(kernelHandle, "Result", tex);
+            textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
+            textureShader.SetTexture(kernelHandle, "texture2", baseMaterials[1].mainTexture);
+            textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
 
-                    aoData[index] = Color.Lerp(aoCol1, aoCol2, factor);
-                    break;
-                case 2:
-                    factor = 0f;
-                    xy = TranslateCoordinates(u, v);
+            textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
-                    float maxHeight = -1;
-                    float minHeight = 10;
-
-                    for(int x = -1; x <=1; x++) {
-                        for(int y = -1; y <= 1; y++) {
-                            if((xy.x + x < 0) || (xy.x + x >= size) || (xy.y + y < 0) || (xy.y + y >= size)) {
-                                continue;
-                            }
-                            height = heights[xy.y + y, xy.x + x];
-                            if(height > maxHeight)
-                                maxHeight = height;
-                            if(height < minHeight)
-                                minHeight = height;
-                        }
-                    }
-
-                    float steepness = (maxHeight - minHeight) * 100;
-
-                    if(steepness > mixFactor + 0.1f) {
-                        factor = 1f;
-                    } else if(steepness > mixFactor) {
-                        factor = (steepness - mixFactor) * 10;
-                    }
-
-                    data[index] = Color.Lerp(color1[pos], color2[pos], factor);
-
-                    if(aoColor1 != null)
-                        aoCol1 = aoColor1[pos];
-                    if(aoColor2 != null)
-                        aoCol2 = aoColor2[pos];
-
-                    aoData[index] = Color.Lerp(aoCol1, aoCol2, factor);
-                    //data[index] = Color.Lerp(Color.red, Color.blue, steepness);
-                    break;
-                }
-                index++;
-            }
         }
+
+        Texture2D tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, false);
+        RenderTexture.active = tex;
+        tex2D.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
+        tex2D.Apply();
+        terrainMaterial.mainTexture = tex2D;
+
 
         //mainTexture.SetPixels32(0, 0, sizeX, sizeY, data);
         mainTexture.Apply();
         aoTexture.Apply();
-
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
     }
 
     public Color GetPixel(Texture2D texture, int u, int v)

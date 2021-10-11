@@ -1,0 +1,76 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel SingleMaterial
+#pragma kernel ByHeight
+#pragma kernel BySlope
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+Texture2D<float4> texture1;
+Texture2D<float4> texture2;
+Texture2D<float4> heightMap;
+float tiling;
+int width;
+int height;
+int heightMapResolution;
+float factor;
+
+[numthreads(8,8,1)]
+void SingleMaterial (uint3 id : SV_DispatchThreadID)
+{
+    int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
+
+    Result[id.xy] = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);
+}
+
+[numthreads(8,8,1)]
+void ByHeight (uint3 id : SV_DispatchThreadID)
+{
+    int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
+    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
+
+    float height = heightMap[hmPos];
+
+    float f = (height * 2 - factor) * 10;
+
+    f = min(f, 1);
+    f = max(f, 0);
+
+    float4 val1 = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);    
+    float4 val2 = float4(texture2[pos].x, texture2[pos].y, texture2[pos].z, 1.0);    
+
+    Result[id.xy] = val1 * (1 - f) + val2 * f;
+}
+
+[numthreads(8,8,1)]
+void BySlope (uint3 id : SV_DispatchThreadID)
+{
+    int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
+    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
+
+    float height;
+    float minHeight = 10;
+    float maxHeight = 0;
+
+    for(int i = -1; i <= 1; i++) {
+        for(int j = -1; j <= 1; j++) {
+
+            int2 newPos = int2(hmPos.x + i, hmPos.y + j);
+
+            height = heightMap[newPos];
+
+            minHeight = min(minHeight, height);
+            maxHeight = max(maxHeight, height);
+        }
+    }
+
+    float f = ((maxHeight - minHeight) * 110 - factor) * 10;
+
+    f = min(f, 1);
+    f = max(f, 0);
+
+    float4 val1 = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);    
+    float4 val2 = float4(texture2[pos].x, texture2[pos].y, texture2[pos].z, 1.0);    
+
+    Result[id.xy] = val1 * (1 - f) + val2 * f;
+}
