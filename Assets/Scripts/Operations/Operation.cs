@@ -24,6 +24,8 @@ public class Operation
         foreach(SubOperation subOperation in subOperations) {
             subOperation.Do();
         }
+
+        TerrainManager.instance.ApplyTextures();
     }
 
 
@@ -32,6 +34,7 @@ public class Operation
         foreach(SubOperation subOperation in subOperations) {
             subOperation.Undo();
         }
+        TerrainManager.instance.ApplyTextures();
     }
 
     public virtual void AddSubOperation(SubOperation subOperation)
