@@ -427,7 +427,6 @@ public class TerrainManager
         Texture2D texture2 = (Texture2D)(baseMaterials[1].mainTexture);
         Texture2D aoTexture1 = (Texture2D)(baseMaterials[0].GetTexture("_AOTexture"));
         Texture2D aoTexture2 = (Texture2D)(baseMaterials[1].GetTexture("_AOTexture"));
-        Texture2D mainTexture = (Texture2D)(terrainMaterial.mainTexture);
 
         int width = baseMaterials[0].mainTexture.width;
         int height = baseMaterials[0].mainTexture.height;
@@ -485,7 +484,7 @@ public class TerrainManager
 
         }
 
-        Texture2D tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, false);
+        Texture2D tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, true);
         RenderTexture.active = tex;
         tex2D.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
         tex2D.Apply();
@@ -493,9 +492,6 @@ public class TerrainManager
 
         RenderTexture.active = aotex;
         aoTexture.ReadPixels(new Rect(0, 0, aotex.width, aotex.height), 0, 0);
-        aoTexture.Apply();
-
-        mainTexture.Apply();
         aoTexture.Apply();
     }
 
