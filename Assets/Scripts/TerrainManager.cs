@@ -96,8 +96,7 @@ public class TerrainManager
         int sizeX = 2048;
         int sizeY = 2048;
 
-        Texture2D newTexture = new Texture2D((int)sizeX, (int)sizeY);// GraphicsFormat.R8G8B8A8_UNorm, true);
-
+        Texture2D newTexture = new Texture2D(sizeX, sizeY);
         painter.ClearTexture(newTexture);
 
         terrainMaterial.mainTexture = newTexture;
