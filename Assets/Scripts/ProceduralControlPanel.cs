@@ -21,7 +21,7 @@ public class ProceduralControlPanel : MonoBehaviour
 
     [Header("Voronoi")]
     public Slider voronoiXOffsetSlider;
-    public Slider voronoiyOffsetSlider;
+    public Slider voronoiYOffsetSlider;
     public Slider voronoiCellSizeSlider;
     public Slider voronoiRandomSlider;
 
@@ -57,6 +57,7 @@ public class ProceduralControlPanel : MonoBehaviour
 
     [Header("Other")]
     public SettingsDataScriptable settingsData;
+    public  FlagsDataScriptable flagsData;
 
     public Texture2D busyCursor;
     public RawImage heightmapImage;
@@ -116,7 +117,7 @@ public class ProceduralControlPanel : MonoBehaviour
         procGen.scale = scaleSlider.value;
         procGen.iterations = (int)iterationSlider.value;
 
-        procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiXOffsetSlider.value);
+        procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiYOffsetSlider.value);
         procGen.cellSize = voronoiCellSizeSlider.value; // * 100;
         procGen.noiseAmplitude = voronoiRandomSlider.value;
 
@@ -156,6 +157,7 @@ public class ProceduralControlPanel : MonoBehaviour
     public void CancelButtonClick()
     {
         manager.RevertChanges();
+        flagsData.ProcGenOpen = false;
         gameObject.SetActive(false);
     }
 
@@ -175,6 +177,7 @@ public class ProceduralControlPanel : MonoBehaviour
         Cursor.visible = false;
         Cursor.visible = true;
 
+        flagsData.ProcGenOpen = false;
         gameObject.SetActive(false);
     }
 

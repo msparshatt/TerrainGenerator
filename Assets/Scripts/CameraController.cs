@@ -24,6 +24,7 @@ public class CameraController : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private GameObject userInterface;
+    [SerializeField] private GameObject[] panels;
     private bool uiVisible = true;
     //sliders which can be controlled using the scroll wheel
     [SerializeField] private Slider radiusSlider;
@@ -172,10 +173,20 @@ public class CameraController : MonoBehaviour
 
         transform.position += transform.TransformDirection(movement);
 
+        if(flagsData.ProcGenOpen) {
+            for(int i = 0; i < panels.Length; i++) {
+                panels[i].SetActive(false);
+            }
+            return;
+        } else {
+            panels[0].SetActive(true);
+        }
+
         //don't allow mouseDownion with the terrain if the mouse is over the UI
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
+        
         projectImage(); 
 
         //sculpt/paint on left mouse button       

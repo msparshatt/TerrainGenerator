@@ -133,7 +133,14 @@ public class ControlPanel : MonoBehaviour
         SelectTextureIcon(1);
         SwitchMode(BrushDataScriptable.Modes.Sculpt);
 
+        InitialiseFlags();
         //Debug.Log("end of start method " + Time.realtimeSinceStartup);
+    }
+
+    private void InitialiseFlags()
+    {
+        flagsData.ProcGenOpen = false;
+        flagsData.sliderChanged = false;
     }
 
     private void SetupPanels()
@@ -200,6 +207,7 @@ public class ControlPanel : MonoBehaviour
     public void ProceduralButtonClick()
     {
         proceduralPanel.SetActive(!proceduralPanel.activeSelf);
+        flagsData.ProcGenOpen = true;
 
         if(proceduralPanel.activeSelf == false)
             proceduralPanel.GetComponent<ProceduralControlPanel>().CancelButtonClick();
