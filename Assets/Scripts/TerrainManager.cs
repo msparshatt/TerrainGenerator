@@ -11,6 +11,7 @@ public class TerrainManager
     private Material[] baseMaterials;
 
     private Material terrainMaterial;
+    private Shader materialShader;
     private Texture2D aoTexture;
     private SettingsDataScriptable settingsData;
 
@@ -56,15 +57,12 @@ public class TerrainManager
         exportHeightmap = ExportHeightmap.instance;
         exportHeightmap.terrainObject = currentTerrain;
 
-        terrainMaterial = currentTerrain.materialTemplate;
 
         painter = currentTerrain.GetComponent<TerrainPainter>();
         sculpter = currentTerrain.GetComponent<TerrainSculpter>();
 
         baseMaterials = new Material[2];
         
-        CreateTextures();
-
         originalData = CopyTerrain(currentTerrain.terrainData);
 
         currentTerrain.terrainData = originalData;
@@ -75,8 +73,11 @@ public class TerrainManager
         textureScale = new Vector2(1,1);
     }
 
-    public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor, ComputeShader _textureShader)
+    public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
     {
+        materialShader = _materialShader;
+        CreateTextures();
+
         settingsData = _settingsData;
         exportTerrain = ExportTerrain.instance;
         exportTerrain.terrainObject = currentTerrain;
@@ -86,9 +87,12 @@ public class TerrainManager
         textureShader = _textureShader;
     }
 
-    //create a new transparent texture and add it to the material in the _OverlayTexture slot
+    //create a material and set up it's textures
     private void CreateTextures()
     {
+        terrainMaterial = new Material(materialShader);
+        currentTerrain.materialTemplate = terrainMaterial;
+
         int sizeX = 2048;
         int sizeY = 2048;
 

@@ -64,8 +64,9 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Sprite selectedTabSprite;
     [SerializeField] private Sprite deselectedTabSprite;
 
-    [Header("Shaers")]
+    [Header("Shaders")]
     [SerializeField] private ComputeShader textureShader;
+    [SerializeField] private Shader materialShader;
 
     private TerrainManager manager;
     private int[] currentMaterialIndices;
@@ -121,7 +122,7 @@ public class ControlPanel : MonoBehaviour
 
         Debug.Log("creating terrain " + Time.realtimeSinceStartup);
 
-        manager.SetupTerrain(settingsData, busyCursor, textureShader);
+        manager.SetupTerrain(settingsData, busyCursor, textureShader, materialShader);
         manager.CreateFlatTerrain();
 
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
