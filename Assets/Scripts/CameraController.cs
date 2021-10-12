@@ -15,6 +15,7 @@ public class CameraController : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private SettingsDataScriptable settingsData;
+    [SerializeField] private FlagsDataScriptable flagsData;
 
     //private terrain settings
     private TerrainData mainTerrainData;
@@ -27,8 +28,6 @@ public class CameraController : MonoBehaviour
     //sliders which can be controlled using the scroll wheel
     [SerializeField] private Slider radiusSlider;
     [SerializeField] private Slider strengthSlider;
-
-    public bool sliderChanged;
 
     //store the operation which is currently being performed
     private Operation operation;
@@ -58,7 +57,7 @@ public class CameraController : MonoBehaviour
         modifier1 = false;
         modifier2 = false;
 
-        sliderChanged = false;
+        flagsData.sliderChanged = false;
     }
 
     //Callback functions for new input system
@@ -131,9 +130,9 @@ public class CameraController : MonoBehaviour
     {
         mouseDown = input.isPressed;
 
-        if(!mouseDown && sliderChanged) {
+        if(!mouseDown && flagsData.sliderChanged) {
             TerrainManager.instance.ApplyTextures();
-            sliderChanged = false;
+            flagsData.sliderChanged = false;
         }
     }
 

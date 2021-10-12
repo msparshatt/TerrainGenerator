@@ -55,8 +55,9 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Dropdown scaleDropdown;
     [SerializeField] private Texture2D busyCursor;
 
-    [Header("settings")]
+    [Header("Data objects")]
     [SerializeField] private SettingsDataScriptable settingsData;
+    [SerializeField] private FlagsDataScriptable flagsData;
 
 
     [Header("Sprites")]
@@ -391,7 +392,7 @@ public class ControlPanel : MonoBehaviour
     {
         manager.mixFactor = value;
 
-        Camera.main.GetComponent<CameraController>().sliderChanged = true;
+        flagsData.sliderChanged = true;
             //manager.ApplyTextures();        
     }
 
@@ -428,9 +429,8 @@ public class ControlPanel : MonoBehaviour
 
     public void ScaleSliderChange(float value)
     {
-        Camera currentCamera = Camera.main;
-        CameraController con = currentCamera.GetComponent<CameraController>();
-        con.sliderChanged = true;
+        
+        flagsData.sliderChanged = true;
         manager.ScaleMaterial(value);
     }
 
