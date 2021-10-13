@@ -457,6 +457,7 @@ GameObject:
   m_Component:
   - component: {fileID: 15418495}
   - component: {fileID: 15418496}
+  - component: {fileID: 15418497}
   m_Layer: 5
   m_Name: SingleToggle
   m_TagString: Untagged
@@ -545,6 +546,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &15418497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 15418494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Only use matieral 1
 --- !u!1 &23376958
 GameObject:
   m_ObjectHideFlags: 0
@@ -2783,6 +2798,7 @@ GameObject:
   m_Component:
   - component: {fileID: 164014974}
   - component: {fileID: 164014975}
+  - component: {fileID: 164014976}
   m_Layer: 5
   m_Name: HeightToggle
   m_TagString: Untagged
@@ -2871,6 +2887,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &164014976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164014973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Mix materials based on the terrain height
 --- !u!1 &166731863
 GameObject:
   m_ObjectHideFlags: 0
@@ -6564,6 +6594,7 @@ GameObject:
   - component: {fileID: 355739043}
   - component: {fileID: 355739042}
   - component: {fileID: 355739041}
+  - component: {fileID: 355739044}
   m_Layer: 5
   m_Name: RegenerateButton
   m_TagString: Untagged
@@ -6685,6 +6716,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355739039}
   m_CullTransparentMesh: 1
+--- !u!114 &355739044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355739039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Rebuild the texturing for the terrain
 --- !u!1 &360100569
 GameObject:
   m_ObjectHideFlags: 0
@@ -19242,6 +19287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1044054622}
   - component: {fileID: 1044054623}
+  - component: {fileID: 1044054624}
   m_Layer: 5
   m_Name: SlopeToggle
   m_TagString: Untagged
@@ -19330,6 +19376,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1044054624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1044054621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Mix materials based on the terrain slope
 --- !u!1 &1045633874
 GameObject:
   m_ObjectHideFlags: 0
