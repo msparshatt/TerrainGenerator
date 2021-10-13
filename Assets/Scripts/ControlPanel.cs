@@ -192,7 +192,7 @@ public class ControlPanel : MonoBehaviour
     public void FlatButtonClick()
     {
         proceduralPanel.SetActive(false);
-        TerrainManager.instance.CreateFlatTerrain();
+        manager.CreateFlatTerrain();
         manager.ApplyTextures();
     }
 
@@ -203,7 +203,7 @@ public class ControlPanel : MonoBehaviour
         FileBrowser.SetDefaultFilter( ".raw" );
 
         playerInput.enabled = false;
-        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; TerrainManager.instance.CreateTerrainFromHeightmap(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; manager.CreateTerrainFromHeightmap(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
     }
 
     public void ProceduralButtonClick()
