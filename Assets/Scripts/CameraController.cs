@@ -234,7 +234,8 @@ public class CameraController : MonoBehaviour
             //TerrainManager.instance.
             gameObject.GetComponent<OperationList>().AddOperation(operation);
             operation = null;
-            TerrainManager.instance.ApplyTextures();
+            if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt)
+                TerrainManager.instance.ApplyTextures();
 
         }
     }
