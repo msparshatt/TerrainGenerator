@@ -193,6 +193,7 @@ public class ControlPanel : MonoBehaviour
     {
         proceduralPanel.SetActive(false);
         TerrainManager.instance.CreateFlatTerrain();
+        manager.ApplyTextures();
     }
 
     public void HeightmapButtonClick()

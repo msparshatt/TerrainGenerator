@@ -240,6 +240,7 @@ public class TerrainManager
         _heightmapresolution = heights.GetLength(0);
         
         CreateTerrain(heights);
+        ApplyTextures();
     }
 
     public void CreateTerrainFromHeightmap(byte[] data)
