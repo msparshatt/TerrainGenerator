@@ -9,9 +9,13 @@ public class GameLoader : MonoBehaviour
 {
     AsyncOperation loadingOperation;
     [SerializeField] private Slider progressBar;
+    [SerializeField] private Image loadingScreen;
+    [SerializeField] private Sprite[] loadingScreenImages;
 
     void Start() 
     {
+        int index = Random.Range(0, loadingScreenImages.Length);
+        loadingScreen.GetComponent<Image>().sprite = loadingScreenImages[index];
         //accessing the instance property creates an instance of the class which loads all game resources
         GameResources gameResources = GameResources.instance; 
         int count = 0;
