@@ -769,6 +769,8 @@ MonoBehaviour:
   loadingScreenImages:
   - {fileID: 21300000, guid: 7f0f90413b01e74b8b544084edf23842, type: 3}
   - {fileID: 21300000, guid: 196f6f44f4aceafb585f4743b7a9f6e0, type: 3}
+  - {fileID: 21300000, guid: 4ac07c31e5aeb72658feddaba3f947b2, type: 3}
+  - {fileID: 21300000, guid: fb83f976ba1704273af6703eb77830d8, type: 3}
 --- !u!4 &1729291377
 Transform:
   m_ObjectHideFlags: 0
