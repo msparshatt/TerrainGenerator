@@ -425,8 +425,8 @@ public class TerrainManager
 
         Texture2D texture1 = (Texture2D)(baseMaterials[0].mainTexture);
         Texture2D texture2 = (Texture2D)(baseMaterials[1].mainTexture);
-        Texture2D aoTexture1 = (Texture2D)(baseMaterials[0].GetTexture("_AOTexture"));
-        Texture2D aoTexture2 = (Texture2D)(baseMaterials[1].GetTexture("_AOTexture"));
+        Texture2D aoTexture1 = (Texture2D)(baseMaterials[0].GetTexture("_OcclusionMap"));
+        Texture2D aoTexture2 = (Texture2D)(baseMaterials[1].GetTexture("_OcclusionMap"));
 
         int width = baseMaterials[0].mainTexture.width;
         int height = baseMaterials[0].mainTexture.height;
@@ -451,7 +451,7 @@ public class TerrainManager
             textureShader.SetTexture(kernelHandle, "Result", tex);
             textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
             textureShader.SetTexture(kernelHandle, "aoResult", aotex);
-            textureShader.SetTexture(kernelHandle, "aotexture1", baseMaterials[0].GetTexture("_OcclusionMap"));
+            textureShader.SetTexture(kernelHandle, "aotexture1", aoTexture1);
 
             textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
@@ -462,8 +462,8 @@ public class TerrainManager
             textureShader.SetTexture(kernelHandle, "aoResult", aotex);
             textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
             textureShader.SetTexture(kernelHandle, "texture2", baseMaterials[1].mainTexture);
-            textureShader.SetTexture(kernelHandle, "aotexture1", baseMaterials[0].GetTexture("_OcclusionMap"));
-            textureShader.SetTexture(kernelHandle, "aotexture2", baseMaterials[1].GetTexture("_OcclusionMap"));
+            textureShader.SetTexture(kernelHandle, "aotexture1", aoTexture1);
+            textureShader.SetTexture(kernelHandle, "aotexture2", aoTexture2);
             textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
 
 
@@ -476,8 +476,8 @@ public class TerrainManager
             textureShader.SetTexture(kernelHandle, "aoResult", aotex);
             textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
             textureShader.SetTexture(kernelHandle, "texture2", baseMaterials[1].mainTexture);
-            textureShader.SetTexture(kernelHandle, "aotexture1", baseMaterials[0].GetTexture("_OcclusionMap"));
-            textureShader.SetTexture(kernelHandle, "aotexture2", baseMaterials[1].GetTexture("_OcclusionMap"));
+            textureShader.SetTexture(kernelHandle, "aotexture1", aoTexture1);
+            textureShader.SetTexture(kernelHandle, "aotexture2", aoTexture2);
             textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
 
             textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
