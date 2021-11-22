@@ -237,9 +237,22 @@ public class TerrainManager
     public void CreateTerrainFromHeightmap(string path = "")
     {
         float[,] heights = ReadHeightmap(path);
-        _heightmapresolution = heights.GetLength(0);
-        
-        CreateTerrain(heights);
+
+        if(heights.GetLength(0) > currentTerrain.terrainData.heightmapResolution) {
+            _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
+            float[,] newHeights = new float[_heightmapresolution, _heightmapresolution];
+
+            for(int i = 0; i < _heightmapresolution; i++) {
+                for(int j = 0; j < _heightmapresolution; j++) {
+                    newHeights[i, j] = heights[i, j];
+                }
+            }
+
+            CreateTerrain(newHeights);
+        } else {
+            CreateTerrain(heights); 
+        }
+
         ApplyTextures();
     }
 
