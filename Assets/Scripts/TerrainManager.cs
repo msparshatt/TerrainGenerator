@@ -455,47 +455,85 @@ public class TerrainManager
         textureShader.SetFloat("tiling", textureScale.x);
         textureShader.SetInt("width", width);
         textureShader.SetInt("height", height);
-        textureShader.SetFloat("factor", mixFactor);
+        float[] factors = {0f, 0f, 0f, 0f,
+        mixFactor, 0f, 0f, 0f,
+        0f, 0f, 0f, 0f,
+        0f, 0f, 0f, 0f,
+        0f, 0f, 0f, 0f,
+        0f, 0f, 0f, 0f,
+        0f, 0f, 0f, 0f,
+        0f, 0f, 0f, 0f, 
+        0f, 0f, 0f, 0f, 
+        0f, 0f, 0f, 0f};
+
+        int[] mixTypes = {0, 0, 0, 0,
+        mixType, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0};
+
+        textureShader.SetFloats("factors", factors);
+        textureShader.SetInts("mixTypes", mixTypes);
         textureShader.SetInt("heightMapResolution", hmResolution);
 
         if(mixType == 0) {
-            int kernelHandle = textureShader.FindKernel("SingleMaterial");
+            int kernelHandle = textureShader.FindKernel("ApplyTextures");
 
 
             textureShader.SetTexture(kernelHandle, "Result", tex);
-            textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
             textureShader.SetTexture(kernelHandle, "aoResult", aotex);
-            textureShader.SetTexture(kernelHandle, "aotexture1", aoTexture1);
 
-            textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
+            Texture2D tempTexture = (Texture2D)(baseMaterials[0].mainTexture);
+            Texture2DArray inputTextures = new Texture2DArray(tempTexture.width, tempTexture.height, 1, TextureFormat.ARGB32, false); 
+            inputTextures.SetPixels(tempTexture.GetPixels(), 0, 0);
+            inputTextures.Apply();
 
-        } else if(mixType == 1) {
-            int kernelHandle = textureShader.FindKernel("ByHeight");
+            tempTexture = (Texture2D)(aoTexture1);
+            Texture2DArray inputAOs = new Texture2DArray(tempTexture.width, tempTexture.height, 1, TextureFormat.ARGB32, false);
+            inputAOs.SetPixels(tempTexture.GetPixels(), 0, 0);
+            inputAOs.Apply();
 
-            textureShader.SetTexture(kernelHandle, "Result", tex);
-            textureShader.SetTexture(kernelHandle, "aoResult", aotex);
-            textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
-            textureShader.SetTexture(kernelHandle, "texture2", baseMaterials[1].mainTexture);
-            textureShader.SetTexture(kernelHandle, "aotexture1", aoTexture1);
-            textureShader.SetTexture(kernelHandle, "aotexture2", aoTexture2);
-            textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
-
-
-            textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
-
-        } else if(mixType == 2) {
-            int kernelHandle = textureShader.FindKernel("BySlope");
-
-            textureShader.SetTexture(kernelHandle, "Result", tex);
-            textureShader.SetTexture(kernelHandle, "aoResult", aotex);
-            textureShader.SetTexture(kernelHandle, "texture1", baseMaterials[0].mainTexture);
-            textureShader.SetTexture(kernelHandle, "texture2", baseMaterials[1].mainTexture);
-            textureShader.SetTexture(kernelHandle, "aotexture1", aoTexture1);
-            textureShader.SetTexture(kernelHandle, "aotexture2", aoTexture2);
+            textureShader.SetTexture(kernelHandle, "textures", inputTextures);
+            textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);
+            textureShader.SetInt("textureCount", 1);
             textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
 
             textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
+        } else {
+            int kernelHandle = textureShader.FindKernel("ApplyTextures");
+
+            textureShader.SetTexture(kernelHandle, "Result", tex);
+            textureShader.SetTexture(kernelHandle, "aoResult", aotex);
+            Texture2D tempTexture = (Texture2D)(baseMaterials[0].mainTexture);
+            Texture2DArray inputTextures = new Texture2DArray(tempTexture.width, tempTexture.height, 2, TextureFormat.ARGB32, false); 
+            inputTextures.SetPixels(tempTexture.GetPixels(), 0, 0);
+            inputTextures.Apply();
+
+            tempTexture = (Texture2D)(aoTexture1);
+            Texture2DArray inputAOs = new Texture2DArray(tempTexture.width, tempTexture.height, 2, TextureFormat.ARGB32, false);
+            inputAOs.SetPixels(tempTexture.GetPixels(), 0, 0);
+            inputAOs.Apply();
+
+            tempTexture = (Texture2D)(baseMaterials[1].mainTexture);
+            inputTextures.SetPixels(tempTexture.GetPixels(), 1, 0);
+            inputTextures.Apply();
+
+            tempTexture = (Texture2D)(aoTexture2);
+            inputAOs.SetPixels(tempTexture.GetPixels(), 1, 0);
+            inputAOs.Apply();
+
+            textureShader.SetTexture(kernelHandle, "textures", inputTextures);
+            textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);
+            textureShader.SetInt("textureCount", 2);
+
+            textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
+            textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
         }
 
         Texture2D tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, true);

@@ -1,82 +1,66 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel SingleMaterial
-#pragma kernel ByHeight
-#pragma kernel BySlope
+#pragma kernel ApplyTextures
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 RWTexture2D<float4> aoResult;
-Texture2D<float4> texture1;
-Texture2D<float4> aotexture1;
-Texture2D<float4> texture2;
-Texture2D<float4> aotexture2;
 Texture2D<float4> heightMap;
+Texture2DArray<float4> textures;
+Texture2DArray<float4> aotextures;
+int textureCount;
+float factors[10];
+int mixTypes[10];
 float tiling;
 int width;
 int height;
 int heightMapResolution;
-float factor;
 
 [numthreads(8,8,1)]
-void SingleMaterial (uint3 id : SV_DispatchThreadID)
+void ApplyTextures(uint3 id : SV_DispatchThreadID)
 {
-    int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
+    int3 pos = int3((id.x * tiling) % width, (id.y * tiling) % height, 0);
+    float4 pixelTexture = float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0);
+    float4 pixelAO = float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0);
+    float f = 0;
 
-    Result[id.xy] = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);
-    aoResult[id.xy] = float4(aotexture1[pos].x, aotexture1[pos].y, aotexture1[pos].z, 1.0);
-}
+    if(textureCount > 1) {
+        int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
 
-[numthreads(8,8,1)]
-void ByHeight (uint3 id : SV_DispatchThreadID)
-{
-    int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
-    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
+        for(int index = 1; index < textureCount; index ++) {
+            float height = heightMap[hmPos];
 
-    float height = heightMap[hmPos];
 
-    float f = (height * 2 - factor) * 10;
+            if(mixTypes[index] == 1) {
+                f = (height * 2 - factors[index]) * 10;
+            } else {
+                float minHeight = 10;
+                float maxHeight = 0;
 
-    f = min(f, 1);
-    f = max(f, 0);
+                for(int i = -1; i <= 1; i++) {
+                    for(int j = -1; j <= 1; j++) {
 
-    float4 val1 = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);    
-    float4 val2 = float4(texture2[pos].x, texture2[pos].y, texture2[pos].z, 1.0);    
+                        int2 newPos = int2(hmPos.x + i, hmPos.y + j);
 
-    Result[id.xy] = val1 * (1 - f) + val2 * f;
-    aoResult[id.xy] = float4(aotexture1[pos].x, aotexture1[pos].y, aotexture1[pos].z, 1.0) * (1 - f) + float4(aotexture2[pos].x, aotexture2[pos].y, aotexture2[pos].z, 1.0) * f;
-}
+                        height = heightMap[newPos];
 
-[numthreads(8,8,1)]
-void BySlope (uint3 id : SV_DispatchThreadID)
-{
-    int2 pos = int2((id.x * tiling) % width, (id.y * tiling) % height);
-    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
+                        minHeight = min(minHeight, height);
+                        maxHeight = max(maxHeight, height);
+                    }
+                }
 
-    float height;
-    float minHeight = 10;
-    float maxHeight = 0;
+                f = ((maxHeight - minHeight) * 110 - factors[index]) * 10;
+            }
 
-    for(int i = -1; i <= 1; i++) {
-        for(int j = -1; j <= 1; j++) {
+            f = min(f, 1);
+            f = max(f, 0);
 
-            int2 newPos = int2(hmPos.x + i, hmPos.y + j);
-
-            height = heightMap[newPos];
-
-            minHeight = min(minHeight, height);
-            maxHeight = max(maxHeight, height);
+            pos[2] = index;
+            pixelTexture = pixelTexture * (1 - f) + float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0) * f;
+            pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
         }
     }
 
-    float f = ((maxHeight - minHeight) * 110 - factor) * 10;
-
-    f = min(f, 1);
-    f = max(f, 0);
-
-    float4 val1 = float4(texture1[pos].x, texture1[pos].y, texture1[pos].z, 1.0);    
-    float4 val2 = float4(texture2[pos].x, texture2[pos].y, texture2[pos].z, 1.0);    
-
-    Result[id.xy] = val1 * (1 - f) + val2 * f;
-    aoResult[id.xy] = float4(aotexture1[pos].x, aotexture1[pos].y, aotexture1[pos].z, 1.0) * (1 - f) + float4(aotexture2[pos].x, aotexture2[pos].y, aotexture2[pos].z, 1.0) * f;
+    Result[id.xy] = pixelTexture;
+    aoResult[id.xy] = pixelAO;
 }
