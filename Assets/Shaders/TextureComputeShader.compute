@@ -32,7 +32,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
 
 
             if(mixTypes[index] == 1) {
-                f = (height * 2 - factors[index]) * 5;
+                f = (height * 2 + factors[index] - 1) * 5;
             } else {
                 float minHeight = 10;
                 float maxHeight = 0;
@@ -49,7 +49,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
                     }
                 }
 
-                f = ((maxHeight - minHeight) * 100 - factors[index]) * 6;
+                f = ((maxHeight - minHeight) * 100 + factors[index] - 1) * 6;
             }
 
             f = min(f, 1);

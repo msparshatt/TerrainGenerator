@@ -20,8 +20,6 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject texturePanel;
     [SerializeField] private Button textureDeleteButton;
     [SerializeField] private GameObject helpPanel;
-    [SerializeField] private RawImage materialImage;
-    [SerializeField] private RawImage material2Image;
     [SerializeField] private RawImage brushImage;
     [SerializeField] private RawImage textureImage;
     [SerializeField] private Button textureButton;
@@ -37,15 +35,16 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
 
     [Header("Materials Panel")]
-    [SerializeField] private Toggle singeMatToggle;
-    [SerializeField] private Toggle heightToggle;
-    [SerializeField] private Toggle slopeToggle;
-    [SerializeField] private Slider mixFactorSlider;
-    [SerializeField] private Button panel1Button;
-    [SerializeField] private Button panel2Button;
     [SerializeField] private GameObject materialScrollView;
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private Button materialDeleteButton;
+
+    [Header("Material List")]
+    [SerializeField] private GameObject materialListPanel;
+    [SerializeField] private RawImage[] materialImages;
+    [SerializeField] private Toggle[] heightToggles;
+    [SerializeField] private Toggle[] slopeToggles;
+    [SerializeField] private Slider[] mixFactorSliders;
 
 
     [Header("brush settings")]
@@ -118,7 +117,7 @@ public class ControlPanel : MonoBehaviour
         customMaterials = new List<string>();
         LoadCustomMaterials();
 
-        currentMaterialIndices = new int[] {0,0};
+        currentMaterialIndices = new int[] {0,0,0,0,0};
 
         Debug.Log("creating terrain " + Time.realtimeSinceStartup);
 
@@ -126,10 +125,16 @@ public class ControlPanel : MonoBehaviour
         manager.CreateFlatTerrain();
 
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
-        materialPanelIndex = 0;
-        SelectMaterialIcon(0);
-        materialPanelIndex = 1;
-        SelectMaterialIcon(1);
+        manager.doNotApply = true;
+        SelectMaterialIcon(0, 0);
+        SelectMaterialIcon(1, 1);
+        SelectMaterialIcon(2, 2);
+        SelectMaterialIcon(3, 3);
+        SelectMaterialIcon(4, 4);
+        manager.doNotApply = false;
+        MixFactorSliderChange();
+        MaterialToggleSelect();
+
         SelectBrushIcon(0);
         SelectTextureIcon(1);
         SwitchMode(BrushDataScriptable.Modes.Sculpt);
@@ -173,6 +178,7 @@ public class ControlPanel : MonoBehaviour
 
         return buttons;
     }
+
     //create an image button. It will call the passed onClickListener action when clicked
     private GameObject MakeButton(Texture2D icon, UnityAction onClickListener, int index=0)
     {
@@ -262,6 +268,13 @@ public class ControlPanel : MonoBehaviour
             brushImage.color = selectedColor;
     }
 
+    public void OpenMaterialListPanelButtonClick()
+    {
+        bool active = !materialListPanel.activeSelf;
+
+        CloseAllPanels();
+        materialListPanel.SetActive(active);
+    }
     public void MaterialButtonClick(int index)
     {
         bool active = !materialPanel.activeSelf;
@@ -270,18 +283,15 @@ public class ControlPanel : MonoBehaviour
 
         CloseAllPanels();
         materialPanel.SetActive(active);
+        materialListPanel.SetActive(true);
         materialPanelIndex = index;
 
+        for(int i = 0; i < 5; i++) {
+            materialImages[i].color = deselectedColor;
+        }
+
         if(active) {
-            if(index == 0) {
-                materialImage.color = selectedColor;    
-                panel1Button.GetComponent<Image>().sprite = selectedTabSprite;             
-                panel2Button.GetComponent<Image>().sprite = deselectedTabSprite;             
-            } else {
-                material2Image.color = selectedColor;
-                panel1Button.GetComponent<Image>().sprite = deselectedTabSprite;             
-                panel2Button.GetComponent<Image>().sprite = selectedTabSprite;             
-            }
+            materialImages[index].color = selectedColor;
 
             for (int i = 0; i < materialIcons.Count; i++) {
                 if(i == currentMaterialIndices[materialPanelIndex]) {
@@ -297,18 +307,6 @@ public class ControlPanel : MonoBehaviour
     public void MaterialPanelButtonClick(int index)
     {
         materialPanelIndex = index;
-
-        if(index == 0) {
-            materialImage.color = selectedColor;  
-            material2Image.color = deselectedColor;  
-            panel1Button.GetComponent<Image>().sprite = selectedTabSprite;             
-            panel2Button.GetComponent<Image>().sprite = deselectedTabSprite;             
-        } else {
-            materialImage.color = deselectedColor;  
-            material2Image.color = selectedColor;
-            panel1Button.GetComponent<Image>().sprite = deselectedTabSprite;             
-            panel2Button.GetComponent<Image>().sprite = selectedTabSprite;             
-        }
 
         for (int i = 0; i < materialIcons.Count; i++) {
             if(i == currentMaterialIndices[materialPanelIndex]) {
@@ -393,19 +391,32 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
-    public void MaterialToggleSelect(int index)
+    public void MaterialToggleSelect()
     {
-        manager.SetMixType(index);
+        for(int i = 1; i < 5; i++) {
+            int mixType = 1;
+            if(slopeToggles[i].isOn)
+                mixType = 2;
+
+            manager.SetMixType(i, mixType);
+        }
+        manager.ApplyTextures();
     }
 
-    public void MixFactorSliderChange(float value)
+    public void MixFactorSliderChange()
     {
-        manager.mixFactor = value;
+        for(int i = 1; i < 5; i++) {
+            manager.SetMixFactor(i, mixFactorSliders[i].value);
+        }
 
         flagsData.sliderChanged = true;
-            //manager.ApplyTextures();        
     }
 
+    public void SelectMaterialIcon(int panel, int buttonIndex)
+    {
+        materialPanelIndex = panel;
+        SelectMaterialIcon(buttonIndex);
+    }
     public void SelectMaterialIcon(int buttonIndex)
     {        
         Material mat = gameResources.materials[buttonIndex];
@@ -420,10 +431,7 @@ public class ControlPanel : MonoBehaviour
             materialDeleteButton.interactable = false;
         }        
 
-        if(materialPanelIndex == 0)
-            materialImage.texture = mat.mainTexture;
-        else
-            material2Image.texture = mat.mainTexture;
+        materialImages[materialPanelIndex].texture = mat.mainTexture;
 
         manager.SetBaseMaterials(materialPanelIndex, mat);
 
@@ -491,6 +499,7 @@ public class ControlPanel : MonoBehaviour
 
     private void CloseAllPanels()
     {
+        materialListPanel.SetActive(false);
         materialPanel.SetActive(false);
         brushPanel.SetActive(false);
         texturePanel.SetActive(false);
@@ -498,8 +507,6 @@ public class ControlPanel : MonoBehaviour
         settingsPanel.SetActive(false);
 
         brushImage.color = deselectedColor;
-        materialImage.color = deselectedColor;
-        material2Image.color = deselectedColor;
         textureImage.color = deselectedColor;
     }
 
@@ -547,8 +554,8 @@ public class ControlPanel : MonoBehaviour
                 data.baseTexture2_colors = null;
             }
 
-            data.mixType = manager.mixType;
-            data.mixFactor = manager.mixFactor;
+            //data.mixType = manager.mixType;
+            //data.mixFactor = manager.mixFactor;
             data.tiling = scaleSlider.value;
             data.aoActive = aoToggle.isOn;
 
@@ -612,18 +619,9 @@ public class ControlPanel : MonoBehaviour
                 SelectMaterialIcon(data.baseTexture2);
             }
 
-            if(data.mixType == 0) {
-                singeMatToggle.isOn = true;
-            } else if (data.mixType == 1) {
-                heightToggle.isOn = true;
-            } else {
-                slopeToggle.isOn = true;
-            }
 
             if(data.mixFactor == 0)
                 data.mixFactor = 0.5f;
-
-            mixFactorSlider.value = data.mixFactor;
 
             if(data.tiling == 0)
                 data.tiling = 1;
