@@ -1157,6 +1157,7 @@ GameObject:
   - component: {fileID: 65471946}
   - component: {fileID: 65471947}
   - component: {fileID: 65471948}
+  - component: {fileID: 65471949}
   m_Layer: 5
   m_Name: Material3Image
   m_TagString: Untagged
@@ -1275,6 +1276,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &65471949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65471943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Select material 3
 --- !u!1 &66758128
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,6 +1377,7 @@ GameObject:
   m_Component:
   - component: {fileID: 75482842}
   - component: {fileID: 75482843}
+  - component: {fileID: 75482844}
   m_Layer: 5
   m_Name: Material2HeightToggle
   m_TagString: Untagged
@@ -1451,6 +1467,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &75482844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75482841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 2 based on the terrain height
 --- !u!1 &78442302
 GameObject:
   m_ObjectHideFlags: 0
@@ -2342,6 +2372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 124303732}
   - component: {fileID: 124303733}
+  - component: {fileID: 124303734}
   m_Layer: 5
   m_Name: Material3FactorSlider
   m_TagString: Untagged
@@ -2435,6 +2466,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &124303734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124303731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2ef051b772d46c092e846beaadb512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: 'The amount of material 3 to place: '
 --- !u!1 &124676107
 GameObject:
   m_ObjectHideFlags: 0
@@ -4366,6 +4411,7 @@ GameObject:
   m_Component:
   - component: {fileID: 245363761}
   - component: {fileID: 245363762}
+  - component: {fileID: 245363763}
   m_Layer: 5
   m_Name: Material4HeightToggle
   m_TagString: Untagged
@@ -4455,6 +4501,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &245363763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245363760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 4 based on the terrain height
 --- !u!1 &246731773
 GameObject:
   m_ObjectHideFlags: 0
@@ -13425,6 +13485,7 @@ GameObject:
   - component: {fileID: 711273591}
   - component: {fileID: 711273592}
   - component: {fileID: 711273593}
+  - component: {fileID: 711273594}
   m_Layer: 5
   m_Name: Material4Image
   m_TagString: Untagged
@@ -13543,6 +13604,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &711273594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711273588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Select material 4
 --- !u!1 &718858587
 GameObject:
   m_ObjectHideFlags: 0
@@ -19694,6 +19769,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1003455288}
   - component: {fileID: 1003455289}
+  - component: {fileID: 1003455290}
   m_Layer: 5
   m_Name: Material2FactorSlider
   m_TagString: Untagged
@@ -19787,6 +19863,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1003455290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003455287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2ef051b772d46c092e846beaadb512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: 'The amount of material 2 to place: '
 --- !u!1 &1006947926
 GameObject:
   m_ObjectHideFlags: 0
@@ -19988,6 +20078,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1029985275}
   - component: {fileID: 1029985276}
+  - component: {fileID: 1029985277}
   m_Layer: 5
   m_Name: Material4FactorSlider
   m_TagString: Untagged
@@ -20081,6 +20172,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1029985277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029985274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2ef051b772d46c092e846beaadb512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: 'The amount of material 4 to place: '
 --- !u!1 &1030866242
 GameObject:
   m_ObjectHideFlags: 0
@@ -26836,6 +26941,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1367247499}
   - component: {fileID: 1367247500}
+  - component: {fileID: 1367247501}
   m_Layer: 5
   m_Name: Material1SlopeToggle
   m_TagString: Untagged
@@ -26925,6 +27031,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1367247501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367247498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 1 based on the terrain slope
 --- !u!1 &1373549454
 GameObject:
   m_ObjectHideFlags: 0
@@ -28096,6 +28216,7 @@ GameObject:
   - component: {fileID: 1441322828}
   - component: {fileID: 1441322829}
   - component: {fileID: 1441322830}
+  - component: {fileID: 1441322831}
   m_Layer: 5
   m_Name: Material1Image
   m_TagString: Untagged
@@ -28214,6 +28335,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1441322831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441322825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Select material 1
 --- !u!1 &1444942977
 GameObject:
   m_ObjectHideFlags: 0
@@ -29688,6 +29823,7 @@ GameObject:
   - component: {fileID: 1544948124}
   - component: {fileID: 1544948125}
   - component: {fileID: 1544948126}
+  - component: {fileID: 1544948127}
   m_Layer: 5
   m_Name: Material2Image
   m_TagString: Untagged
@@ -29806,6 +29942,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1544948127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1544948121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Select material 2
 --- !u!1 &1550847145
 GameObject:
   m_ObjectHideFlags: 0
@@ -29954,7 +30104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 335145013}
-  text: Change base material
+  text: Display the material list
 --- !u!1 &1554601052
 GameObject:
   m_ObjectHideFlags: 0
@@ -33952,6 +34102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1737186000}
   - component: {fileID: 1737186001}
+  - component: {fileID: 1737186002}
   m_Layer: 5
   m_Name: Material2SlopeToggle
   m_TagString: Untagged
@@ -34041,6 +34192,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1737186002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737185999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 2 based on the terrain slope
 --- !u!1 &1737531383
 GameObject:
   m_ObjectHideFlags: 0
@@ -34820,6 +34985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1786591015}
   - component: {fileID: 1786591016}
+  - component: {fileID: 1786591017}
   m_Layer: 5
   m_Name: Material3HeightToggle
   m_TagString: Untagged
@@ -34909,6 +35075,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &1786591017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786591014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 3 based on the terrain height
 --- !u!1 &1791703216
 GameObject:
   m_ObjectHideFlags: 0
@@ -36500,6 +36680,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1896765478}
   - component: {fileID: 1896765479}
+  - component: {fileID: 1896765480}
   m_Layer: 5
   m_Name: Material1HeightToggle
   m_TagString: Untagged
@@ -36589,6 +36770,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &1896765480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896765477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 1 based on the terrain height
 --- !u!1 &1897220962
 GameObject:
   m_ObjectHideFlags: 0
@@ -36927,6 +37122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1909227245}
   - component: {fileID: 1909227246}
+  - component: {fileID: 1909227247}
   m_Layer: 5
   m_Name: Material3SlopeToggle
   m_TagString: Untagged
@@ -37016,6 +37212,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1909227247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909227244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 3 based on the terrain slope
 --- !u!1 &1911082751
 GameObject:
   m_ObjectHideFlags: 0
@@ -37026,6 +37236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1911082752}
   - component: {fileID: 1911082753}
+  - component: {fileID: 1911082754}
   m_Layer: 5
   m_Name: Material4SlopeToggle
   m_TagString: Untagged
@@ -37115,6 +37326,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1911082754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911082751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Place material 4 based on the terrain slope
 --- !u!1 &1916208605
 GameObject:
   m_ObjectHideFlags: 0
@@ -37780,6 +38005,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1973100096}
   - component: {fileID: 1973100097}
+  - component: {fileID: 1973100098}
   m_Layer: 5
   m_Name: Material1FactorSlider
   m_TagString: Untagged
@@ -37873,6 +38099,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1973100098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973100095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2ef051b772d46c092e846beaadb512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: 'The amount of material 1 to place: '
 --- !u!1 &1977020107
 GameObject:
   m_ObjectHideFlags: 0
@@ -40878,6 +41118,7 @@ GameObject:
   - component: {fileID: 2094712714}
   - component: {fileID: 2094712715}
   - component: {fileID: 2094712716}
+  - component: {fileID: 2094712717}
   m_Layer: 5
   m_Name: BaseMaterialImage
   m_TagString: Untagged
@@ -40996,6 +41237,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2094712717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094712711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Select the base material
 --- !u!1 &2100755066
 GameObject:
   m_ObjectHideFlags: 0
