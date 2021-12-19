@@ -24,41 +24,39 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
     float4 pixelAO = float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0);
     float f = 0;
 
-    if(textureCount > 1) {
-        int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
+    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
 
-        for(int index = 1; index < textureCount; index ++) {
-            float height = heightMap[hmPos];
+    for(int index = 1; index < textureCount; index ++) {
+        float height = heightMap[hmPos];
 
 
-            if(mixTypes[index] == 1) {
-                f = (height * 2 + factors[index] - 1) * 5;
-            } else {
-                float minHeight = 10;
-                float maxHeight = 0;
+        if(mixTypes[index] == 1) {
+            f = (height * 2 + factors[index] - 1) * 5;
+        } else {
+            float minHeight = 10;
+            float maxHeight = 0;
 
-                for(int i = -1; i <= 1; i++) {
-                    for(int j = -1; j <= 1; j++) {
+            for(int i = -1; i <= 1; i++) {
+                for(int j = -1; j <= 1; j++) {
 
-                        int2 newPos = int2(hmPos.x + i, hmPos.y + j);
+                    int2 newPos = int2(hmPos.x + i, hmPos.y + j);
 
-                        height = heightMap[newPos];
+                    height = heightMap[newPos];
 
-                        minHeight = min(minHeight, height);
-                        maxHeight = max(maxHeight, height);
-                    }
+                    minHeight = min(minHeight, height);
+                    maxHeight = max(maxHeight, height);
                 }
-
-                f = ((maxHeight - minHeight) * 100 + factors[index] - 1) * 6;
             }
 
-            f = min(f, 1);
-            f = max(f, 0);
-
-            pos[2] = index;
-            pixelTexture = pixelTexture * (1 - f) + float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0) * f;
-            pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
+            f = ((maxHeight - minHeight) * 100 + factors[index] - 1) * 6;
         }
+
+        f = min(f, 1);
+        f = max(f, 0);
+
+        pos[2] = index;
+        pixelTexture = pixelTexture * (1 - f) + float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0) * f;
+        pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
     }
 
     Result[id.xy] = pixelTexture;
