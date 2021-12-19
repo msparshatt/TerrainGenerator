@@ -444,6 +444,12 @@ public class TerrainManager
         if(shaderRunning)
             return;
 
+        Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+        //force the cursor to update
+        Cursor.visible = false;
+        Cursor.visible = true;
+
         shaderRunning = true;
         int hmResolution = currentTerrain.terrainData.heightmapResolution;
 
@@ -526,6 +532,8 @@ public class TerrainManager
         aoTexture.ReadPixels(new Rect(0, 0, aotex.width, aotex.height), 0, 0);
         aoTexture.Apply();
         shaderRunning = false;
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
     }
 
     public Color GetPixel(Texture2D texture, int u, int v)
