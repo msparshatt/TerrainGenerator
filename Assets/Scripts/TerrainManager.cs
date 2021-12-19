@@ -42,6 +42,9 @@ public class TerrainManager
     private Texture2D busyCursor;
     private ComputeShader textureShader;
 
+    //flag to avoid running multipe compute shaders at the same time
+    private bool shaderRunning;
+    
     public static TerrainManager instance {
         get {
             if(_instance == null)
@@ -438,6 +441,10 @@ public class TerrainManager
 
     public void ApplyTextures()
     {
+        if(shaderRunning)
+            return;
+
+        shaderRunning = true;
         int hmResolution = currentTerrain.terrainData.heightmapResolution;
 
         int width = baseMaterials[0].mainTexture.width;
@@ -549,6 +556,7 @@ public class TerrainManager
         RenderTexture.active = aotex;
         aoTexture.ReadPixels(new Rect(0, 0, aotex.width, aotex.height), 0, 0);
         aoTexture.Apply();
+        shaderRunning = false;
     }
 
     public Color GetPixel(Texture2D texture, int u, int v)
