@@ -468,27 +468,17 @@ public class TerrainManager
         textureShader.SetFloat("tiling", textureScale.x);
         textureShader.SetInt("width", width);
         textureShader.SetInt("height", height);
-        float[] factors = {0f, 0f, 0f, 0f,
-        mixFactors[1], 0f, 0f, 0f,
-        mixFactors[2], 0f, 0f, 0f,
-        mixFactors[3], 0f, 0f, 0f,
-        mixFactors[4], 0f, 0f, 0f,
-        0f, 0f, 0f, 0f,
-        0f, 0f, 0f, 0f,
-        0f, 0f, 0f, 0f, 
-        0f, 0f, 0f, 0f, 
-        0f, 0f, 0f, 0f};
+        float[] factors =  new float[20];
+        factors[4] = mixFactors[1];
+        factors[8] = mixFactors[2];
+        factors[12] = mixFactors[3];
+        factors[16] = mixFactors[4];
 
-        int[] paddedMixTypes = {0, 0, 0, 0,
-        mixTypes[1], 0, 0, 0,
-        mixTypes[2], 0, 0, 0,
-        mixTypes[3], 0, 0, 0,
-        mixTypes[4], 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0};
+        int[] paddedMixTypes = new int[20];
+        paddedMixTypes[4] = mixTypes[1];
+        paddedMixTypes[8] = mixTypes[2];
+        paddedMixTypes[12] = mixTypes[3];
+        paddedMixTypes[16] = mixTypes[4];
 
         textureShader.SetFloats("factors", factors);
         textureShader.SetInts("mixTypes", paddedMixTypes);
