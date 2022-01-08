@@ -37,6 +37,11 @@ public class SettingsPanel : MonoBehaviour
             dataScriptable.defaultTerrainResolution = 1025;
     }
 
+    public void ResolutionDropDownChange(int index)
+    {
+        dataScriptable.resolutionMultiplier = (int)Mathf.Pow(2, index);
+    }
+
     public void SaveSettings()
     {
         PlayerPrefs.SetFloat("movementSpeed", movementSlider.value);
