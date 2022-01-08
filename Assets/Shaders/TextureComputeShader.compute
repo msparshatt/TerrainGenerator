@@ -48,7 +48,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
                 }
             }
 
-            f = ((maxHeight - minHeight) * 100 + factors[index] - 1) * 6;
+            f = ((maxHeight - minHeight) * factors[index] * 1000);
         }
 
         f = min(f, 1);
