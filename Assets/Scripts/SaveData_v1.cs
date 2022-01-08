@@ -1,4 +1,4 @@
-public struct SaveData
+public struct SaveData_v1
 {
     public int version;
     public int terrainResolution;

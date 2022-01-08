@@ -530,32 +530,34 @@ public class ControlPanel : MonoBehaviour
             Cursor.visible = true;
 
             Debug.Log("SAVE: Creating SaveData object");
-            SaveData data = new SaveData();
+            SaveData_v2 data = new SaveData_v2();
             Texture2D texture;
 
-            data.version = 1;
+            data.version = 2;
             Debug.Log("SAVE: Store heightmap");
             data.heightmap = manager.GetHeightmapAsBytes();
             Debug.Log("SAVE: Store base textures");
-            if(currentMaterialIndices[0] >= (gameResources.materials.Count - customMaterials.Count)) {
-                data.baseTexture = -1;
-                texture = (Texture2D)gameResources.materials[currentMaterialIndices[0]].mainTexture;
-                data.baseTexture_colors = texture.EncodeToPNG();
-            } else {
-                data.baseTexture = currentMaterialIndices[0];
-                data.baseTexture_colors = null;
-            }
-            if(currentMaterialIndices[1] >= (gameResources.materials.Count - customMaterials.Count)) {
-                data.baseTexture2 = -1;
-                texture = (Texture2D)gameResources.materials[currentMaterialIndices[1]].mainTexture;
-                data.baseTexture2_colors = texture.EncodeToPNG();
-            } else {
-                data.baseTexture2 = currentMaterialIndices[1];
-                data.baseTexture2_colors = null;
+
+            int no_textures = 5;
+            data.baseTexture = new int[no_textures];
+            data.baseTexture_colors = new byte[no_textures][];
+            data.mixFactor = new float[no_textures];
+            data.mixType = new int[no_textures];
+            
+            for(int index = 0; index < no_textures; index++) {
+                if(currentMaterialIndices[index] >= (gameResources.materials.Count - customMaterials.Count)) {
+                    data.baseTexture[index] = -1;
+                    texture = (Texture2D)gameResources.materials[currentMaterialIndices[index]].mainTexture;
+                    data.baseTexture_colors[index] = texture.EncodeToPNG();
+                } else {
+                    data.baseTexture[index] = currentMaterialIndices[index];
+                    data.baseTexture_colors[index] = null;
+                }
+
+                data.mixType[index] = manager.mixTypes[index];
+                data.mixFactor[index] = manager.mixFactors[index];
             }
 
-            //data.mixType = manager.mixType;
-            //data.mixFactor = manager.mixFactor;
             data.tiling = scaleSlider.value;
             data.aoActive = aoToggle.isOn;
 
@@ -599,47 +601,121 @@ public class ControlPanel : MonoBehaviour
             string fileContents = sr.ReadToEnd();
             sr.Close();        
 
-            SaveData data = JsonUtility.FromJson<SaveData>(fileContents);
+            Version data = JsonUtility.FromJson<Version>(fileContents);
 
-            manager.CreateTerrainFromHeightmap(data.heightmap);
-
-            materialPanelIndex = 0;
-            if(data.baseTexture == -1) {
-                SelectMaterialIcon(AddBaseTexture(data.baseTexture_colors));
+            if(data.version <= 1) {
+                Version1Load(fileContents);
             } else {
-                SelectMaterialIcon(data.baseTexture);
+                Version2Load(fileContents);
             }
-
-            materialPanelIndex = 1;
-            if(data.baseTexture2 == 0) {
-                SelectMaterialIcon(data.baseTexture);
-            } else if(data.baseTexture2 == -1) {
-                SelectMaterialIcon(AddBaseTexture(data.baseTexture2_colors));
-            } else {
-                SelectMaterialIcon(data.baseTexture2);
-            }
-
-
-            if(data.mixFactor == 0)
-                data.mixFactor = 0.5f;
-
-            if(data.tiling == 0)
-                data.tiling = 1;
-            scaleSlider.value = data.tiling;
-
-            if(data.paintTiling == 0)
-                data.paintTiling = 1;
-            paintScaleSlider.value = data.paintTiling;
-
-            aoToggle.isOn = data.aoActive;
-            
-            Texture2D texture = new Texture2D(10,10);
-            ImageConversion.LoadImage(texture, data.overlayTexture);
-
-            manager.SetOverlay(texture);
 
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }        
+    }
+
+    public void Version1Load(string fileContents)
+    {
+        SaveData_v1 data = JsonUtility.FromJson<SaveData_v1>(fileContents);
+        manager.CreateTerrainFromHeightmap(data.heightmap);
+
+        materialPanelIndex = 0;
+        int no_textures = 5;
+        
+        if(data.baseTexture == -1) {
+            SelectMaterialIcon(0, AddBaseTexture(data.baseTexture_colors));
+        } else {
+            SelectMaterialIcon(0, data.baseTexture);
+        }
+
+        if(data.baseTexture2 == 0) {
+            SelectMaterialIcon(1, data.baseTexture);
+        } else if(data.baseTexture2 == -1) {
+            SelectMaterialIcon(1, AddBaseTexture(data.baseTexture2_colors));
+        } else {
+            SelectMaterialIcon(1, data.baseTexture2);
+        }
+
+        manager.mixTypes[1] = data.mixType;
+        if(data.mixType == 2)
+            slopeToggles[1].isOn = true;
+        else
+            heightToggles[1].isOn = true;
+
+        manager.mixFactors[1] = 1- data.mixFactor;
+        mixFactorSliders[1].value = 1 - data.mixFactor;
+
+        for(int index = 2; index < 5; index++) {
+            SelectMaterialIcon(index, index);
+            manager.mixTypes[index] = 1;
+            heightToggles[index].isOn = true;
+
+            manager.mixFactors[index] = 0f;
+            mixFactorSliders[index].value = 0f;
+        }
+
+        if(data.tiling == 0)
+            data.tiling = 1;
+
+        scaleSlider.value = data.tiling;
+
+        if(data.paintTiling == 0)
+            data.paintTiling = 1;
+        paintScaleSlider.value = data.paintTiling;
+
+        aoToggle.isOn = data.aoActive;
+        
+        Texture2D texture = new Texture2D(10,10);
+        ImageConversion.LoadImage(texture, data.overlayTexture);
+
+        manager.SetOverlay(texture);
+    }
+
+    public void Version2Load(string fileContents)
+    {
+        SaveData_v2 data = JsonUtility.FromJson<SaveData_v2>(fileContents);
+        manager.CreateTerrainFromHeightmap(data.heightmap);
+
+        materialPanelIndex = 0;
+        int no_textures = 5;
+        
+        for(int index = 0; index < no_textures; index++) {
+            if(data.baseTexture[index] == -1) {
+                SelectMaterialIcon(index, AddBaseTexture(data.baseTexture_colors[index]));
+            } else {
+                SelectMaterialIcon(index, data.baseTexture[index]);
+            }
+
+            if(index > 0)
+            {
+                manager.mixTypes[index] = data.mixType[index];
+                if(data.mixType[index] == 1)
+                    heightToggles[index].isOn = true;
+                else
+                    slopeToggles[index].isOn = true;
+
+                manager.mixFactors[index] = data.mixFactor[index];
+                mixFactorSliders[index].value = data.mixFactor[index];
+            } else {
+                manager.mixTypes[0] = 0;
+                manager.mixFactors[0] = 0f;
+            }
+        }
+
+        if(data.tiling == 0)
+            data.tiling = 1;
+
+        scaleSlider.value = data.tiling;
+
+        if(data.paintTiling == 0)
+            data.paintTiling = 1;
+        paintScaleSlider.value = data.paintTiling;
+
+        aoToggle.isOn = data.aoActive;
+        
+        Texture2D texture = new Texture2D(10,10);
+        ImageConversion.LoadImage(texture, data.overlayTexture);
+
+        manager.SetOverlay(texture);
     }
 
     private int AddBaseTexture(byte[] pixels)
