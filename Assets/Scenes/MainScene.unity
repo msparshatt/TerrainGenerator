@@ -3574,7 +3574,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &137066525
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5536,34 +5536,37 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Two materials can be assigned to the terrain.
-
-    Tiling controls the
-    scale of the materials.
-
-    Reset returns the tiling value to 1
-
-    Ambient
-    Occlusion turns on the ambient occlusion texture for the materials
+  m_text: 'Five materials can be assigned to the terrain. A base material and four
+    modifier materials.
 
 
-    Material
-    Panel
+    Tiling controls the scale of the materials.
 
-    Single Material - only use Material 1
+    Reset
+    returns the tiling value to 1
 
-    By Height - mixes material
-    1 and material 2 depending on the height of the terrain
+    Ambient Occlusion turns on the ambient occlusion
+    texture for the materials
 
-    By Slope - mixes
-    material 1 and material 2 depending on the steepness of the terrain
+
+    Material List Panel
+
+    Click on the material
+    picture to change the material used
+
+
+    For each of the modifier materials:
+
+    By
+    Height - mixes material 1 and material 2 depending on the height of the terrain
+
+    By
+    Slope - mixes material 1 and material 2 depending on the steepness of the terrain
 
     The
-    slider controls what proportion of each material to use
+    slider controls how much of that material to use
 
-    The textures should
-    always change to match any changes in the terrain. If they ever get out of sync
-    the regenerate button can be used to fix this'
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11775,7 +11778,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &548463194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41373,7 +41376,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1863165584
 MonoBehaviour:
   m_ObjectHideFlags: 0
