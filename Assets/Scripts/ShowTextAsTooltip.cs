@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class ShowTextAsTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -15,7 +16,7 @@ public class ShowTextAsTooltip : MonoBehaviour, IPointerEnterHandler, IPointerEx
         Vector2 pos = Mouse.current.position.ReadValue();
         tooltipPanel.transform.position = new Vector2(pos.x + 50 , pos.y - 50);
 
-        Text tooltip = tooltipPanel.transform.GetChild(0).gameObject.GetComponent<Text>();
+        TextMeshProUGUI tooltip = tooltipPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
         tooltip.text = text;
         tooltipPanel.SetActive(true);
     }

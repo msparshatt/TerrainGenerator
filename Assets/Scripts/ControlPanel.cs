@@ -7,12 +7,13 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using SimpleFileBrowser;
 using UnityEngine.InputSystem;
+using TMPro;
 
 
 public class ControlPanel : MonoBehaviour
 {
     [Header("UI elements")]
-    [SerializeField] private Text modeText;
+    [SerializeField] private TextMeshProUGUI modeText;
     [SerializeField] private GameObject brushScrollView;
     [SerializeField] private GameObject brushPanel;
     [SerializeField] private Button brushDeleteButton;
