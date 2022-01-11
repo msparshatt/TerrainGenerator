@@ -9640,8 +9640,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -21837,6 +21837,7 @@ MonoBehaviour:
   movementSlider: {fileID: 615076687}
   sensitivitySlider: {fileID: 1695751654}
   dataScriptable: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
+  ResolutionDropdown: {fileID: 820821638}
 --- !u!1 &945595739
 GameObject:
   m_ObjectHideFlags: 0
