@@ -9,6 +9,7 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private Slider sensitivitySlider;
     [SerializeField] private SettingsDataScriptable dataScriptable;
     [SerializeField] private Dropdown ResolutionDropdown;
+    [SerializeField] private GameObject aboutPanel;
 
     private float defaultSpeed = 40.0f;
     private float defaultSensitivity = 1.0f;
@@ -54,6 +55,17 @@ public class SettingsPanel : MonoBehaviour
         PlayerPrefs.SetInt("DefaultTerrainResolution", dataScriptable.defaultTerrainResolution);
         PlayerPrefs.SetInt("ScreenshotResolution", ResolutionDropdown.value);
     }
+
+    public void AboutButtonClick()
+    {
+        aboutPanel.SetActive(true);
+    }
+
+    public void CloseAboutPanelClick()
+    {
+        aboutPanel.SetActive(false);
+    }
+
     public void Start()
     {
         ReloadButtonClick();
