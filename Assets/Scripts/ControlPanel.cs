@@ -625,15 +625,13 @@ public class ControlPanel : MonoBehaviour
         if(data.baseTexture == -1) {
             SelectMaterialIcon(0, AddBaseTexture(data.baseTexture_colors));
         } else {
-            SelectMaterialIcon(0, data.baseTexture);
+            SelectMaterialIcon(0, RemapTextureIndex(data.baseTexture));
         }
 
-        if(data.baseTexture2 == 0) {
-            SelectMaterialIcon(1, data.baseTexture);
-        } else if(data.baseTexture2 == -1) {
+        if(data.baseTexture2 == -1) {
             SelectMaterialIcon(1, AddBaseTexture(data.baseTexture2_colors));
         } else {
-            SelectMaterialIcon(1, data.baseTexture2);
+            SelectMaterialIcon(1, RemapTextureIndex(data.baseTexture2));
         }
 
         manager.mixTypes[1] = data.mixType;
@@ -671,6 +669,12 @@ public class ControlPanel : MonoBehaviour
         manager.SetOverlay(texture);
     }
 
+    public int RemapTextureIndex(int index)
+    {
+        int[] newIndices = {0, 1, 2, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 53, 54};
+
+        return newIndices[index];
+    }
     public void Version2Load(string fileContents)
     {
         SaveData_v2 data = JsonUtility.FromJson<SaveData_v2>(fileContents);
