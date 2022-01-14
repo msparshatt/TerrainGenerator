@@ -32,6 +32,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Button settingButton;
     [SerializeField] private GameObject exitConfirmationPanel;
     [SerializeField] private Shader terrainShader;
+    [SerializeField] private GameObject OldSavePanel;
 
     [SerializeField] private PlayerInput playerInput;
 
@@ -89,6 +90,9 @@ public class ControlPanel : MonoBehaviour
 
     //assets from the resource folder used by the game
     private GameResources gameResources;
+
+    //Stores the name of the current file
+    private string savefileName;
 
     public void Start() 
     {
@@ -523,6 +527,7 @@ public class ControlPanel : MonoBehaviour
     public void OnSave(string filename)
     {
         if(filename != null && filename != "") {
+            savefileName = filename;
             Debug.Log("Saving to " + filename);
             Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
@@ -594,6 +599,7 @@ public class ControlPanel : MonoBehaviour
         if(filename != "") {
             Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
+            savefileName = filename;
             //force the cursor to update
             Cursor.visible = false;
             Cursor.visible = true;
@@ -667,12 +673,31 @@ public class ControlPanel : MonoBehaviour
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
         manager.SetOverlay(texture);
+
+        OldSavePanel.SetActive(true);
+    }
+
+    public void UpdateOldSaveFile()
+    {
+        //backup save file
+        File.Copy(savefileName, savefileName + ".bak");
+
+        //save new version
+        OnSave(savefileName);
+
+        OldSavePanel.SetActive(false);
+    }
+
+    public void DontUpdateOldSaveFile()
+    {
+        OldSavePanel.SetActive(false);
     }
 
     public int RemapTextureIndex(int index)
     {
-        int[] newIndices = {0, 1, 2, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 53, 54};
+        int[] newIndices = {0, 1, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 57, 53, 54};
 
+        Debug.Log(index + " : " + newIndices[index]);
         return newIndices[index];
     }
     public void Version2Load(string fileContents)
