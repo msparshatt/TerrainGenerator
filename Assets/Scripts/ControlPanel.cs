@@ -1078,7 +1078,22 @@ public class ControlPanel : MonoBehaviour
         ClearButtonClick();
 
         SelectBrushIcon(0);
-        SelectMaterialIcon(0);
+        SelectMaterialIcon(0, 0);
+        SelectMaterialIcon(1, 1);
+        SelectMaterialIcon(2, 2);
+        SelectMaterialIcon(3, 3);
+        SelectMaterialIcon(4, 4);
+
+        mixFactorSliders[1].value = 0;
+        mixFactorSliders[2].value = 0;
+        mixFactorSliders[3].value = 0;
+        mixFactorSliders[4].value = 0;
+
+        heightToggles[1].isOn = true;
+        heightToggles[2].isOn = true;
+        heightToggles[3].isOn = true;
+        heightToggles[4].isOn = true;
+
         SelectTextureIcon(1);
 
         flagsData.unsavedChanges = false;
