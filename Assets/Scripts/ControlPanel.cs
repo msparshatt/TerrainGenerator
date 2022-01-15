@@ -31,6 +31,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private Button settingButton;
     [SerializeField] private GameObject exitConfirmationPanel;
+    [SerializeField] private GameObject unsavedChangesText;
     [SerializeField] private Shader terrainShader;
     [SerializeField] private GameObject OldSavePanel;
 
@@ -239,6 +240,7 @@ public class ControlPanel : MonoBehaviour
     public void ExitButtonClick()
     {
         exitConfirmationPanel.SetActive(true);
+        unsavedChangesText.SetActive(flagsData.unsavedChanges);
     }
 
     public void NoButtonClick()
@@ -583,6 +585,8 @@ public class ControlPanel : MonoBehaviour
 
         }
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+
+        flagsData.unsavedChanges = false;
     }
 
     public void LoadButtonClick()
@@ -1076,5 +1080,7 @@ public class ControlPanel : MonoBehaviour
         SelectBrushIcon(0);
         SelectMaterialIcon(0);
         SelectTextureIcon(1);
+
+        flagsData.unsavedChanges = false;
     }
 }

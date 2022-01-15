@@ -59,6 +59,7 @@ public class CameraController : MonoBehaviour
         modifier2 = false;
 
         flagsData.sliderChanged = false;
+        flagsData.unsavedChanges = false;
     }
 
     //Callback functions for new input system
