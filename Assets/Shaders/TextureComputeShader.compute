@@ -16,6 +16,9 @@ int width;
 int height;
 int heightMapResolution;
 
+#define FUDGEFACTOR  0.05f  //
+#define DIVISOR 0.1f
+
 [numthreads(8,8,1)]
 void ApplyTextures(uint3 id : SV_DispatchThreadID)
 {
@@ -25,13 +28,14 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
     float f = 0;
 
     int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
+    float height = heightMap[hmPos].r * 2; //the red channel of the heightmap texture contains values between 0 and 0.5f
 
     for(int index = 1; index < textureCount; index ++) {
-        float height = heightMap[hmPos];
-
+        float minValue = 1 - factors[index] - FUDGEFACTOR;
+        float value = 0.0f;
 
         if(mixTypes[index] == 1) {
-            f = (height * 2 + factors[index] - 1) * 5;
+            value = height;
         } else {
             float minHeight = 10;
             float maxHeight = 0;
@@ -41,16 +45,17 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
 
                     int2 newPos = int2(hmPos.x + i, hmPos.y + j);
 
-                    height = heightMap[newPos];
+                    height = heightMap[newPos].r * 2;
 
                     minHeight = min(minHeight, height);
                     maxHeight = max(maxHeight, height);
                 }
             }
 
-            f = ((maxHeight - minHeight) * factors[index] * 1000);
+            value = ((maxHeight - minHeight) * 50);  //turn height difference into value between 0 & 1
         }
 
+        f = (value - minValue) / DIVISOR;
         f = min(f, 1);
         f = max(f, 0);
 
