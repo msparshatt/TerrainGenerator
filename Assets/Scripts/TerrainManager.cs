@@ -45,6 +45,8 @@ public class TerrainManager
     //flag to avoid running multipe compute shaders at the same time
     private bool shaderRunning;
 
+    private List<Vector4> maxima;
+    private List<Vector4>minima;
     public static TerrainManager instance {
         get {
             if(_instance == null)
@@ -75,6 +77,13 @@ public class TerrainManager
         mixFactors = new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f};
         mixTypes = new int[]{0, 0, 0, 0, 0};
         textureScale = new Vector2(1,1);
+
+        maxima = new List<Vector4>();
+        minima = new List<Vector4>();
+
+        ClearMaximaAndMinima();
+        maxima.Add(new Vector4(-1, -1, -1, -1));
+        minima.Add(new Vector4(-1, -1, -1, -1));
     }
 
     public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
@@ -190,6 +199,7 @@ public class TerrainManager
         multiplier = 1;
 
         CreateProceduralTerrain(procGen, terraces, erosion);
+        FindMaximaAndMinima();
         ApplyTextures();
     }
 
@@ -238,6 +248,7 @@ public class TerrainManager
         }
 
         CreateTerrain(heights);
+        FindMaximaAndMinima();        
     }
 
     public void CreateTerrainFromHeightmap(string path = "")
@@ -259,6 +270,7 @@ public class TerrainManager
             CreateTerrain(heights); 
         }
 
+        FindMaximaAndMinima();
         ApplyTextures();
     }
 
@@ -280,6 +292,7 @@ public class TerrainManager
         currentTerrain.terrainData.heightmapResolution = _heightmapresolution;
 
         CreateTerrain(heights);
+        FindMaximaAndMinima();
     }
 
     public void CreateProceduralTerrain(ProceduralGeneration procGen, TerraceSettings terrace, Erosion erosion)
@@ -306,7 +319,7 @@ public class TerrainManager
 
         Debug.Log("Creating terrain");
         CreateTerrain(heights);
-
+        FindMaximaAndMinima();
     }
 
     protected void CreateTerrain(float[,] heights)
@@ -505,6 +518,12 @@ public class TerrainManager
         textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);
         textureShader.SetInt("textureCount", 5);
         textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
+
+        //send maxima and minima
+        textureShader.SetVectorArray("maxima", maxima.ToArray());
+        textureShader.SetVectorArray("minima", minima.ToArray());
+
+        //run the shader
         textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
         Texture2D tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, true);
@@ -563,5 +582,101 @@ public class TerrainManager
         int y = (int)(v * heightmapSize / (textureHeight));
 
         return new Vector2Int(x, y);
+    }
+
+    public void ClearMaximaAndMinima()
+    {
+        maxima.Clear();
+        minima.Clear();
+    }
+
+    public void FindMaximaAndMinima()
+    {
+        Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+        //force the cursor to update
+        Cursor.visible = false;
+        Cursor.visible = true;
+
+        ClearMaximaAndMinima();
+        TerrainData data = currentTerrain.terrainData;
+        int resolution = data.heightmapResolution;
+
+        for(int x = 1; x < resolution - 1; x++) {
+            for(int y = 1; y < resolution - 1; y++) {
+                if(CheckPointisMaxima(x,y)) {
+                    maxima.Add(new Vector4(x, y, currentTerrain.terrainData.GetHeight(x,y) / 1000.0f, 0));
+                }
+
+                if(CheckPointisMinima(x,y)) {
+                    minima.Add(new Vector4(x, y, currentTerrain.terrainData.GetHeight(x,y) / 1000.0f, 0));
+                }
+            }
+        }
+        maxima.Add(new Vector4(-1, -1, -1, -1));
+        minima.Add(new Vector4(-1, -1, -1, -1));
+
+        maxima = RemoveDuplicates(maxima);
+        minima = RemoveDuplicates(minima);
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
+    }
+
+    private List<Vector4> RemoveDuplicates(List<Vector4> items)
+    {
+        List<Vector4> result = new List<Vector4>();
+        for (int i = 0; i < items.Count; i++)
+        {
+            // Assume not duplicate.
+            bool duplicate = false;
+            for (int z = 0; z < i; z++)
+            {
+                if ((items[z].x >= items[i].x - 1 && items[z].x <= items[i].x + 1) && 
+                    (items[z].y >= items[i].y - 1 && items[z].y <= items[i].y + 1) && 
+                    (items[z].z >= items[i].z - 1 && items[z].z <= items[i].z + 1))
+                {
+                    // This is a duplicate.
+                    duplicate = true;
+                    break;
+                }
+            }
+            // If not duplicate, add to result.
+            if (!duplicate)
+            {
+                result.Add(items[i]);
+            }
+        }
+        return result;
+    }
+    private bool CheckPointisMaxima(int x, int y)
+    {
+        float height = currentTerrain.terrainData.GetHeight(x,y);
+
+        if(currentTerrain.terrainData.GetHeight(x + 1,y) >= height)
+            return false;
+        if(currentTerrain.terrainData.GetHeight(x - 1,y) >= height)
+            return false;
+        if(currentTerrain.terrainData.GetHeight(x,y + 1) >= height)
+            return false;
+        if(currentTerrain.terrainData.GetHeight(x,y - 1) >= height)
+            return false;
+
+        return true;
+    }
+
+    private bool CheckPointisMinima(int x, int y)
+    {
+        float height = currentTerrain.terrainData.GetHeight(x,y);
+
+        if(currentTerrain.terrainData.GetHeight(x + 1,y) <= height)
+            return false;
+        if(currentTerrain.terrainData.GetHeight(x - 1,y) <= height)
+            return false;
+        if(currentTerrain.terrainData.GetHeight(x,y + 1) <= height)
+            return false;
+        if(currentTerrain.terrainData.GetHeight(x,y - 1) <= height)
+            return false;
+
+        return true;
     }
 }

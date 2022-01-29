@@ -16,6 +16,9 @@ int width;
 int height;
 int heightMapResolution;
 
+float4 maxima[1000];
+float4 minima[1000];
+
 #define FUDGEFACTOR  0.05f  //
 #define DIVISOR 0.1f
 
@@ -34,9 +37,9 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
         float minValue = 1 - factors[index] - FUDGEFACTOR;
         float value = 0.0f;
 
-        if(mixTypes[index] == 1) {
+        if(mixTypes[index] == 1) {                  //by height
             value = height;
-        } else {
+        } else if (mixTypes[index] == 2) {          //by slope
             float minHeight = 10;
             float maxHeight = 0;
 
@@ -53,13 +56,43 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             }
 
             value = ((maxHeight - minHeight) * 50);  //turn height difference into value between 0 & 1
+        } else if(mixTypes[index] == 3) {           //peaks
+            float minDistance = 1000;
+            for(int index = 0; index < 1000; index++) {
+                float4 maximum = maxima[index];
+                if(maximum.x == -1) {
+                    break;
+                }
+
+                float distance = (hmPos.x - maximum.x) * (hmPos.x - maximum.x) + (hmPos.y - maximum.y) * (hmPos.y - maximum.y);
+                distance = sqrt(distance);
+                minDistance = min(minDistance, distance);
+            }
+
+            value = 1 - minDistance / 100;
+        } else if(mixTypes[index] == 4) {           //valleys
+            float minDistance = 1000;
+            for(int index = 0; index < 1000; index++) {
+                float4 minimum = minima[index];
+                if(minimum.x == -1) {
+                    break;
+                }
+
+
+                float distance = (hmPos.x - minimum.x) * (hmPos.x - minimum.x) + (hmPos.y - minimum.y) * (hmPos.y - minimum.y);
+                distance = sqrt(distance);
+                minDistance = min(minDistance, distance);
+            }            
+
+            value = 1 - minDistance / 100;
         }
 
         f = (value - minValue) / DIVISOR;
+
         f = min(f, 1);
         f = max(f, 0);
 
-        pos[2] = index;
+        pos[2] = 1;
         pixelTexture = pixelTexture * (1 - f) + float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0) * f;
         pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
     }
