@@ -45,8 +45,7 @@ public class ControlPanel : MonoBehaviour
     [Header("Material List")]
     [SerializeField] private GameObject materialListPanel;
     [SerializeField] private RawImage[] materialImages;
-    [SerializeField] private Toggle[] heightToggles;
-    [SerializeField] private Toggle[] slopeToggles;
+    [SerializeField] private TMP_Dropdown[] mixtypeDropdowns;
     [SerializeField] private Slider[] mixFactorSliders;
 
 
@@ -139,7 +138,7 @@ public class ControlPanel : MonoBehaviour
         SelectMaterialIcon(4, 4);
         manager.doNotApply = false;
         MixFactorSliderChange();
-        MaterialToggleSelect();
+        MaterialDropdownSelect();
 
         SelectBrushIcon(0);
         SelectTextureIcon(1);
@@ -398,12 +397,10 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
-    public void MaterialToggleSelect()
+    public void MaterialDropdownSelect()
     {
         for(int i = 1; i < 5; i++) {
-            int mixType = 1;
-            if(slopeToggles[i].isOn)
-                mixType = 2;
+            int mixType = mixtypeDropdowns[i].value + 1;
 
             manager.SetMixType(i, mixType);
         }
@@ -645,10 +642,10 @@ public class ControlPanel : MonoBehaviour
         }
 
         manager.mixTypes[1] = data.mixType;
-        if(data.mixType == 2)
+/*        if(data.mixType == 2)
             slopeToggles[1].isOn = true;
         else
-            heightToggles[1].isOn = true;
+            heightToggles[1].isOn = true;*/
 
         manager.mixFactors[1] = 1- data.mixFactor;
         mixFactorSliders[1].value = 1 - data.mixFactor;
@@ -656,7 +653,7 @@ public class ControlPanel : MonoBehaviour
         for(int index = 2; index < 5; index++) {
             SelectMaterialIcon(index, index);
             manager.mixTypes[index] = 1;
-            heightToggles[index].isOn = true;
+            //heightToggles[index].isOn = true;
 
             manager.mixFactors[index] = 0f;
             mixFactorSliders[index].value = 0f;
@@ -722,10 +719,10 @@ public class ControlPanel : MonoBehaviour
             if(index > 0)
             {
                 manager.mixTypes[index] = data.mixType[index];
-                if(data.mixType[index] == 1)
+/*                if(data.mixType[index] == 1)
                     heightToggles[index].isOn = true;
                 else
-                    slopeToggles[index].isOn = true;
+                    slopeToggles[index].isOn = true;*/
 
                 manager.mixFactors[index] = data.mixFactor[index];
                 mixFactorSliders[index].value = data.mixFactor[index];
@@ -1084,15 +1081,10 @@ public class ControlPanel : MonoBehaviour
         SelectMaterialIcon(3, 3);
         SelectMaterialIcon(4, 4);
 
-        mixFactorSliders[1].value = 0;
-        mixFactorSliders[2].value = 0;
-        mixFactorSliders[3].value = 0;
-        mixFactorSliders[4].value = 0;
-
-        heightToggles[1].isOn = true;
-        heightToggles[2].isOn = true;
-        heightToggles[3].isOn = true;
-        heightToggles[4].isOn = true;
+        for(int index = 1; index < 5; index++) {
+            mixFactorSliders[index].value = 0;
+            mixtypeDropdowns[index].value = 0;
+        }
 
         SelectTextureIcon(1);
 
