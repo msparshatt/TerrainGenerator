@@ -25,7 +25,9 @@ public class Operation
             subOperation.Do();
         }
 
-        TerrainManager.instance.ApplyTextures();
+        if(subOperations[0] is SculptSubOperation) {
+            TerrainManager.instance.ApplyTextures();
+        }
     }
 
 
@@ -34,7 +36,9 @@ public class Operation
         foreach(SubOperation subOperation in subOperations) {
             subOperation.Undo();
         }
-        TerrainManager.instance.ApplyTextures();
+        if(subOperations[0] is SculptSubOperation) {
+            TerrainManager.instance.ApplyTextures();
+        }
     }
 
     public virtual void AddSubOperation(SubOperation subOperation)
