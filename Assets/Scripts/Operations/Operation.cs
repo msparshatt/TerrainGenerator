@@ -26,6 +26,7 @@ public class Operation
         }
 
         if(subOperations[0] is SculptSubOperation) {
+            TerrainManager.instance.FindMaximaAndMinima();
             TerrainManager.instance.ApplyTextures();
         }
     }
@@ -37,6 +38,7 @@ public class Operation
             subOperation.Undo();
         }
         if(subOperations[0] is SculptSubOperation) {
+            TerrainManager.instance.FindMaximaAndMinima();
             TerrainManager.instance.ApplyTextures();
         }
     }
