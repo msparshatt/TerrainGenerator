@@ -92,7 +92,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
         f = min(f, 1);
         f = max(f, 0);
 
-        pos[2] = 1;
+        pos[2] = index;
         pixelTexture = pixelTexture * (1 - f) + float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0) * f;
         pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
     }
