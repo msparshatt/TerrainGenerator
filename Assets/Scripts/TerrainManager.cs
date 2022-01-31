@@ -14,6 +14,7 @@ public class TerrainManager
     private Shader materialShader;
     private Texture2D aoTexture;
     private SettingsDataScriptable settingsData;
+    private FlagsDataScriptable flagsData;
 
     //references to the export classes
     private ExportHeightmap exportHeightmap;
@@ -90,12 +91,13 @@ public class TerrainManager
         minima.Add(new Vector4(-1, -1, -1, -1));
     }
 
-    public void SetupTerrain(SettingsDataScriptable _settingsData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
+    public void SetupTerrain(SettingsDataScriptable _settingsData, FlagsDataScriptable _flagsData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
     {
         materialShader = _materialShader;
         CreateTextures();
 
         settingsData = _settingsData;
+        flagsData = _flagsData;
         exportTerrain = ExportTerrain.instance;
         exportTerrain.terrainObject = currentTerrain;
         //exportTerrain.scaleDropDown = scaleDropdown;
@@ -603,17 +605,20 @@ public class TerrainManager
         Cursor.visible = true;
 
         ClearMaximaAndMinima();
-        TerrainData data = currentTerrain.terrainData;
-        int resolution = data.heightmapResolution;
 
-        for(int x = 1; x < resolution - 1; x++) {
-            for(int y = 1; y < resolution - 1; y++) {
-                if(CheckPointisMaxima(x,y)) {
-                    maxima.Add(new Vector4(x, y, currentTerrain.terrainData.GetHeight(x,y) / 1000.0f, 0));
-                }
+        if(flagsData.detectMaximaAndMinima) {
+            TerrainData data = currentTerrain.terrainData;
+            int resolution = data.heightmapResolution;
 
-                if(CheckPointisMinima(x,y)) {
-                    minima.Add(new Vector4(x, y, currentTerrain.terrainData.GetHeight(x,y) / 1000.0f, 0));
+            for(int x = 1; x < resolution - 1; x++) {
+                for(int y = 1; y < resolution - 1; y++) {
+                    if(CheckPointisMaxima(x,y)) {
+                        maxima.Add(new Vector4(x, y, currentTerrain.terrainData.GetHeight(x,y) / 1000.0f, 0));
+                    }
+
+                    if(CheckPointisMinima(x,y)) {
+                        minima.Add(new Vector4(x, y, currentTerrain.terrainData.GetHeight(x,y) / 1000.0f, 0));
+                    }
                 }
             }
         }

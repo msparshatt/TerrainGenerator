@@ -126,7 +126,7 @@ public class ControlPanel : MonoBehaviour
 
         Debug.Log("creating terrain " + Time.realtimeSinceStartup);
 
-        manager.SetupTerrain(settingsData, busyCursor, textureShader, materialShader);
+        manager.SetupTerrain(settingsData, flagsData, busyCursor, textureShader, materialShader);
         manager.CreateFlatTerrain();
 
         //Debug.Log("loaded " + Time.realtimeSinceStartup);
@@ -399,11 +399,20 @@ public class ControlPanel : MonoBehaviour
 
     public void MaterialDropdownSelect()
     {
+        bool oldDetect = flagsData.detectMaximaAndMinima;
+        flagsData.detectMaximaAndMinima = false;
         for(int i = 1; i < 5; i++) {
             int mixType = mixtypeDropdowns[i].value + 1;
 
+            if(mixType == 3 || mixType == 4)
+                flagsData.detectMaximaAndMinima = true;
+
             manager.SetMixType(i, mixType);
         }
+
+        if(!oldDetect && flagsData.detectMaximaAndMinima)
+            manager.FindMaximaAndMinima();
+            
         manager.ApplyTextures();
     }
 
