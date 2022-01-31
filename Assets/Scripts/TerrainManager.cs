@@ -46,7 +46,11 @@ public class TerrainManager
     private bool shaderRunning;
 
     private List<Vector4> maxima;
-    private List<Vector4>minima;
+    private List<Vector4> minima;
+
+    //amount that a point in the heightmap needs to be higher/lower that the surrounding points to count as a maxima/minima
+    private const float MARGIN = 0.075f;  
+    
     public static TerrainManager instance {
         get {
             if(_instance == null)
@@ -650,7 +654,7 @@ public class TerrainManager
     }
     private bool CheckPointisMaxima(int x, int y)
     {
-        float height = currentTerrain.terrainData.GetHeight(x,y);
+        float height = currentTerrain.terrainData.GetHeight(x,y) - MARGIN;
 
         if(currentTerrain.terrainData.GetHeight(x + 1,y) >= height)
             return false;
@@ -666,7 +670,7 @@ public class TerrainManager
 
     private bool CheckPointisMinima(int x, int y)
     {
-        float height = currentTerrain.terrainData.GetHeight(x,y);
+        float height = currentTerrain.terrainData.GetHeight(x,y) + MARGIN;
 
         if(currentTerrain.terrainData.GetHeight(x + 1,y) <= height)
             return false;
