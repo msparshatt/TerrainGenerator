@@ -621,12 +621,11 @@ public class TerrainManager
                     }
                 }
             }
+            maxima = RemoveDuplicates(maxima);
+            minima = RemoveDuplicates(minima);
         }
         maxima.Add(new Vector4(-1, -1, -1, -1));
         minima.Add(new Vector4(-1, -1, -1, -1));
-
-        maxima = RemoveDuplicates(maxima);
-        minima = RemoveDuplicates(minima);
 
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
     }
