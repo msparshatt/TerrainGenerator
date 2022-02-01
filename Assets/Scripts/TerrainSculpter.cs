@@ -172,15 +172,15 @@ public class TerrainSculpter : MonoBehaviour
         int maskOffsetY = 0;
 
         //check if the brush goes over the edge of the terrain
-        if(startX + width >=terrainMapSize) {
-            width = terrainMapSize - startX - 1;
+        if(startX + width > terrainMapSize) {
+            width = terrainMapSize - startX;
         } else if(startX < 0) {
             width += startX;
             maskOffsetX = - startX;
             startX = 0;
         }
-        if(startY + length >= terrainMapSize) {
-            length = terrainMapSize- startY - 1;
+        if(startY + length > terrainMapSize) {
+            length = terrainMapSize- startY;
         } else if(startY< 0) {
             length += startY;
             maskOffsetY = - startY;
