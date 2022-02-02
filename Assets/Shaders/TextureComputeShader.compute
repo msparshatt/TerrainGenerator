@@ -119,7 +119,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             }            
 
             value = 1 - minDistance / 100;
-        }  else if(mixTypes[index] == 4) {           //random
+        }  else if(mixTypes[index] == 5) {           //random
             value = snoise(float2(id.x * 0.005f, id.y * 0.005f));
             value = (value + 1) / 2;
         }
