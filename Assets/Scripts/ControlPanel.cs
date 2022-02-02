@@ -12,6 +12,7 @@ using TMPro;
 
 public class ControlPanel : MonoBehaviour
 {
+    private enum MixTypes  {Height, Slope, Peaks, Valleys, Random};
     [Header("UI elements")]
     [SerializeField] private TextMeshProUGUI modeText;
     [SerializeField] private GameObject brushScrollView;
@@ -405,10 +406,10 @@ public class ControlPanel : MonoBehaviour
         for(int i = 1; i < 5; i++) {
             int mixType = mixtypeDropdowns[i].value + 1;
 
-            if(mixType == 3 || mixType == 4)
+            if(mixType == (int)MixTypes.Peaks || mixType == (int)MixTypes.Valleys)
                 flagsData.detectMaximaAndMinima = true;
 
-            offsetSliders[i].gameObject.SetActive((mixType == 5));
+            offsetSliders[i].gameObject.SetActive((mixType == (int)MixTypes.Random));
             manager.SetMixType(i, mixType);
         }
 
