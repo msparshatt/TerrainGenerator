@@ -408,6 +408,7 @@ public class ControlPanel : MonoBehaviour
             if(mixType == 3 || mixType == 4)
                 flagsData.detectMaximaAndMinima = true;
 
+            offsetSliders[i].gameObject.SetActive((mixType == 5));
             manager.SetMixType(i, mixType);
         }
 
