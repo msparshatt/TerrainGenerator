@@ -12,6 +12,7 @@ Texture2DArray<float4> aotextures;
 int textureCount;
 float factors[10];
 int mixTypes[10];
+float offsets[10];
 float tiling;
 int width;
 int height;
@@ -87,7 +88,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
 
             value = 1 - minDistance / 100;
         }  else if(mixTypes[index] == 5) {           //random
-            value = snoise(float2(id.x * 0.005f, id.y * 0.005f));
+            value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
             value = (value + 1) / 2;
         }
 

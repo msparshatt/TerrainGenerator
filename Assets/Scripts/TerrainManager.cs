@@ -23,6 +23,7 @@ public class TerrainManager
     //how to mix the two base materials
     public int[] mixTypes;
     public float[] mixFactors;
+    private float[] offsets;
     public bool doNotApply;
 
     private Vector2 textureScale;
@@ -81,6 +82,7 @@ public class TerrainManager
 
         mixFactors = new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f};
         mixTypes = new int[]{0, 0, 0, 0, 0};
+        offsets = new float[]{0, 0, 0, 0, 0};
         textureScale = new Vector2(1,1);
 
         maxima = new List<Vector4>();
@@ -148,6 +150,11 @@ public class TerrainManager
     public void SetMixFactor(int materialIndex, float factor)
     {
         mixFactors[materialIndex] = factor;
+    }
+
+    public void SetOffset(int materialIndex, float offset)
+    {
+        offsets[materialIndex] = offset;
     }
 
     public void ScaleMaterial(float value)
@@ -499,7 +506,14 @@ public class TerrainManager
         paddedMixTypes[12] = mixTypes[3];
         paddedMixTypes[16] = mixTypes[4];
 
+        float[] paddedOffsets = new float[20];
+        paddedOffsets[4] = offsets[1];
+        paddedOffsets[8] = offsets[2];
+        paddedOffsets[12] = offsets[3];
+        paddedOffsets[16] = offsets[4];
+
         textureShader.SetFloats("factors", factors);
+        textureShader.SetFloats("offsets", paddedOffsets);
         textureShader.SetInts("mixTypes", paddedMixTypes);
         textureShader.SetInt("heightMapResolution", hmResolution);
 

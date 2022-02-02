@@ -47,6 +47,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private RawImage[] materialImages;
     [SerializeField] private TMP_Dropdown[] mixtypeDropdowns;
     [SerializeField] private Slider[] mixFactorSliders;
+    [SerializeField] private Slider[] offsetSliders;
 
 
     [Header("brush settings")]
@@ -420,6 +421,15 @@ public class ControlPanel : MonoBehaviour
     {
         for(int i = 1; i < 5; i++) {
             manager.SetMixFactor(i, mixFactorSliders[i].value);
+        }
+
+        flagsData.sliderChanged = true;
+    }
+
+    public void OffsetSliderChange()
+    {
+        for(int i = 1; i < 5; i++) {
+            manager.SetOffset(i, offsetSliders[i].value);
         }
 
         flagsData.sliderChanged = true;
