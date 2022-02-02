@@ -1,3 +1,4 @@
+#include "noiseSimplex.cginc"
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel ApplyTextures
 
@@ -21,6 +22,39 @@ float4 minima[1000];
 
 #define FUDGEFACTOR  0.05f  //
 #define DIVISOR 0.1f
+
+uint TausStep(uint z, int S1, int S2, int S3, uint M)
+{
+    uint b = (((z << S1) ^ z) >> S2);
+    return ((z & M) << S3) ^ b;
+}
+uint LCGStep(uint z, uint A, uint C)
+{
+    return A * z + C;
+}
+float HybridTaus(uint4 state)
+{
+    state.x = TausStep(state.x, 13, 19, 12, 4294967294);
+    state.y = TausStep(state.y, 2, 25, 4, 4294967288);
+    state.z = TausStep(state.z, 3, 11, 17, 4294967280);
+    state.w = LCGStep(state.w, 1664525, 1013904223);
+
+    return 2.3283064365387e-9 * (state.x ^ state.y ^ state.z ^ state.w);
+}
+
+float dropOff(float x)
+{
+    float v = 1 - abs(x);
+    return 3 * v * v - 2 * v * v * v;
+}
+
+float RandomNumber(uint3 id)
+{
+    float res = 1;
+    float2 g = normalize(float2(0.2, 0.1));
+    float2 v = float2(id.xy) / (res * 0.5) - float2(1.0, 1.0);
+    return dot(g, v) * dropOff(v.x) * dropOff(v.y);
+}
 
 [numthreads(8,8,1)]
 void ApplyTextures(uint3 id : SV_DispatchThreadID)
@@ -85,6 +119,9 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             }            
 
             value = 1 - minDistance / 100;
+        }  else if(mixTypes[index] == 4) {           //random
+            value = snoise(float2(id.x * 0.005f, id.y * 0.005f));
+            value = (value + 1) / 2;
         }
 
         f = (value - minValue) / DIVISOR;
