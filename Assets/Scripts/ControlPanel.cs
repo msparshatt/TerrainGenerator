@@ -33,6 +33,7 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private Button settingButton;
     [SerializeField] private GameObject exitConfirmationPanel;
     [SerializeField] private GameObject unsavedChangesText;
+    [SerializeField] private GameObject saveChangesButton;
     [SerializeField] private Shader terrainShader;
     [SerializeField] private GameObject OldSavePanel;
 
@@ -242,6 +243,8 @@ public class ControlPanel : MonoBehaviour
     {
         exitConfirmationPanel.SetActive(true);
         unsavedChangesText.SetActive(flagsData.unsavedChanges);
+        saveChangesButton.SetActive(flagsData.unsavedChanges);
+        
     }
 
     public void NoButtonClick()
@@ -252,6 +255,11 @@ public class ControlPanel : MonoBehaviour
     public void YesButtonClick()
     {
         DoExit();
+    }
+
+    public void ExitPanelSaveClick()
+    {
+        SaveButtonClick(true);
     }
 
     public void DoExit()
@@ -535,16 +543,16 @@ public class ControlPanel : MonoBehaviour
         textureImage.color = deselectedColor;
     }
 
-    public void SaveButtonClick()
+    public void SaveButtonClick(bool exitOnSave = false)
     {
         Debug.Log("SAVE: Opening file browser");
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Save files", ".json"));
 
         playerInput.enabled = false;
-        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true; OnSave(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true; OnSave(filenames[0], exitOnSave);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
     }
 
-    public void OnSave(string filename)
+    public void OnSave(string filename, bool exitOnSave)
     {
         if(filename != null && filename != "") {
             savefileName = filename;
@@ -601,6 +609,8 @@ public class ControlPanel : MonoBehaviour
             sr.Close();
             Debug.Log("SAVE: Finish");
 
+            if(exitOnSave)
+                DoExit();
         }
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 
@@ -705,7 +715,7 @@ public class ControlPanel : MonoBehaviour
         File.Copy(savefileName, savefileName + ".bak");
 
         //save new version
-        OnSave(savefileName);
+        OnSave(savefileName, false);
 
         OldSavePanel.SetActive(false);
     }
