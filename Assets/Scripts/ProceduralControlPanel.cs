@@ -59,6 +59,7 @@ public class ProceduralControlPanel : MonoBehaviour
     [Header("Other")]
     public SettingsDataScriptable settingsData;
     public  FlagsDataScriptable flagsData;
+    public ComputeShader proceduralGenerationShader;
 
     public Texture2D busyCursor;
     public RawImage heightmapImage;
@@ -78,6 +79,7 @@ public class ProceduralControlPanel : MonoBehaviour
         Debug.Log("start");
         //resolution = currentTerrain.terrainData.heightmapResolution;
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
+        procGen.proceduralGenerationShader = proceduralGenerationShader;
         terrace = new TerraceSettings();
         erosion = new Erosion();
         manager = TerrainManager.instance;

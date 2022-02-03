@@ -21,6 +21,8 @@ public class ProceduralGeneration
     public float minHeight;
     public float heightscale;
 
+    public ComputeShader proceduralGenerationShader;
+
     private int defaultTerrainResolution;
     private int noCells;
     private Vector2[,] voronoiCells;
@@ -30,6 +32,8 @@ public class ProceduralGeneration
     private float totalTime;
 
     private int counter = 0;
+
+    private bool shaderRunning;
 
     public ProceduralGeneration(int _defaultTerrainResolution)
     {
@@ -46,9 +50,43 @@ public class ProceduralGeneration
         noCells = 100;
         voronoiCells = new Vector2[noCells, noCells];
         InitialiseCells(noCells);
+        shaderRunning = false;
     }
 
     public float[,] GenerateHeightMap(int size, int multiplier = 1)
+    {
+        if(shaderRunning)
+            return null;
+
+        shaderRunning = true;
+
+        ComputeBuffer heightBuffer = new ComputeBuffer(size * size, sizeof(float));
+        float[,] heights = new float[size, size];
+        int kernelHandle = proceduralGenerationShader.FindKernel("GenerateTerrain");
+
+        proceduralGenerationShader.SetFloat("PerlinScale", scale);
+        proceduralGenerationShader.SetFloat("PerlinXOffset", scale);
+        proceduralGenerationShader.SetFloat("PerlinYOffset", scale);
+        proceduralGenerationShader.SetInt("PerlinIterations", iterations);
+        proceduralGenerationShader.SetFloat("MinHeight", minHeight);
+        proceduralGenerationShader.SetFloat("HeightScale", heightscale);
+        proceduralGenerationShader.SetInt("Resolution", size);
+
+        proceduralGenerationShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
+        int groups = Mathf.CeilToInt(size / 8f);
+		proceduralGenerationShader.Dispatch(0, groups, groups, 1);
+
+        float[] data = new float[heightBuffer.count];
+        heightBuffer.GetData(data);
+        heights = ConvertTo2DArray(data);
+
+        heightBuffer.Release();
+        heightBuffer = null;
+
+        shaderRunning = false;
+        return heights;
+    }
+    public float[,] GenerateHeightMapold(int size, int multiplier = 1)
     {
         perlinTime = 0;
         voronoiTime = 0;
@@ -208,5 +246,37 @@ public class ProceduralGeneration
         y -= Mathf.Floor(y);
 
         return new Vector2(x, y);
+    }
+
+    //convert a 1D float array to a 2D height array so it can be applied to a terrain
+    private float[,] ConvertTo2DArray(float[] heightData)
+    {
+        int resolution = (int)Mathf.Sqrt(heightData.Length);
+        //Debug.Log(resolution);
+
+        float[,] unityHeights = new float[resolution, resolution];
+
+        Vector2 pos = Vector2.zero;
+            
+        for (int i = 0 ; i < heightData.Length; i++) {
+            unityHeights[(int)pos.y, (int)pos.x] = heightData[i];
+
+            if (pos.x < resolution - 1)
+            {
+                pos.x += 1;
+            }
+            else
+            {
+                pos.x = 0;
+                pos.y += 1;
+                if (pos.y >= resolution)
+                {
+                    break;
+                }
+            }
+                
+        }
+
+        return unityHeights;
     }
 }

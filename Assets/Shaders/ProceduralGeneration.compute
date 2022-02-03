@@ -1,0 +1,48 @@
+#include "noiseSimplex.cginc"
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel GenerateTerrain
+
+float PerlinScale;
+float PerlinXOffset;
+float PerlinYOffset;
+int PerlinIterations;
+int Resolution;
+
+float MinHeight;
+float HeightScale;
+
+RWBuffer<float> Heights;
+
+[numthreads(8,8,1)]
+void GenerateTerrain (uint3 id : SV_DispatchThreadID)
+{
+    float xCoord = PerlinXOffset + id.x;
+    float yCoord = PerlinYOffset + id.y;
+    float amplitude = 1.0;
+    float scale = PerlinScale / 500.0;
+
+    float perlin = 0;
+
+    for(int i = 0; i < PerlinIterations; i++) {
+        float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
+        value = (value + 1) / 2;
+        perlin += value / amplitude;
+
+        scale *= 2;
+        amplitude *= 2;
+    }
+
+    int index = id.x + Resolution * id.y;
+    float height = perlin * 0.7;
+    if(height < MinHeight + 0.05) {
+        if(height < MinHeight - 0.05) {
+            height = MinHeight;                        
+        } else {
+            height = lerp(MinHeight, MinHeight + 0.05f, (height + 0.05f - MinHeight) * 10);
+        }
+    }
+
+    height = (height - 0.5f) * HeightScale + 0.5f;
+
+    Heights[index] = height;
+}
