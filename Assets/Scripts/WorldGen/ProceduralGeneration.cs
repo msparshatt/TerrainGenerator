@@ -19,6 +19,7 @@ public class ProceduralGeneration
     public bool toggle;
 
     public float minHeight;
+    public float heightscale;
 
     private int defaultTerrainResolution;
     private int noCells;
@@ -96,7 +97,7 @@ public class ProceduralGeneration
                     }
                 }
 
-                heights[x, y] = height;
+                heights[x, y] = (height - 0.5f) * heightscale + 0.5f;
 
                 totalTime += Time.realtimeSinceStartup - start;
             }

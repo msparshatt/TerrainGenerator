@@ -30,6 +30,7 @@ public class ProceduralControlPanel : MonoBehaviour
 
     [Header("Settings")]
     public Slider minimumHeightSlider;
+    public Slider heightScaleSlider;
     public Toggle clampToggle;
 
 
@@ -125,6 +126,7 @@ public class ProceduralControlPanel : MonoBehaviour
 
         procGen.clampEdges = clampToggle.isOn;
         procGen.minHeight = minimumHeightSlider.value;
+        procGen.heightscale = heightScaleSlider.value;
 
         if(erodeToggle.isOn) {
             erosion.isOn = true;
