@@ -8,10 +8,86 @@ float PerlinYOffset;
 int PerlinIterations;
 int Resolution;
 
+float VoronoiXOffset;
+float VoronoiYOffset;
+float CellSize;
+int NumberCells;
+
+float Factor;
+
 float MinHeight;
 float HeightScale;
 
 RWBuffer<float> Heights;
+
+float2 Rand2D(float xPos, float yPos)
+{
+    float2 smallValue = float2(sin(xPos), sin(yPos));
+
+    float2 dotDir = float2(12.989f, 78.233f);
+    float random = dot(smallValue, dotDir);
+
+    float x = sin(random) * 143758.5453f;
+    x -= floor(x);
+
+    dotDir = float2(39.346f, 11.135f);
+    random = dot(smallValue, dotDir);
+
+    float y = sin(random) * 143758.5453f;
+    y -= floor(y);
+
+    return float2(x, y);
+}
+
+float VoronoiNoise(float xPos, float yPos)
+{
+    float xcoord = abs(xPos + VoronoiXOffset);
+    float ycoord = abs(yPos + VoronoiYOffset);
+
+    float xPosition = xcoord / CellSize;
+    float yPosition = ycoord / CellSize;
+
+    int xBase = floor(xPosition);
+    int yBase = floor(yPosition);
+//    pos.x += noiseAmplitude * Random.value;
+//    pos.y += noiseAmplitude * Random.value;
+
+
+    float minDistance = 100;
+    float minDistance2 = 110;
+
+    for(int x=-1; x<=1; x++) {
+        for(int y=-1; y<=1; y++) {
+            int cellX = xBase + x;
+            int cellY = yBase + y;
+
+            //don't try to read outside the bounds of the array
+            if(cellX < 0) {
+                continue;
+            }
+            if(cellY < 0) {
+                continue;
+            }
+
+            float2 voronoiPos = float2(cellX, cellY) + Rand2D(cellX, cellY);
+            float distToCell = sqrt((xPosition - voronoiPos.x) * (xPosition - voronoiPos.x) + (yPosition - voronoiPos.y) * (yPosition - voronoiPos.y));
+            //Vector2.Distance(voronoiCells[cell.x, cell.y], pos);
+
+            if(distToCell < minDistance){
+                minDistance2 = minDistance;
+                minDistance = distToCell;
+            } else if(distToCell < minDistance2) {
+                minDistance2 = distToCell;
+            }   
+        }
+    }
+
+
+    float result = 0;
+    result = minDistance * -1 + minDistance2;
+
+    return result;
+}
 
 [numthreads(8,8,1)]
 void GenerateTerrain (uint3 id : SV_DispatchThreadID)
@@ -24,7 +100,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     float perlin = 0;
 
     for(int i = 0; i < PerlinIterations; i++) {
-        float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
+        float value = snoise(float2(xCoord * scale, yCoord * scale + 0.1));
         value = (value + 1) / 2;
         perlin += value / amplitude;
 
@@ -32,8 +108,10 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
         amplitude *= 2;
     }
 
+    float voronoi = VoronoiNoise(id.x, id.y);
+
     int index = id.x + Resolution * id.y;
-    float height = perlin * 0.7;
+    float height = (voronoi * (1 - Factor) + perlin * Factor) * 0.7;
     if(height < MinHeight + 0.05) {
         if(height < MinHeight - 0.05) {
             height = MinHeight;                        

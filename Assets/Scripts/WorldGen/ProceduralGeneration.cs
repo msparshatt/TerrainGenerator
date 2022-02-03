@@ -65,12 +65,20 @@ public class ProceduralGeneration
         int kernelHandle = proceduralGenerationShader.FindKernel("GenerateTerrain");
 
         proceduralGenerationShader.SetFloat("PerlinScale", scale);
-        proceduralGenerationShader.SetFloat("PerlinXOffset", scale);
-        proceduralGenerationShader.SetFloat("PerlinYOffset", scale);
+        proceduralGenerationShader.SetFloat("PerlinXOffset", perlinOffset.x);
+        proceduralGenerationShader.SetFloat("PerlinYOffset", perlinOffset.y);
         proceduralGenerationShader.SetInt("PerlinIterations", iterations);
+        proceduralGenerationShader.SetInt("Resolution", size);
+
+        proceduralGenerationShader.SetFloat("VoronoiXOffset", voronoiOffset.x);
+        proceduralGenerationShader.SetFloat("VoronoiYOffset", voronoiOffset.y);
+        proceduralGenerationShader.SetInt("NoCells", noCells);
+        proceduralGenerationShader.SetFloat("CellSize", cellSize);
+
+        proceduralGenerationShader.SetFloat("Factor", factor);
+
         proceduralGenerationShader.SetFloat("MinHeight", minHeight);
         proceduralGenerationShader.SetFloat("HeightScale", heightscale);
-        proceduralGenerationShader.SetInt("Resolution", size);
 
         proceduralGenerationShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
         int groups = Mathf.CeilToInt(size / 8f);
