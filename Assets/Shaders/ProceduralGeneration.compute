@@ -50,9 +50,6 @@ float VoronoiNoise(float xPos, float yPos)
 
     int xBase = floor(xPosition);
     int yBase = floor(yPosition);
-//    pos.x += noiseAmplitude * Random.value;
-//    pos.y += noiseAmplitude * Random.value;
-
 
     float minDistance = 100;
     float minDistance2 = 110;
