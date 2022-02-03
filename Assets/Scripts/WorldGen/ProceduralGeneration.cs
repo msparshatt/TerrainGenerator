@@ -79,6 +79,7 @@ public class ProceduralGeneration
 
         proceduralGenerationShader.SetFloat("MinHeight", minHeight);
         proceduralGenerationShader.SetFloat("HeightScale", heightscale);
+        proceduralGenerationShader.SetBool("ClampEdges", clampEdges);
 
         proceduralGenerationShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
         int groups = Mathf.CeilToInt(size / 8f);

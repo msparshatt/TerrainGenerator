@@ -17,6 +17,7 @@ float Factor;
 
 float MinHeight;
 float HeightScale;
+bool ClampEdges;
 
 RWBuffer<float> Heights;
 
@@ -100,7 +101,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     float perlin = 0;
 
     for(int i = 0; i < PerlinIterations; i++) {
-        float value = snoise(float2(xCoord * scale, yCoord * scale + 0.1));
+        float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
         value = (value + 1) / 2;
         perlin += value / amplitude;
 
@@ -112,6 +113,24 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 
     int index = id.x + Resolution * id.y;
     float height = (voronoi * (1 - Factor) + perlin * Factor) * 0.7;
+
+    float edgeClamp = 0;
+    float center = Resolution / 2;
+    if(ClampEdges) {
+
+        float xDistance = id.x - center;
+        float yDistance = id.y - center;
+        float distance = xDistance * xDistance + yDistance * yDistance;
+
+        edgeClamp = distance / (center * center);
+
+        if(edgeClamp > 1) {
+            edgeClamp = 1.0;
+        }
+
+        height = lerp(height, 0.5, edgeClamp);                    
+    }
+
     if(height < MinHeight + 0.05) {
         if(height < MinHeight - 0.05) {
             height = MinHeight;                        
