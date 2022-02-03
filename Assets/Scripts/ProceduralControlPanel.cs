@@ -23,7 +23,6 @@ public class ProceduralControlPanel : MonoBehaviour
     public Slider voronoiXOffsetSlider;
     public Slider voronoiYOffsetSlider;
     public Slider voronoiCellSizeSlider;
-    public Slider voronoiRandomSlider;
 
     [Header("Factor")]
     public Slider factorSlider;
@@ -122,7 +121,6 @@ public class ProceduralControlPanel : MonoBehaviour
 
         procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiYOffsetSlider.value);
         procGen.cellSize = voronoiCellSizeSlider.value; // * 100;
-        procGen.noiseAmplitude = voronoiRandomSlider.value;
 
         procGen.factor = factorSlider.value;
 
