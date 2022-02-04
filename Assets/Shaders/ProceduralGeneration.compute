@@ -91,7 +91,7 @@ float VoronoiNoise(float xPos, float yPos)
 
 
     float result = 0;
-    result = minDistance * -1 + minDistance2;
+    result = minDistance2 - minDistance;
 
     return result;
 }
@@ -125,11 +125,15 @@ float Terraces(int index, float height)
     return newHeight;
 }
 
-[numthreads(8,8,1)]
+[numthreads(64,1,1)]
 void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 {
-    float xCoord = PerlinXOffset + id.x;
-    float yCoord = PerlinYOffset + id.y;
+    //calcuate the location in the heightmap
+    int x = id.x % Resolution;
+    int y = id.x / Resolution;
+
+    float xCoord = PerlinXOffset + x;
+    float yCoord = PerlinYOffset + y;
     float amplitude = 1.0;
     float scale = PerlinScale / 500.0;
 
@@ -146,18 +150,19 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     }
 
     //calculate the voronoi noise
-    float voronoi = VoronoiNoise(id.x, id.y);
+    float voronoi = VoronoiNoise(x, y);
 
     //mix the two noise functions
     float height = (voronoi * (1 - Factor) + perlin * Factor) * 0.7;
+
 
     //if Clamp Edges is true then ensure the height tends to the midpoint at the edges of the heightmap
     float edgeClamp = 0;
     float center = Resolution / 2;
     if(ClampEdges) {
 
-        float xDistance = id.x - center;
-        float yDistance = id.y - center;
+        float xDistance = x - center;
+        float yDistance = y - center;
         float distance = xDistance * xDistance + yDistance * yDistance;
 
         edgeClamp = distance / (center * center);
@@ -187,6 +192,5 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     }
 
     //write the value to the buffer
-    int index = id.x + Resolution * id.y;
-    Heights[index] = height;
+    Heights[id.x] = height;
 }

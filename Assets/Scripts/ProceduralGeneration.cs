@@ -87,7 +87,6 @@ public class ProceduralGeneration
         shaderRunning = true;
 
         ComputeBuffer heightBuffer = new ComputeBuffer(size * size, sizeof(float));
-        float[,] heights = new float[size, size];
         int kernelHandle = proceduralGenerationShader.FindKernel("GenerateTerrain");
 
         proceduralGenerationShader.SetFloat("PerlinScale", scale);
@@ -122,8 +121,8 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloats("TerraceParameters", terraceParameters);
 
         proceduralGenerationShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
-        int groups = Mathf.CeilToInt(size / 8f);
-		proceduralGenerationShader.Dispatch(0, groups, groups, 1);
+        int groups = Mathf.CeilToInt(size * size / 64f);
+		proceduralGenerationShader.Dispatch(0, groups, 1, 1);
 
         float[] data = new float[heightBuffer.count];
         heightBuffer.GetData(data);
