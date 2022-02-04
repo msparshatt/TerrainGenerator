@@ -322,8 +322,6 @@ public class TerrainManager
             return;
 
         if(erosion) { 
-            Debug.Log("Eroding");
-
             heights = procGen.Erosion(heights, _heightmapresolution);
         }
 
@@ -418,25 +416,12 @@ public class TerrainManager
 
         float[,] unityHeights = new float[resolution, resolution];
 
-        Vector2 pos = Vector2.zero;
-            
-        for (int i = 0 ; i < heightData.Length; i++) {
-            unityHeights[(int)pos.y, (int)pos.x] = heightData[i];
-
-            if (pos.x < resolution - 1)
-            {
-                pos.x += 1;
-            }
-            else
-            {
-                pos.x = 0;
-                pos.y += 1;
-                if (pos.y >= resolution)
-                {
-                    break;
-                }
-            }
-                
+        int index = 0;
+        for(int i = 0; i < resolution; i++) {
+            for(int j = 0; j < resolution; j++) {
+                unityHeights[j, i] = heightData[index];
+                index++;
+            }            
         }
 
         return unityHeights;
