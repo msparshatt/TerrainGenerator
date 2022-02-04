@@ -2,27 +2,34 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel GenerateTerrain
 
+//perlin noise parameters
 float PerlinScale;
 float PerlinXOffset;
 float PerlinYOffset;
 int PerlinIterations;
 int Resolution;
 
+//voronoi noise parameters
 float VoronoiXOffset;
 float VoronoiYOffset;
 float CellSize;
 int NumberCells;
 
+//factor for mixing perlin and voronoi noise
 float Factor;
 
+//settings
 float MinHeight;
 float HeightScale;
 bool ClampEdges;
 
+//terrace parameters
 float2 TerraceParameters[3];
 
+//ouput buffer
 RWBuffer<float> Heights;
 
+//calculate a 2D random number, used for producing voronoi noise
 float2 Rand2D(float xPos, float yPos)
 {
     float2 smallValue = float2(sin(xPos), sin(yPos));
@@ -89,6 +96,7 @@ float VoronoiNoise(float xPos, float yPos)
     return result;
 }
 
+//sigmoid value used for terracing
 float Sigmoid(float k, float t)
 {
     return (k * t) / (1 + k - t);
@@ -127,6 +135,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 
     float perlin = 0;
 
+    //calculate sum of a series of perlin noise functions
     for(int i = 0; i < PerlinIterations; i++) {
         float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
         value = (value + 1) / 2;
@@ -136,11 +145,13 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
         amplitude *= 2;
     }
 
+    //calculate the voronoi noise
     float voronoi = VoronoiNoise(id.x, id.y);
 
-    int index = id.x + Resolution * id.y;
+    //mix the two noise functions
     float height = (voronoi * (1 - Factor) + perlin * Factor) * 0.7;
 
+    //if Clamp Edges is true then ensure the height tends to the midpoint at the edges of the heightmap
     float edgeClamp = 0;
     float center = Resolution / 2;
     if(ClampEdges) {
@@ -158,6 +169,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
         height = lerp(height, 0.5, edgeClamp);                    
     }
 
+    //ensure the height is above the minimum value
     if(height < MinHeight + 0.05) {
         if(height < MinHeight - 0.05) {
             height = MinHeight;                        
@@ -166,11 +178,15 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
         }
     }
 
+    //apply the scale value
     height = (height - 0.5f) * HeightScale + 0.5f;
 
+    //add any terraces
     for(int terraceIndex = 0; terraceIndex < 3; terraceIndex++) {
         height = Terraces(terraceIndex, height);
     }
 
+    //write the value to the buffer
+    int index = id.x + Resolution * id.y;
     Heights[index] = height;
 }
