@@ -419,7 +419,7 @@ public class TerrainManager
         int index = 0;
         for(int i = 0; i < resolution; i++) {
             for(int j = 0; j < resolution; j++) {
-                unityHeights[j, i] = heightData[index];
+                unityHeights[i, j] = heightData[index];
                 index++;
             }            
         }
