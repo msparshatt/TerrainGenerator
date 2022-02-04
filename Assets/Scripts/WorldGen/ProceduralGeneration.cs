@@ -111,6 +111,7 @@ public class ProceduralGeneration
             foreach (Layer layer in layerList) {
                 terraceParameters[4 * count] = layer.terraceCount;
                 terraceParameters[4 * count + 1] = layer.shape;
+                count++;
             }
         }
         proceduralGenerationShader.SetFloats("TerraceParameters", terraceParameters);
