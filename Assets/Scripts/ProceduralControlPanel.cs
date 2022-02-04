@@ -138,16 +138,16 @@ public class ProceduralControlPanel : MonoBehaviour
             erosion.factor = 0f;
         }
 
-        terrace.ClearLayers();
+        procGen.ClearLayers();
         if(terraceToggle.isOn) {
             if(layer1Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer1CountSlider.value), layer1ShaperSlider.value);
+                procGen.AddLayer(Mathf.FloorToInt(layer1CountSlider.value), layer1ShaperSlider.value);
             }
             if(layer2Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer2CountSlider.value), layer2ShaperSlider.value);
+                procGen.AddLayer(Mathf.FloorToInt(layer2CountSlider.value), layer2ShaperSlider.value);
             }
             if(layer3Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer3CountSlider.value), layer3ShaperSlider.value);
+                procGen.AddLayer(Mathf.FloorToInt(layer3CountSlider.value), layer3ShaperSlider.value);
             }
         }
 

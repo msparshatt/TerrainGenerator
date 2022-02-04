@@ -19,6 +19,8 @@ float MinHeight;
 float HeightScale;
 bool ClampEdges;
 
+float2 TerraceParameters[3];
+
 RWBuffer<float> Heights;
 
 float2 Rand2D(float xPos, float yPos)
@@ -87,6 +89,34 @@ float VoronoiNoise(float xPos, float yPos)
     return result;
 }
 
+float Sigmoid(float k, float t)
+{
+    return (k * t) / (1 + k - t);
+}
+
+float Terraces(int index, float height)
+{
+    float newHeight = height;
+
+    if(TerraceParameters[index].x != -1) {
+        float terraceHeight = height * TerraceParameters[index].x;
+
+        int heightFloor = floor(terraceHeight);
+        float difference = terraceHeight - heightFloor;
+
+        float shape = TerraceParameters[index].y;
+
+        float newDifference = Sigmoid(shape, difference);
+
+        float minHeight = (float)(heightFloor) / TerraceParameters[index].x;
+        float maxHeight = (float)(heightFloor + 1) / TerraceParameters[index].x;
+
+        newHeight = lerp(minHeight, maxHeight, newDifference);
+    }
+
+    return newHeight;
+}
+
 [numthreads(8,8,1)]
 void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 {
@@ -137,6 +167,10 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     }
 
     height = (height - 0.5f) * HeightScale + 0.5f;
+
+    for(int terraceIndex = 0; terraceIndex < 3; terraceIndex++) {
+        height = Terraces(terraceIndex, height);
+    }
 
     Heights[index] = height;
 }

@@ -321,10 +321,10 @@ public class TerrainManager
         if(heights == null)
             return;
 
-        if(terrace != null) {
+/*        if(terrace != null) {
             Debug.Log("Applying terraces");
             heights = terrace.AddTerraces(heights, _heightmapresolution);
-        }
+        }*/
 
 
         if(erosion != null) { 

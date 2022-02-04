@@ -34,6 +34,8 @@ public class ProceduralGeneration
 
     private bool shaderRunning;
 
+    private List<Layer> layerList = new List<Layer>();
+
     public ProceduralGeneration(int _defaultTerrainResolution)
     {
         defaultTerrainResolution = _defaultTerrainResolution;
@@ -48,6 +50,16 @@ public class ProceduralGeneration
 
         noCells = 100;
         shaderRunning = false;
+    }
+
+    public void AddLayer(int _terraceCount, float _shape)
+    {
+        layerList.Add(new Layer(_terraceCount, _shape));
+    }
+
+    public void ClearLayers()
+    {
+        layerList.Clear();
     }
 
     public float[,] GenerateHeightMap(int size, int multiplier = 1)
@@ -77,6 +89,19 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloat("MinHeight", minHeight);
         proceduralGenerationShader.SetFloat("HeightScale", heightscale);
         proceduralGenerationShader.SetBool("ClampEdges", clampEdges);
+
+        float[] terraceParameters = {-1, -1, 0, 0
+        -1, -1, 0, 0,
+        -1, -1, 0, 0};
+
+        if(layerList.Count != 0) {
+            int count = 0;
+            foreach (Layer layer in layerList) {
+                terraceParameters[4 * count] = layer.terraceCount;
+                terraceParameters[4 * count + 1] = layer.shape;
+            }
+        }
+        proceduralGenerationShader.SetFloats("TerraceParameters", terraceParameters);
 
         proceduralGenerationShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
         int groups = Mathf.CeilToInt(size / 8f);
