@@ -1,0 +1,58 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Erode
+
+int Resolution;
+float Factor; //amount to multiply displacement by
+int IterationCount; //number of iterations
+
+float Talus = 0.016; //maximum inclination
+
+//input/ouput buffer
+RWBuffer<float> Heights;
+
+[numthreads(8,8,1)]
+void Erode (uint3 id : SV_DispatchThreadID) 
+{
+    int index = id.x + id.y * Resolution;
+
+    float height = Heights[index];
+
+    for(int iteration = 0; iteration < IterationCount; iteration++) {
+        float totalDelta = 0;
+        float maxDelta = 0;
+        float delta = 0;
+        int lowestIndex = 0;
+
+        for(int k = 0; k < 4; k++) {
+            if((index - 1 >= 0) && (index + 1 < Resolution * Resolution) && (index - Resolution >= 0) && (index + Resolution < Resolution * Resolution)) {
+                delta = height - Heights[index - 1];
+                if(delta > maxDelta) {
+                    maxDelta = delta;
+                    //lowestIndex = k;
+                }
+                delta = height - Heights[index + 1];
+                if(delta > maxDelta) {
+                    maxDelta = delta;
+                    //lowestIndex = k;
+                }
+                delta = height - Heights[index + Resolution];
+                if(delta > maxDelta) {
+                    maxDelta = delta;
+                    //lowestIndex = k;
+                }
+                delta = height - Heights[index - Resolution];
+                if(delta > maxDelta) {
+                    maxDelta = delta;
+                    //lowestIndex = k;
+                }
+            }
+        }
+
+        if(maxDelta > 0) { // && maxDelta <= Talus) {
+            height -=  maxDelta * Factor;
+//            heights[i + offsets[lowestIndex].x, j + offsets[lowestIndex].y] += maxDelta * factor;
+        }
+    }
+
+    Heights[index] = height;
+}

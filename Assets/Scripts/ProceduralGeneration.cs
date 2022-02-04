@@ -34,6 +34,11 @@ public class ProceduralGeneration
     public float heightscale;
 
     public ComputeShader proceduralGenerationShader;
+    public ComputeShader erosionShader;
+
+    public bool erosionIsOn;
+    public float erosionFactor;
+    public int erosionIterations;
 
     private int defaultTerrainResolution;
     private int noCells;
@@ -74,7 +79,7 @@ public class ProceduralGeneration
         layerList.Clear();
     }
 
-    public float[,] GenerateHeightMap(int size, int multiplier = 1)
+    public float[] GenerateHeightMap(int size, int multiplier = 1)
     {
         if(shaderRunning)
             return null;
@@ -122,13 +127,37 @@ public class ProceduralGeneration
 
         float[] data = new float[heightBuffer.count];
         heightBuffer.GetData(data);
-        heights = ConvertTo2DArray(data);
 
         heightBuffer.Release();
         heightBuffer = null;
 
         shaderRunning = false;
-        return heights;
+        return data;
+    }
+
+    public float[] Erosion(float[] heights, int size)
+    {
+        Debug.Log("Eroding");
+
+        ComputeBuffer heightBuffer = new ComputeBuffer(size * size, sizeof(float));
+        heightBuffer.SetData(heights);
+
+        int kernelHandle = erosionShader.FindKernel("Erode");
+        erosionShader.SetInt("IterationCount", erosionIterations);
+        erosionShader.SetInt("Resolution", size);
+        erosionShader.SetFloat("Factor", erosionFactor);
+
+        erosionShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
+        int groups = Mathf.CeilToInt(size / 8f);
+        erosionShader.Dispatch(kernelHandle, groups, groups, 1);
+
+        float[] data  = new float[heightBuffer.count];
+        heightBuffer.GetData(data);
+
+        heightBuffer.Release();
+        heightBuffer = null;
+
+        return data;
     }
 
     //convert a 1D float array to a 2D height array so it can be applied to a terrain

@@ -59,13 +59,14 @@ public class ProceduralControlPanel : MonoBehaviour
     public SettingsDataScriptable settingsData;
     public  FlagsDataScriptable flagsData;
     public ComputeShader proceduralGenerationShader;
+    public ComputeShader erosionShader;
 
     public Texture2D busyCursor;
     public RawImage heightmapImage;
 
     //objects to handle the stages of generation
     ProceduralGeneration procGen;
-    Erosion erosion;
+    bool erosion;
 
     private TerrainManager manager;
 
@@ -78,7 +79,7 @@ public class ProceduralControlPanel : MonoBehaviour
         //resolution = currentTerrain.terrainData.heightmapResolution;
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
         procGen.proceduralGenerationShader = proceduralGenerationShader;
-        erosion = new Erosion();
+        erosion = false;
         manager = TerrainManager.instance;
 
         gameObject.SetActive(false);
@@ -126,14 +127,17 @@ public class ProceduralControlPanel : MonoBehaviour
         procGen.minHeight = minimumHeightSlider.value;
         procGen.heightscale = heightScaleSlider.value;
 
+        procGen.erosionShader = erosionShader;
         if(erodeToggle.isOn) {
-            erosion.isOn = true;
-            erosion.iterationCount = (int)erosionIterationsSlider.value;
-            erosion.factor = erosionFactorsetSlider.value;
+            erosion = true;
+            procGen.erosionIsOn = true;
+            procGen.erosionIterations = (int)erosionIterationsSlider.value;
+            procGen.erosionFactor = erosionFactorsetSlider.value;
         } else {
-            erosion.isOn = false;
-            erosion.iterationCount = 0;
-            erosion.factor = 0f;
+            erosion = false;
+            procGen.erosionIsOn = false;
+            procGen.erosionIterations = 0;
+            procGen.erosionFactor = 0f;
         }
 
         procGen.ClearLayers();

@@ -205,7 +205,7 @@ public class TerrainManager
         currentTerrain.terrainData = originalData;
     }
 
-    public void ApplyChanges(ProceduralGeneration procGen, Erosion erosion)
+    public void ApplyChanges(ProceduralGeneration procGen, bool erosion)
     {
         currentTerrain.terrainData = originalData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
@@ -308,11 +308,11 @@ public class TerrainManager
         FindMaximaAndMinima();
     }
 
-    public void CreateProceduralTerrain(ProceduralGeneration procGen, Erosion erosion)
+    public void CreateProceduralTerrain(ProceduralGeneration procGen, bool erosion)
     {
         _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
 
-        float[,] heights;
+        float[] heights;
         Debug.Log("generating terrain");
         
         //HeightMapBuilder heights  = new HeightMapBuilder(shader, size);
@@ -321,15 +321,14 @@ public class TerrainManager
         if(heights == null)
             return;
 
-
-        if(erosion != null) { 
+        if(erosion) { 
             Debug.Log("Eroding");
 
-            heights = erosion.Erode(heights, _heightmapresolution);
+            heights = procGen.Erosion(heights, _heightmapresolution);
         }
 
         Debug.Log("Creating terrain");
-        CreateTerrain(heights);
+        CreateTerrain(ConvertTo2DArray(heights));
         FindMaximaAndMinima();
     }
 

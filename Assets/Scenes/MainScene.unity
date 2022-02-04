@@ -44740,7 +44740,6 @@ MonoBehaviour:
   voronoiXOffsetSlider: {fileID: 1290215075}
   voronoiYOffsetSlider: {fileID: 1466187927}
   voronoiCellSizeSlider: {fileID: 612410709}
-  voronoiRandomSlider: {fileID: 0}
   factorSlider: {fileID: 553907182}
   minimumHeightSlider: {fileID: 2035639567}
   heightScaleSlider: {fileID: 1886907898}
@@ -44762,6 +44761,7 @@ MonoBehaviour:
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   flagsData: {fileID: 11400000, guid: dab7a105691cf5ca0b0e3a94f318242e, type: 2}
   proceduralGenerationShader: {fileID: 7200000, guid: ac96a9232ca4183ddb1bd51fb46ceeb9, type: 3}
+  erosionShader: {fileID: 7200000, guid: 250183c8dbd5b7884a9714d612acab40, type: 3}
   busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
   heightmapImage: {fileID: 1882173313}
 --- !u!114 &1765543709
