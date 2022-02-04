@@ -2,6 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Layer
+{
+    public int terraceCount;
+    public float shape;
+
+    public Layer(int _terraceCount, float _shape)
+    {
+        terraceCount = _terraceCount;
+        shape = _shape;
+    }
+}
+
 public class ProceduralGeneration
 {
     public Vector2 perlinOffset;

@@ -65,7 +65,6 @@ public class ProceduralControlPanel : MonoBehaviour
 
     //objects to handle the stages of generation
     ProceduralGeneration procGen;
-    TerraceSettings terrace;
     Erosion erosion;
 
     private TerrainManager manager;
@@ -79,7 +78,6 @@ public class ProceduralControlPanel : MonoBehaviour
         //resolution = currentTerrain.terrainData.heightmapResolution;
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
         procGen.proceduralGenerationShader = proceduralGenerationShader;
-        terrace = new TerraceSettings();
         erosion = new Erosion();
         manager = TerrainManager.instance;
 
@@ -151,7 +149,7 @@ public class ProceduralControlPanel : MonoBehaviour
             }
         }
 
-        manager.CreateProceduralTerrain(procGen, terrace, erosion);
+        manager.CreateProceduralTerrain(procGen, erosion);
 
         heightmapImage.GetComponent<RawImage>().texture = manager.GetHeightmapTexture();
     }
@@ -171,7 +169,7 @@ public class ProceduralControlPanel : MonoBehaviour
         Cursor.visible = false;
         Cursor.visible = true;
 
-        manager.ApplyChanges(procGen, terrace, erosion);
+        manager.ApplyChanges(procGen, erosion);
 
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
 
