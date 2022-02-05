@@ -10,10 +10,10 @@ float Talus = 0.016; //maximum inclination
 //input/ouput buffer
 RWBuffer<float> Heights;
 
-[numthreads(8,8,1)]
+[numthreads(64,1,1)]
 void Erode (uint3 id : SV_DispatchThreadID) 
 {
-    int index = id.x + id.y * Resolution;
+    int index = id.x;
 
     float height = Heights[index];
 
@@ -22,35 +22,35 @@ void Erode (uint3 id : SV_DispatchThreadID)
         float maxDelta = 0;
         float delta = 0;
         int lowestIndex = 0;
-
+        uint2 offsets[] = {uint2(-1, 0), uint2(1, 0), uint2(0, 1), uint2(0, -1)};
         for(int k = 0; k < 4; k++) {
-            if((index - 1 >= 0) && (index + 1 < Resolution * Resolution) && (index - Resolution >= 0) && (index + Resolution < Resolution * Resolution)) {
+            if((index - Resolution >= 0) && (index + Resolution < Resolution * Resolution)) {
                 delta = height - Heights[index - 1];
                 if(delta > maxDelta) {
                     maxDelta = delta;
-                    //lowestIndex = k;
+                    lowestIndex = 0;
                 }
                 delta = height - Heights[index + 1];
                 if(delta > maxDelta) {
                     maxDelta = delta;
-                    //lowestIndex = k;
+                    lowestIndex = 1;
                 }
                 delta = height - Heights[index + Resolution];
                 if(delta > maxDelta) {
                     maxDelta = delta;
-                    //lowestIndex = k;
+                    lowestIndex = 2;
                 }
                 delta = height - Heights[index - Resolution];
                 if(delta > maxDelta) {
                     maxDelta = delta;
-                    //lowestIndex = k;
+                    lowestIndex = 3;
                 }
             }
         }
 
         if(maxDelta > 0) { // && maxDelta <= Talus) {
             height -=  maxDelta * Factor;
-//            heights[i + offsets[lowestIndex].x, j + offsets[lowestIndex].y] += maxDelta * factor;
+            Heights[index + offsets[lowestIndex].x + offsets[lowestIndex].y * Resolution] += maxDelta * Factor;
         }
     }
 

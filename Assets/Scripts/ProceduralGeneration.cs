@@ -147,8 +147,8 @@ public class ProceduralGeneration
         erosionShader.SetFloat("Factor", erosionFactor);
 
         erosionShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
-        int groups = Mathf.CeilToInt(size / 8f);
-        erosionShader.Dispatch(kernelHandle, groups, groups, 1);
+        int groups = Mathf.CeilToInt(size * size / 64f);
+        erosionShader.Dispatch(kernelHandle, groups, 1, 1);
 
         float[] data  = new float[heightBuffer.count];
         heightBuffer.GetData(data);
