@@ -36,7 +36,6 @@ public class TerrainManager
 
     //copy used for procedural generation
     private TerrainData copyData;
-    private int multiplier;
 
     private TerrainPainter painter;
     private TerrainSculpter sculpter;
@@ -191,13 +190,11 @@ public class TerrainManager
     public void SetupChanges()
     {
         copyData = CopyTerrain(originalData);
-        copyData.heightmapResolution = 1025;
 
         copyData.size = new Vector3(1000, 1000, 1000);
 
         currentTerrain.terrainData = copyData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = copyData;    
-        multiplier = 1;
     }
 
     public void RevertChanges()
@@ -209,7 +206,6 @@ public class TerrainManager
     {
         currentTerrain.terrainData = originalData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
-        multiplier = 1;
 
         CreateProceduralTerrain(procGen, erosion);
         FindMaximaAndMinima();
@@ -316,7 +312,7 @@ public class TerrainManager
         Debug.Log("generating terrain");
         
         //HeightMapBuilder heights  = new HeightMapBuilder(shader, size);
-        heights = procGen.GenerateHeightMap(_heightmapresolution, multiplier);            
+        heights = procGen.GenerateHeightMap(_heightmapresolution);            
 
         if(heights == null)
             return;

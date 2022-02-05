@@ -79,7 +79,7 @@ public class ProceduralGeneration
         layerList.Clear();
     }
 
-    public float[] GenerateHeightMap(int size, int multiplier = 1)
+    public float[] GenerateHeightMap(int size)
     {
         if(shaderRunning)
             return null;
@@ -157,37 +157,5 @@ public class ProceduralGeneration
         heightBuffer = null;
 
         return data;
-    }
-
-    //convert a 1D float array to a 2D height array so it can be applied to a terrain
-    private float[,] ConvertTo2DArray(float[] heightData)
-    {
-        int resolution = (int)Mathf.Sqrt(heightData.Length);
-        //Debug.Log(resolution);
-
-        float[,] unityHeights = new float[resolution, resolution];
-
-        Vector2 pos = Vector2.zero;
-            
-        for (int i = 0 ; i < heightData.Length; i++) {
-            unityHeights[(int)pos.y, (int)pos.x] = heightData[i];
-
-            if (pos.x < resolution - 1)
-            {
-                pos.x += 1;
-            }
-            else
-            {
-                pos.x = 0;
-                pos.y += 1;
-                if (pos.y >= resolution)
-                {
-                    break;
-                }
-            }
-                
-        }
-
-        return unityHeights;
     }
 }
