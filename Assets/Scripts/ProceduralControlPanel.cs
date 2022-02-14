@@ -52,6 +52,14 @@ public class ProceduralControlPanel : MonoBehaviour
     public Toggle erodeToggle;
     public Slider erosionIterationsSlider;
     public Slider erosionFactorsetSlider;
+    public Slider erosionCapcitySlider;
+    public Slider erosionErosionSpeedSlider;
+    public Slider erosionDepositSpeedSlider;
+    public Slider erosionEvaporationSlider;
+    public Slider erosionLifetimeSlider;
+    public Slider erosionStartSpeedSlider;
+    public Slider erosionStartWaterSlider;
+    public Slider erosionInertiaSlider;
 
     [Header("Terrain")]
     public Terrain currentTerrain;
@@ -114,7 +122,6 @@ public class ProceduralControlPanel : MonoBehaviour
     }
     public void UpdateTerrain()
     {
-
         procGen.perlinOffset = new Vector2(xOffsetSlider.value, yOffsetSlider.value);
         procGen.scale = scaleSlider.value;
         procGen.iterations = (int)iterationSlider.value;
@@ -133,8 +140,17 @@ public class ProceduralControlPanel : MonoBehaviour
         if(erodeToggle.isOn) {
             erosion = true;
             procGen.erosionIsOn = true;
-            procGen.erosionIterations = 200000; //(int)erosionIterationsSlider.value;
+            procGen.erosionIterations = (int)erosionIterationsSlider.value;
             procGen.erosionFactor = erosionFactorsetSlider.value;
+
+            procGen.sedimentCapaFactor = erosionCapcitySlider.value;
+            procGen.eroSpeed = erosionErosionSpeedSlider.value;
+            procGen.depSpeed = erosionDepositSpeedSlider.value;
+            procGen.evaporateSpeed = erosionEvaporationSlider.value;
+            procGen.lifetime = (int)erosionLifetimeSlider.value;
+            procGen.startSpeed = erosionStartSpeedSlider.value;
+            procGen.startWater = erosionStartWaterSlider.value;
+            procGen.inertia = erosionInertiaSlider.value;
         } else {
             erosion = false;
             procGen.erosionIsOn = false;
