@@ -138,22 +138,26 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     float scale = PerlinScale / 500.0;
 
     float perlin = 0;
+    float totalAmplitude = 0;
 
     //calculate sum of a series of perlin noise functions
     for(int i = 0; i < PerlinIterations; i++) {
         float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
         value = (value + 1) / 2;
-        perlin += value / amplitude;
+        perlin += value * amplitude;
 
         scale *= 2;
-        amplitude *= 2;
+        totalAmplitude += amplitude;
+        amplitude *= 0.5;
     }
 
+    perlin /= totalAmplitude;
+
     //calculate the voronoi noise
-    float voronoi = VoronoiNoise(x, y);
+    float voronoi = VoronoiNoise(x, y) * 0.7;
 
     //mix the two noise functions
-    float height = (voronoi * (1 - Factor) + perlin * Factor) * 0.7;
+    float height = (voronoi * (1 - Factor) + perlin * Factor);
 
 
     //if Clamp Edges is true then ensure the height tends to the midpoint at the edges of the heightmap
