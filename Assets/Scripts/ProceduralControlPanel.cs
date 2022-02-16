@@ -18,6 +18,7 @@ public class ProceduralControlPanel : MonoBehaviour
     public Slider yOffsetSlider;
     public Slider scaleSlider;
     public Slider iterationSlider;
+    public Slider iterationFactorSlider;
 
     [Header("Voronoi")]
     public Slider voronoiXOffsetSlider;
@@ -125,6 +126,7 @@ public class ProceduralControlPanel : MonoBehaviour
         procGen.perlinOffset = new Vector2(xOffsetSlider.value, yOffsetSlider.value);
         procGen.scale = scaleSlider.value;
         procGen.iterations = (int)iterationSlider.value;
+        procGen.iterationFactor = iterationFactorSlider.value;
 
         procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiYOffsetSlider.value);
         procGen.cellSize = voronoiCellSizeSlider.value; // * 100;

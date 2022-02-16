@@ -7,6 +7,7 @@ float PerlinScale;
 float PerlinXOffset;
 float PerlinYOffset;
 int PerlinIterations;
+float PerlinIterationFactor;
 int Resolution;
 
 //voronoi noise parameters
@@ -148,7 +149,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 
         scale *= 2;
         totalAmplitude += amplitude;
-        amplitude *= 0.5;
+        amplitude *= PerlinIterationFactor;
     }
 
     perlin /= totalAmplitude;
