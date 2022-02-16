@@ -200,6 +200,7 @@ public class TerrainManager
     public void RevertChanges()
     {
         currentTerrain.terrainData = originalData;
+        currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
     }
 
     public void ApplyChanges(ProceduralGeneration procGen, bool erosion)
