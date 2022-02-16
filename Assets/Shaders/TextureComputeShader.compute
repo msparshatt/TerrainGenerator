@@ -39,9 +39,11 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
         float minValue = 1 - factors[index] - FUDGEFACTOR;
         float value = 0.0f;
 
-        if(mixTypes[index] == 1) {                  //by height
+        if(mixTypes[index] == 1) {                  //by height (top)
             value = height;
-        } else if (mixTypes[index] == 2) {          //by slope
+        } else if (mixTypes[index] == 2) {          //by height (bottom)
+            value = 1 - height;
+        } else if (mixTypes[index] == 3 || mixTypes[index] == 4) {          //by slope (steep/shallow)
             float minHeight = 10;
             float maxHeight = 0;
 
@@ -58,7 +60,10 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             }
 
             value = ((maxHeight - minHeight) * 50);  //turn height difference into value between 0 & 1
-        } else if(mixTypes[index] == 3) {           //peaks
+
+            if(mixTypes[index] == 4)
+                value = 1 - value;
+        } else if(mixTypes[index] == 5) {           //peaks
             float minDistance = 1000;
             for(int index = 0; index < 1000; index++) {
                 float4 maximum = maxima[index];
@@ -72,7 +77,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             }
 
             value = 1 - minDistance / 100;
-        } else if(mixTypes[index] == 4) {           //valleys
+        } else if(mixTypes[index] == 6) {           //valleys
             float minDistance = 1000;
             for(int index = 0; index < 1000; index++) {
                 float4 minimum = minima[index];
@@ -87,7 +92,7 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             }            
 
             value = 1 - minDistance / 100;
-        }  else if(mixTypes[index] == 5) {           //random
+        }  else if(mixTypes[index] == 7) {           //random
             value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
             value = (value + 1) / 2;
         }

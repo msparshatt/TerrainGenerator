@@ -12,7 +12,7 @@ using TMPro;
 
 public class ControlPanel : MonoBehaviour
 {
-    private enum MixTypes  {Height = 1, Slope, Peaks, Valleys, Random};
+    private enum MixTypes  {Top = 1, Bottom, Steep, Shallow, Peaks, Valleys, Random};
     [Header("UI elements")]
     [SerializeField] private TextMeshProUGUI modeText;
     [SerializeField] private GameObject brushScrollView;
