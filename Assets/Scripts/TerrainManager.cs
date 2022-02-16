@@ -36,7 +36,6 @@ public class TerrainManager
 
     //copy used for procedural generation
     private TerrainData copyData;
-    private int multiplier;
 
     private TerrainPainter painter;
     private TerrainSculpter sculpter;
@@ -191,13 +190,11 @@ public class TerrainManager
     public void SetupChanges()
     {
         copyData = CopyTerrain(originalData);
-        copyData.heightmapResolution = 257;
 
         copyData.size = new Vector3(1000, 1000, 1000);
 
         currentTerrain.terrainData = copyData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = copyData;    
-        multiplier = 4;
     }
 
     public void RevertChanges()
@@ -205,13 +202,12 @@ public class TerrainManager
         currentTerrain.terrainData = originalData;
     }
 
-    public void ApplyChanges(ProceduralGeneration procGen, TerraceSettings terraces, Erosion erosion)
+    public void ApplyChanges(ProceduralGeneration procGen, bool erosion)
     {
         currentTerrain.terrainData = originalData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
-        multiplier = 1;
 
-        CreateProceduralTerrain(procGen, terraces, erosion);
+        CreateProceduralTerrain(procGen, erosion);
         FindMaximaAndMinima();
         ApplyTextures();
     }
@@ -308,30 +304,25 @@ public class TerrainManager
         FindMaximaAndMinima();
     }
 
-    public void CreateProceduralTerrain(ProceduralGeneration procGen, TerraceSettings terrace, Erosion erosion)
+    public void CreateProceduralTerrain(ProceduralGeneration procGen, bool erosion)
     {
         _heightmapresolution = currentTerrain.terrainData.heightmapResolution;
 
-        float[,] heights;
+        float[] heights;
         Debug.Log("generating terrain");
         
         //HeightMapBuilder heights  = new HeightMapBuilder(shader, size);
-        heights = procGen.GenerateHeightMap(_heightmapresolution, multiplier);            
+        heights = procGen.GenerateHeightMap(_heightmapresolution);            
 
-        if(terrace != null) {
-            Debug.Log("Applying terraces");
-            heights = terrace.AddTerraces(heights, _heightmapresolution);
-        }
+        if(heights == null)
+            return;
 
-
-        if(erosion != null) { 
-            Debug.Log("Eroding");
-
-            heights = erosion.Erode(heights, _heightmapresolution);
+        if(erosion) { 
+            heights = procGen.Erosion(heights, _heightmapresolution);
         }
 
         Debug.Log("Creating terrain");
-        CreateTerrain(heights);
+        CreateTerrain(ConvertTo2DArray(heights));
         FindMaximaAndMinima();
     }
 
@@ -421,25 +412,12 @@ public class TerrainManager
 
         float[,] unityHeights = new float[resolution, resolution];
 
-        Vector2 pos = Vector2.zero;
-            
-        for (int i = 0 ; i < heightData.Length; i++) {
-            unityHeights[(int)pos.y, (int)pos.x] = heightData[i];
-
-            if (pos.x < resolution - 1)
-            {
-                pos.x += 1;
-            }
-            else
-            {
-                pos.x = 0;
-                pos.y += 1;
-                if (pos.y >= resolution)
-                {
-                    break;
-                }
-            }
-                
+        int index = 0;
+        for(int i = 0; i < resolution; i++) {
+            for(int j = 0; j < resolution; j++) {
+                unityHeights[i, j] = heightData[index];
+                index++;
+            }            
         }
 
         return unityHeights;

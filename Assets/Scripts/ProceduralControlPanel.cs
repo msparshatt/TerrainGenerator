@@ -18,12 +18,13 @@ public class ProceduralControlPanel : MonoBehaviour
     public Slider yOffsetSlider;
     public Slider scaleSlider;
     public Slider iterationSlider;
+    public Slider iterationFactorSlider;
 
     [Header("Voronoi")]
     public Slider voronoiXOffsetSlider;
     public Slider voronoiYOffsetSlider;
     public Slider voronoiCellSizeSlider;
-    public Slider voronoiRandomSlider;
+    public Slider voronoiValleySlider;
 
     [Header("Factor")]
     public Slider factorSlider;
@@ -52,6 +53,14 @@ public class ProceduralControlPanel : MonoBehaviour
     public Toggle erodeToggle;
     public Slider erosionIterationsSlider;
     public Slider erosionFactorsetSlider;
+    public Slider erosionCapcitySlider;
+    public Slider erosionErosionSpeedSlider;
+    public Slider erosionDepositSpeedSlider;
+    public Slider erosionEvaporationSlider;
+    public Slider erosionLifetimeSlider;
+    public Slider erosionStartSpeedSlider;
+    public Slider erosionStartWaterSlider;
+    public Slider erosionInertiaSlider;
 
     [Header("Terrain")]
     public Terrain currentTerrain;
@@ -59,14 +68,15 @@ public class ProceduralControlPanel : MonoBehaviour
     [Header("Other")]
     public SettingsDataScriptable settingsData;
     public  FlagsDataScriptable flagsData;
+    public ComputeShader proceduralGenerationShader;
+    public ComputeShader erosionShader;
 
     public Texture2D busyCursor;
     public RawImage heightmapImage;
 
     //objects to handle the stages of generation
     ProceduralGeneration procGen;
-    TerraceSettings terrace;
-    Erosion erosion;
+    bool erosion;
 
     private TerrainManager manager;
 
@@ -78,8 +88,8 @@ public class ProceduralControlPanel : MonoBehaviour
         Debug.Log("start");
         //resolution = currentTerrain.terrainData.heightmapResolution;
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
-        terrace = new TerraceSettings();
-        erosion = new Erosion();
+        procGen.proceduralGenerationShader = proceduralGenerationShader;
+        erosion = false;
         manager = TerrainManager.instance;
 
         gameObject.SetActive(false);
@@ -113,14 +123,14 @@ public class ProceduralControlPanel : MonoBehaviour
     }
     public void UpdateTerrain()
     {
-
         procGen.perlinOffset = new Vector2(xOffsetSlider.value, yOffsetSlider.value);
         procGen.scale = scaleSlider.value;
         procGen.iterations = (int)iterationSlider.value;
+        procGen.iterationFactor = iterationFactorSlider.value;
 
         procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiYOffsetSlider.value);
         procGen.cellSize = voronoiCellSizeSlider.value; // * 100;
-        procGen.noiseAmplitude = voronoiRandomSlider.value;
+        procGen.voronoiValleys = voronoiValleySlider.value;
 
         procGen.factor = factorSlider.value;
 
@@ -128,30 +138,42 @@ public class ProceduralControlPanel : MonoBehaviour
         procGen.minHeight = minimumHeightSlider.value;
         procGen.heightscale = heightScaleSlider.value;
 
+        procGen.erosionShader = erosionShader;
         if(erodeToggle.isOn) {
-            erosion.isOn = true;
-            erosion.iterationCount = (int)erosionIterationsSlider.value;
-            erosion.factor = erosionFactorsetSlider.value;
+            erosion = true;
+            procGen.erosionIsOn = true;
+            procGen.erosionIterations = (int)erosionIterationsSlider.value;
+            procGen.erosionFactor = erosionFactorsetSlider.value;
+
+            procGen.sedimentCapaFactor = erosionCapcitySlider.value;
+            procGen.eroSpeed = erosionErosionSpeedSlider.value;
+            procGen.depSpeed = erosionDepositSpeedSlider.value;
+            procGen.evaporateSpeed = erosionEvaporationSlider.value;
+            procGen.lifetime = (int)erosionLifetimeSlider.value;
+            procGen.startSpeed = erosionStartSpeedSlider.value;
+            procGen.startWater = erosionStartWaterSlider.value;
+            procGen.inertia = erosionInertiaSlider.value;
         } else {
-            erosion.isOn = false;
-            erosion.iterationCount = 0;
-            erosion.factor = 0f;
+            erosion = false;
+            procGen.erosionIsOn = false;
+            procGen.erosionIterations = 0;
+            procGen.erosionFactor = 0f;
         }
 
-        terrace.ClearLayers();
+        procGen.ClearLayers();
         if(terraceToggle.isOn) {
             if(layer1Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer1CountSlider.value), layer1ShaperSlider.value);
+                procGen.AddLayer(Mathf.FloorToInt(layer1CountSlider.value), layer1ShaperSlider.value);
             }
             if(layer2Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer2CountSlider.value), layer2ShaperSlider.value);
+                procGen.AddLayer(Mathf.FloorToInt(layer2CountSlider.value), layer2ShaperSlider.value);
             }
             if(layer3Toggle.isOn) {
-                terrace.AddLayer(Mathf.FloorToInt(layer3CountSlider.value), layer3ShaperSlider.value);
+                procGen.AddLayer(Mathf.FloorToInt(layer3CountSlider.value), layer3ShaperSlider.value);
             }
         }
 
-        manager.CreateProceduralTerrain(procGen, terrace, erosion);
+        manager.CreateProceduralTerrain(procGen, erosion);
 
         heightmapImage.GetComponent<RawImage>().texture = manager.GetHeightmapTexture();
     }
@@ -171,7 +193,7 @@ public class ProceduralControlPanel : MonoBehaviour
         Cursor.visible = false;
         Cursor.visible = true;
 
-        manager.ApplyChanges(procGen, terrace, erosion);
+        manager.ApplyChanges(procGen, erosion);
 
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
 

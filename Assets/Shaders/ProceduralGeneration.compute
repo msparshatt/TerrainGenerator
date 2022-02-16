@@ -1,0 +1,201 @@
+#include "noiseSimplex.cginc"
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel GenerateTerrain
+
+//perlin noise parameters
+float PerlinScale;
+float PerlinXOffset;
+float PerlinYOffset;
+int PerlinIterations;
+float PerlinIterationFactor;
+int Resolution;
+
+//voronoi noise parameters
+float VoronoiXOffset;
+float VoronoiYOffset;
+float CellSize;
+float VoronoiValleys;
+
+//factor for mixing perlin and voronoi noise
+float Factor;
+
+//settings
+float MinHeight;
+float HeightScale;
+bool ClampEdges;
+
+//terrace parameters
+float2 TerraceParameters[3];
+
+//ouput buffer
+RWBuffer<float> Heights;
+
+//calculate a 2D random number, used for producing voronoi noise
+float2 Rand2D(float xPos, float yPos)
+{
+    float2 smallValue = float2(sin(xPos), sin(yPos));
+
+    float2 dotDir = float2(12.989f, 78.233f);
+    float random = dot(smallValue, dotDir);
+
+    float x = sin(random) * 143758.5453f;
+    x -= floor(x);
+
+    dotDir = float2(39.346f, 11.135f);
+    random = dot(smallValue, dotDir);
+
+    float y = sin(random) * 143758.5453f;
+    y -= floor(y);
+
+    return float2(x, y);
+}
+
+float VoronoiNoise(float xPos, float yPos)
+{
+    float xcoord = abs(xPos + VoronoiXOffset);
+    float ycoord = abs(yPos + VoronoiYOffset);
+
+    float xPosition = xcoord / CellSize;
+    float yPosition = ycoord / CellSize;
+
+    int xBase = floor(xPosition);
+    int yBase = floor(yPosition);
+
+    float minDistance = 100;
+    float minDistance2 = 110;
+
+    for(int x=-1; x<=1; x++) {
+        for(int y=-1; y<=1; y++) {
+            int cellX = xBase + x;
+            int cellY = yBase + y;
+
+            //don't try to read outside the bounds of the array
+            if(cellX < 0) {
+                continue;
+            }
+            if(cellY < 0) {
+                continue;
+            }
+
+            float2 voronoiPos = float2(cellX, cellY) + Rand2D(cellX, cellY);
+            float distToCell = sqrt((xPosition - voronoiPos.x) * (xPosition - voronoiPos.x) + (yPosition - voronoiPos.y) * (yPosition - voronoiPos.y));
+            //Vector2.Distance(voronoiCells[cell.x, cell.y], pos);
+
+            if(distToCell < minDistance){
+                minDistance2 = minDistance;
+                minDistance = distToCell;
+            } else if(distToCell < minDistance2) {
+                minDistance2 = distToCell;
+            }   
+        }
+    }
+
+
+    float result = minDistance2 - minDistance;
+    result = max(result - VoronoiValleys, 0) / (1 - VoronoiValleys);
+
+    return result;
+}
+
+//sigmoid value used for terracing
+float Sigmoid(float k, float t)
+{
+    return (k * t) / (1 + k - t);
+}
+
+float Terraces(int index, float height)
+{
+    float newHeight = height;
+
+    if(TerraceParameters[index].x != -1) {
+        float terraceHeight = height * TerraceParameters[index].x;
+
+        int heightFloor = floor(terraceHeight);
+        float difference = terraceHeight - heightFloor;
+
+        float shape = TerraceParameters[index].y;
+
+        float newDifference = Sigmoid(shape, difference);
+
+        float minHeight = (float)(heightFloor) / TerraceParameters[index].x;
+        float maxHeight = (float)(heightFloor + 1) / TerraceParameters[index].x;
+
+        newHeight = lerp(minHeight, maxHeight, newDifference);
+    }
+
+    return newHeight;
+}
+
+[numthreads(64,1,1)]
+void GenerateTerrain (uint3 id : SV_DispatchThreadID)
+{
+    //calcuate the location in the heightmap
+    int x = id.x % Resolution;
+    int y = id.x / Resolution;
+
+    float xCoord = PerlinXOffset + x;
+    float yCoord = PerlinYOffset + y;
+    float amplitude = 1.0;
+    float scale = PerlinScale / 500.0;
+
+    float perlin = 0;
+    float totalAmplitude = 0;
+
+    //calculate sum of a series of perlin noise functions
+    for(int i = 0; i < PerlinIterations; i++) {
+        float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
+        value = (value + 1) / 2;
+        perlin += value * amplitude;
+
+        scale *= 2;
+        totalAmplitude += amplitude;
+        amplitude *= PerlinIterationFactor;
+    }
+
+    perlin /= totalAmplitude;
+
+    //calculate the voronoi noise
+    float voronoi = VoronoiNoise(x, y) * 0.7;
+
+    //mix the two noise functions
+    float height = (voronoi * (1 - Factor) + perlin * Factor);
+
+
+    //if Clamp Edges is true then ensure the height tends to the midpoint at the edges of the heightmap
+    float edgeClamp = 0;
+    float center = Resolution / 2;
+    if(ClampEdges) {
+
+        float xDistance = x - center;
+        float yDistance = y - center;
+        float distance = xDistance * xDistance + yDistance * yDistance;
+
+        edgeClamp = distance / (center * center);
+
+        if(edgeClamp > 1) {
+            edgeClamp = 1.0;
+        }
+
+        height = lerp(height, 0.5, edgeClamp);                    
+    }
+
+    //ensure the height is above the minimum value
+    if(height < MinHeight + 0.05) {
+        if(height < MinHeight - 0.05) {
+            height = MinHeight;                        
+        } else {
+            height = lerp(MinHeight, MinHeight + 0.05f, (height + 0.05f - MinHeight) * 10);
+        }
+    }
+
+    //apply the scale value
+    height = (height - 0.5f) * HeightScale + 0.5f;
+
+    //add any terraces
+    for(int terraceIndex = 0; terraceIndex < 3; terraceIndex++) {
+        height = Terraces(terraceIndex, height);
+    }
+
+    //write the value to the buffer
+    Heights[id.x] = height;
+}

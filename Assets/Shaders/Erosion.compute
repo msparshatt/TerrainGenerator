@@ -1,0 +1,157 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Erosion
+
+int size;
+int lifetime;
+float startSpeed;
+float inertia;
+float startWater;
+float sedimentCapaFactor;
+float depositSpeed;
+float erosionSpeed;
+float gravity;
+float evaporateSpeed;
+int brushSize;
+
+RWStructuredBuffer<float> map;
+//RWStructuredBuffer<float3> changes;
+StructuredBuffer<float2> startPos;
+StructuredBuffer<float3> brush;
+
+
+float CalculateHeight(float2 position, int size)
+{
+    int2 cell = (int2) position;
+    float2 offset = position - cell;
+    
+    int xn = min(cell.x + 1, size - 1);
+    int yn = min(cell.y + 1, size - 1);
+    
+    float a = map[cell.x * size + cell.y];
+    float b = map[xn * size + cell.y];
+    float c = map[cell.x * size + yn];
+    float d = map[xn * size + yn];
+    
+    float height = (1 - offset.y) * ((1 - offset.x) * a + offset.x * b) + offset.y * ((1 - offset.x) * c + offset.x * d);
+    
+    return height;
+}
+
+float2 CalculateGradient(float2 position, int size)
+{
+    int x = (int) position.x;
+    int y = (int) position.y;
+    float u = position.x - x;
+    float v = position.y - y;
+    
+    int xn = min(x + 1, size - 1);
+    int yn = min(y + 1, size - 1);
+    
+    float a = map[x * size + y];
+    float b = map[xn * size + y];
+    float c = map[x * size + yn];
+    float d = map[xn * size + yn];
+    
+    float gradX = (1 - v) * (b - a) + v * (d - c);
+    float gradY = (1 - u) * (c - a) + u * (d - b);
+    
+    return float2(gradX, gradY);
+}
+
+
+[numthreads(1000,1,1)]
+void Erosion (uint3 id : SV_DispatchThreadID)
+{
+    //initialise variables
+    float2 position = startPos[id.x];
+    float2 newPosition = position;
+    
+    float speed = 0;
+    
+    float2 direction = float2(0, 0);
+    float currHeight = 0;
+    
+    float water = startWater;
+    float sediment = 0;
+          
+    for (int life = 0; life < lifetime; life++)
+    {
+        //calculate the height and gradient
+        float currentHeight = CalculateHeight(position, size);
+        float2 gradient = CalculateGradient(position, size);
+
+        //adjust the direction of motion based on inertia and the gradient
+        direction = inertia * direction - (1 - inertia) * gradient;
+    
+        //normalise the motion vector
+        float magnitude = max(0.00001, sqrt(direction.x * direction.x + direction.y * direction.y));
+        direction /= magnitude;
+
+        //calculate the new position
+        newPosition += direction;
+    
+        //if the new position is outside the grid or the water didn't move, exit the loop
+        if (newPosition.x < 0 || newPosition.y < 0 || newPosition.x >= size || newPosition.y >= size || (direction.x == 0 && direction.y == 0))
+        {
+            break;
+        }
+    
+        //calculate the height for the new position
+        float newheight = CalculateHeight(newPosition, size);
+    
+        //calculate the height difference and the sediment capacity
+        float deltaHeight = newheight - currentHeight;
+        float sedimentCapacity = abs(deltaHeight * speed * water * sedimentCapaFactor);
+    
+        float depositAmount = 0;
+        if (deltaHeight > 0) {
+            //if travelling uphill deposit some sediment
+            depositAmount =  min(deltaHeight, sediment);
+        } else {
+            //travelling downhill
+            if (sediment > sedimentCapacity) {
+                //amount of sediment is above the capicity, so deposit some
+                depositAmount = (sediment - sedimentCapacity) * depositSpeed;
+            } else {
+                //amount of sediment is less than the capacity, so erode some
+                depositAmount = max(deltaHeight, (sediment - sedimentCapacity) * erosionSpeed);
+            }
+        }
+        //modify the amount of sediment
+        sediment -= depositAmount;
+
+        //calculate the position of the current cell and the droplet's offset within the cell
+        int2 cell = (int2) position;
+        int dropletIndex = cell.x * size + cell.y;
+        float2 cellOffset = position - cell;
+
+        if(depositAmount > 0) {
+            //adjust the height of all the cells surrounding the droplet
+            map[dropletIndex] += depositAmount * (1 - cellOffset.x) * (1 - cellOffset.y);
+            map[dropletIndex + 1] += depositAmount * cellOffset.x * (1 - cellOffset.y);
+            map[dropletIndex + size] += depositAmount * (1 - cellOffset.x) * cellOffset.y;
+            map[dropletIndex + size + 1] += depositAmount * cellOffset.x * cellOffset.y;        
+        } else {
+            for (int i = 0; i < 4 * brushSize * brushSize; i++) {
+                    int iX = round(brush[i].x), iY = round(brush[i].y);
+                    float wt = brush[i].z;
+                    
+                    if (cell.x + iX < 0 || cell.y + iY < 0 || cell.x + iX >= size - 1 || cell.y + iY >= size - 1) {
+                        continue;
+                    } else {
+                        float p = (iX > 0) ? cellOffset.x : 1 - cellOffset.x;
+                        float q = (iY > 0) ? cellOffset.y : 1 - cellOffset.y;
+                        
+                        map[(cell.x + iX) * size + cell.y + iY] += p * q * wt * depositAmount;
+                    }
+            }        
+        }
+
+        //adjust the position
+        position = newPosition;
+    
+        //adjust the speed and amount of water
+        speed = sqrt(max(0, speed * speed - deltaHeight * gravity));
+        water *= (1 - evaporateSpeed);
+    }
+}
