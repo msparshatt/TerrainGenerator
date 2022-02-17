@@ -11,6 +11,7 @@ Shader "Unlit/TerrainShader"
         _OverlayTexture("Overlay", 2D) = "RGBA 0,0,0,0" {}
         _CursorLocation("Cursor Location", Vector) = (0, 0, 0.5, 0.5)
         _CursorTexture("Cursor Texture", 2D) = "white" {}
+        _CursorRotation("Cursor Rotation", float) = 0
 
     }
     SubShader
@@ -43,6 +44,7 @@ Shader "Unlit/TerrainShader"
             sampler2D _AOTexture;
             sampler2D _OverlayTexture;
             sampler2D _CursorTexture;
+            float _CursorRotation;
 
             float4 _MainTex_ST;
             float4 _OverlayTexture_ST;
@@ -76,10 +78,27 @@ Shader "Unlit/TerrainShader"
 
                 col = (col * (1 - overlay.a)) + (overlay * overlay.a);
 
-                if((i.uv2.x >= _CursorLocation.x && i.uv2.x <= _CursorLocation.x +  _CursorLocation.z) && 
-                    (i.uv2.y >= _CursorLocation.y && i.uv2.y <= _CursorLocation.y + _CursorLocation.w)) {
-                        float uvX = (i.uv2.x - _CursorLocation.x) / _CursorLocation.z;
-                        float uvY = (i.uv2.y - _CursorLocation.y) / _CursorLocation.w;
+                float angle = radians(_CursorRotation);
+
+                float centerX = _CursorLocation.x + _CursorLocation.z / 2;
+                float centerY = _CursorLocation.y + _CursorLocation.w / 2;
+
+                float diffX = i.uv2.x - centerX;
+                float diffY = i.uv2.y - centerY;
+
+                float rotdiffX = diffX * cos(angle) - diffY * sin(angle);
+                float rotdiffY = diffX * sin(angle) + diffY * cos(angle);
+
+
+                float rotx = centerX + rotdiffX;
+                float roty = centerY + rotdiffY;
+                if((rotx >= _CursorLocation.x && rotx <= _CursorLocation.x +  _CursorLocation.z) && 
+                    (roty >= _CursorLocation.y && roty <= _CursorLocation.y + _CursorLocation.w)) {
+                        float uvX = (rotx - _CursorLocation.x) / _CursorLocation.z;
+                        float uvY = (roty - _CursorLocation.y) / _CursorLocation.w;
+
+
+
                         fixed4 brushCol = {0, 0, tex2D(_CursorTexture, float2(uvX, uvY)).b, 0};
                         brushCol.a = brushCol.b * 0.7;
                         col = (col * (1 - brushCol.a)) + (brushCol * brushCol.a);

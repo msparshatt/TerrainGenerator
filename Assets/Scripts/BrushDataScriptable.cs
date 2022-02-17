@@ -10,6 +10,7 @@ public class BrushDataScriptable : ScriptableObject
     public Modes brushMode;
     public int brushRadius;
     public float brushStrength;
+    public float brushRotation;
     public Texture2D brush;
 
     public Texture2D paintTexture;

@@ -113,6 +113,7 @@ public class ControlPanel : MonoBehaviour
         //set up brush settings
         brushData.brushRadius = 50;
         brushData.brushStrength = 0.05f;
+        brushData.brushRotation = 0;
         brushData.textureScale = 1.0f;
 
         //create selection panels
@@ -237,6 +238,11 @@ public class ControlPanel : MonoBehaviour
     public void StrengthSliderChange(float value)
     {
         brushData.brushStrength = value;
+    }
+
+    public void RotationSliderChange(float value)
+    {
+        brushData.brushRotation = value;
     }
 
     public void ExitButtonClick()

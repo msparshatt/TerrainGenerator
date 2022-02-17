@@ -29,6 +29,7 @@ public class CameraController : MonoBehaviour
     //sliders which can be controlled using the scroll wheel
     [SerializeField] private Slider radiusSlider;
     [SerializeField] private Slider strengthSlider;
+    [SerializeField] private Slider rotationSlider;
 
     //store the operation which is currently being performed
     private Operation operation;
@@ -123,6 +124,8 @@ public class CameraController : MonoBehaviour
 
             if(modifier1)
                 strengthSlider.value -= value / 50;
+            else if(modifier2)
+                rotationSlider.value -= value * 5;
             else
                 radiusSlider.value -= value * 50;
         }
@@ -270,7 +273,7 @@ public class CameraController : MonoBehaviour
             //Debug.Log(posX + ":" + posZ);
             mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(posX, posZ, radius, radius));
             mainTerrain.materialTemplate.SetTexture("_CursorTexture", brushData.brush);
-
+            mainTerrain.materialTemplate.SetFloat("_CursorRotation", -brushData.brushRotation);
         } else {
             mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         }

@@ -14,6 +14,14 @@ public class TerrainPainter : MonoBehaviour
         terrain = gameObject.GetComponent<Terrain>();
     }
 
+    public Vector2 RotateVector(float oldX, float oldY, float degrees)
+    {
+        float radians = Mathf.Deg2Rad * degrees;
+        float newX = oldX * Mathf.Cos(radians) - oldY * Mathf.Sin(radians);
+        float newY = oldX * Mathf.Sin(radians) + oldY * Mathf.Cos(radians);
+        return new Vector2(newX, newY);
+    }
+
     public void PaintTerrain(PaintMode mode, Texture2D texture, Vector3 location, Operation operation)
     {
         //get terrain data
@@ -81,7 +89,20 @@ public class TerrainPainter : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                maskValue = mask[y + maskOffsetY, x + maskOffsetX] * brushData.brushStrength * 5;
+                float posX = x - (width / 2);
+                float posY = y - (length / 2);
+
+                Vector2 rotatedVector = RotateVector(posX, posY, -brushData.brushRotation);
+
+                int newX = Mathf.RoundToInt(rotatedVector.x) + (width / 2);
+                int newY = Mathf.RoundToInt(rotatedVector.y) + (length / 2);
+
+                maskValue = 0;
+                if(newY >= 0 && newY < length && newX >= 0 && newX < width) {
+                    maskValue = mask[newY + maskOffsetY, newX + maskOffsetX] * brushData.brushStrength * 5;
+                }
+
+//                maskValue = mask[y + maskOffsetY, x + maskOffsetX] * brushData.brushStrength * 5;
 
                 if(mode == PaintMode.Erase) {
                     pixels[index].a -= maskValue;

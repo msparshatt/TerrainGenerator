@@ -46,6 +46,22 @@ public class TerrainSculpter : MonoBehaviour
         return heights;
     }
 
+    public Vector2 RotateVector(Vector2 position, float degrees)
+    {
+        float radians = Mathf.Deg2Rad * degrees;
+        float newX = position.x * Mathf.Cos(radians) - position.y * Mathf.Sin(radians);
+        float newY = position.x * Mathf.Sin(radians) + position.y * Mathf.Cos(radians);
+        return new Vector2(newX, newY);
+    }
+
+    public Vector2 RotateVector(float oldX, float oldY, float degrees)
+    {
+        float radians = Mathf.Deg2Rad * degrees;
+        float newX = oldX * Mathf.Cos(radians) - oldY * Mathf.Sin(radians);
+        float newY = oldX * Mathf.Sin(radians) + oldY * Mathf.Cos(radians);
+        return new Vector2(newX, newY);
+    }
+
     public void UndoSculpt(Vector2Int topLeft, Vector2Int size, float[,] changes)
     {
         TerrainData terrainData = terrain.terrainData;
@@ -81,7 +97,6 @@ public class TerrainSculpter : MonoBehaviour
     {
         TerrainData terrainData = terrain.terrainData;
 
-
         ModifyRectangle rectangle = GetModifyRectangle(location);
         float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
         float[,] changes = new float[rectangle.size.y, rectangle.size.x];
@@ -90,7 +105,19 @@ public class TerrainSculpter : MonoBehaviour
         {
             for (int y = 0; y < rectangle.size.y; y++)
             {                   
-                float maskValue = rectangle.mask[y + rectangle.offset.y, x + rectangle.offset.x];
+                float posX = x - (rectangle.size.x / 2);
+                float posY = y - (rectangle.size.y / 2);
+
+                Vector2 rotatedVector = RotateVector(posX, posY, -brushData.brushRotation);
+
+                int newX = Mathf.RoundToInt(rotatedVector.x) + (rectangle.size.x / 2);
+                int newY = Mathf.RoundToInt(rotatedVector.y) + (rectangle.size.y / 2);
+
+                float maskValue = 0;
+                if(newY >= 0 && newY < rectangle.size.y && newX >= 0 && newX < rectangle.size.x) {
+                    maskValue = rectangle.mask[newY + rectangle.offset.y, newX + rectangle.offset.x];
+                }
+
                 heights[y, x] += (effectIncrement * Time.smoothDeltaTime * maskValue);
                 changes[y,x] =  (effectIncrement * Time.smoothDeltaTime * maskValue);
             }
@@ -127,7 +154,19 @@ public class TerrainSculpter : MonoBehaviour
         {
             for (int y = 0; y < rectangle.size.y; y++)
             {
-                float maskValue = rectangle.mask[y + rectangle.offset.y, x + rectangle.offset.x];
+                float posX = x - (rectangle.size.x / 2);
+                float posY = y - (rectangle.size.y / 2);
+
+                Vector2 rotatedVector = RotateVector(posX, posY, -brushData.brushRotation);
+
+                int newX = Mathf.RoundToInt(rotatedVector.x) + (rectangle.size.x / 2);
+                int newY = Mathf.RoundToInt(rotatedVector.y) + (rectangle.size.y / 2);
+
+                float maskValue = 0;
+                if(newY >= 0 && newY < rectangle.size.y && newX >= 0 && newX < rectangle.size.x) {
+                    maskValue = rectangle.mask[newY + rectangle.offset.y, newX + rectangle.offset.x];
+                }
+
 
                 float height = heights[y, x];
                 heights[y, x] += (averageHeight - height) * maskValue * brushData.brushStrength;
