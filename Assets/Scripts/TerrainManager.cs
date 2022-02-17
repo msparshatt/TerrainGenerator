@@ -504,7 +504,7 @@ public class TerrainManager
         Texture2D tempTexture;
 
         tempTexture = (Texture2D)(baseMaterials[0].mainTexture);
-        Texture2DArray inputTextures = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT1, false); 
+        Texture2DArray inputTextures = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT5, false);
         Texture2DArray inputAOs = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT1, false);
 
         for(int i = 0; i < 5; i++) {

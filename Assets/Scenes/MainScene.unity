@@ -26461,7 +26461,7 @@ MonoBehaviour:
   exitConfirmationPanel: {fileID: 363003986}
   unsavedChangesText: {fileID: 17434662}
   saveChangesButton: {fileID: 1661191345}
-  terrainShader: {fileID: 4800000, guid: 8f14a12481d6ce016a68d060228d42af, type: 3}
+  blankAO: {fileID: 2800000, guid: 1fd8d8036db405ce9ac8d3c79b8d30e0, type: 3}
   OldSavePanel: {fileID: 1080871917}
   playerInput: {fileID: 963194231}
   materialScrollView: {fileID: 133782029}
