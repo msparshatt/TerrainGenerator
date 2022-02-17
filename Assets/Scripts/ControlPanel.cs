@@ -858,7 +858,7 @@ public class ControlPanel : MonoBehaviour
 
     public void BrushImportButtonclick()
     {
-		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
         FileBrowser.SetDefaultFilter( ".png" );
 
         playerInput.enabled = false;
@@ -933,7 +933,7 @@ public class ControlPanel : MonoBehaviour
 
     public void TextureImportButtonClick()
     {
-		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
         FileBrowser.SetDefaultFilter( ".png" );
 
         playerInput.enabled = false;
@@ -1008,7 +1008,7 @@ public class ControlPanel : MonoBehaviour
 
     public void MaterialImportButtonClick()
     {
-		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", ".png"));
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
         FileBrowser.SetDefaultFilter( ".png" );
 
         playerInput.enabled = false;
