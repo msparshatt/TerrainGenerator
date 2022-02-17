@@ -60190,7 +60190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 335145013}
-  text: Bursh strength
+  text: Bursh rotation
 --- !u!114 &2138308492
 MonoBehaviour:
   m_ObjectHideFlags: 0
