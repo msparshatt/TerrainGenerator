@@ -395,7 +395,7 @@ public class ControlPanel : MonoBehaviour
     public void SelectTextureIcon(int buttonIndex)
     {
         brushData.paintTexture = (Texture2D)gameResources.textures[buttonIndex];
-        textureImage.texture = brushData.paintTexture;
+        textureImage.texture = gameResources.icons[buttonIndex];
         textureIndex = buttonIndex;
 
         if(buttonIndex >= (gameResources.icons.Count - customTextures.Count)) {
@@ -471,7 +471,7 @@ public class ControlPanel : MonoBehaviour
             materialDeleteButton.interactable = false;
         }        
 
-        materialImages[materialPanelIndex].texture = mat.mainTexture;
+        materialImages[materialPanelIndex].texture = gameResources.icons[buttonIndex];
 
         manager.SetBaseMaterials(materialPanelIndex, mat);
 
