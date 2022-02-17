@@ -34,7 +34,8 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject exitConfirmationPanel;
     [SerializeField] private GameObject unsavedChangesText;
     [SerializeField] private GameObject saveChangesButton;
-    [SerializeField] private Shader terrainShader;
+    //[SerializeField] private Shader terrainShader;
+    [SerializeField] private Texture blankAO;
     [SerializeField] private GameObject OldSavePanel;
 
     [SerializeField] private PlayerInput playerInput;
@@ -807,7 +808,7 @@ public class ControlPanel : MonoBehaviour
 
         if(index == -1) {
             //if the material doesn't exist add it as a new one
-            Material material = new Material(terrainShader); 
+            Material material = new Material(Shader.Find("Standard")); 
             material.mainTexture = colorTexture;
 
             Texture2D newTexture = new Texture2D(colorTexture.width, colorTexture.height);                    
@@ -1038,31 +1039,18 @@ public class ControlPanel : MonoBehaviour
 
     public void LoadCustomMaterial(string filename)
     {
-        Material material = new Material(terrainShader); 
-        Texture2D materialTexture = new Texture2D(128,128, TextureFormat.RGB24, false);
+        Material material = new Material(Shader.Find("Standard")); 
+        Texture2D tmpTexture = new Texture2D(128,128, TextureFormat.RGB24, false);
         byte[] bytes = File.ReadAllBytes(filename);
 
-        materialTexture.filterMode = FilterMode.Trilinear;
+        Texture2D materialTexture = new Texture2D(tmpTexture.width,tmpTexture.height, TextureFormat.DXT1, false);
+        materialTexture.filterMode = FilterMode.Bilinear;
         materialTexture.LoadImage(bytes);
+
+        Debug.Log(materialTexture.format);
         material.mainTexture = materialTexture;
 
-        Texture2D newTexture = new Texture2D(materialTexture.width, materialTexture.height);// GraphicsFormat.R8G8B8A8_UNorm, true);
-
-        Color[] data = new Color[materialTexture.width * materialTexture.height];
-
-        int index = 0;
-        //set the every pixel to be transparent
-        for(int x = 0; x < materialTexture.width; x++) {
-            for(int y = 0; y < materialTexture.height; y++) {                        
-                data[index] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-                index++;
-            }
-        }
-
-        newTexture.SetPixels(0, 0, materialTexture.width, materialTexture.height, data);
-        newTexture.Apply(true);
-
-        material.SetTexture("_OverlayTexture", newTexture);
+        material.SetTexture("_OcclusionMap", blankAO);
 
         gameResources.materials.Add(material);
 
