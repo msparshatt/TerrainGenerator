@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private SettingsDataScriptable settingsData;
-    [SerializeField] private FlagsDataScriptable flagsData;
+    [SerializeField] private InternalDataScriptable internalData;
 
     //private terrain settings
     private TerrainData mainTerrainData;
@@ -59,8 +59,8 @@ public class CameraController : MonoBehaviour
         modifier1 = false;
         modifier2 = false;
 
-        flagsData.sliderChanged = false;
-        flagsData.unsavedChanges = false;
+        internalData.sliderChanged = false;
+        internalData.unsavedChanges = false;
     }
 
     //Callback functions for new input system
@@ -135,9 +135,9 @@ public class CameraController : MonoBehaviour
     {
         mouseDown = input.isPressed;
 
-        if(!mouseDown && flagsData.sliderChanged) {
+        if(!mouseDown && internalData.sliderChanged) {
             TerrainManager.instance.ApplyTextures();
-            flagsData.sliderChanged = false;
+            internalData.sliderChanged = false;
         }
     }
 
@@ -177,7 +177,7 @@ public class CameraController : MonoBehaviour
 
         transform.position += transform.TransformDirection(movement);
 
-        if(flagsData.ProcGenOpen) {
+        if(internalData.ProcGenOpen) {
             for(int i = 0; i < panels.Length; i++) {
                 panels[i].SetActive(false);
             }
@@ -211,7 +211,7 @@ public class CameraController : MonoBehaviour
                 if(operation == null)
                     operation = new Operation();
 
-                if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt) {
+                if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
                     TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
                     if(modifier1) {
                         mode = TerrainSculpter.SculptMode.Lower;
@@ -239,7 +239,7 @@ public class CameraController : MonoBehaviour
             gameObject.GetComponent<OperationList>().AddOperation(operation);
             operation = null;
 
-            if(brushData.brushMode == BrushDataScriptable.Modes.Sculpt) {
+            if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
                 TerrainManager.instance.FindMaximaAndMinima();
                 TerrainManager.instance.ApplyTextures();
             }

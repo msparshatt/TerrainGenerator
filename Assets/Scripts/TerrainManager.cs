@@ -14,7 +14,7 @@ public class TerrainManager
     private Shader materialShader;
     private Texture2D aoTexture;
     private SettingsDataScriptable settingsData;
-    private FlagsDataScriptable flagsData;
+    private InternalDataScriptable internalData;
 
     //references to the export classes
     private ExportHeightmap exportHeightmap;
@@ -92,13 +92,13 @@ public class TerrainManager
         minima.Add(new Vector4(-1, -1, -1, -1));
     }
 
-    public void SetupTerrain(SettingsDataScriptable _settingsData, FlagsDataScriptable _flagsData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
+    public void SetupTerrain(SettingsDataScriptable _settingsData, InternalDataScriptable _internalData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
     {
         materialShader = _materialShader;
         CreateTextures();
 
         settingsData = _settingsData;
-        flagsData = _flagsData;
+        internalData = _internalData;
         exportTerrain = ExportTerrain.instance;
         exportTerrain.terrainObject = currentTerrain;
         //exportTerrain.scaleDropDown = scaleDropdown;
@@ -599,7 +599,7 @@ public class TerrainManager
 
         ClearMaximaAndMinima();
 
-        if(flagsData.detectMaximaAndMinima) {
+        if(internalData.detectMaximaAndMinima) {
             TerrainData data = currentTerrain.terrainData;
             int resolution = data.heightmapResolution;
 

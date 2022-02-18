@@ -67,7 +67,7 @@ public class ProceduralControlPanel : MonoBehaviour
 
     [Header("Other")]
     public SettingsDataScriptable settingsData;
-    public  FlagsDataScriptable flagsData;
+    public  InternalDataScriptable internalData;
     public ComputeShader proceduralGenerationShader;
     public ComputeShader erosionShader;
 
@@ -181,7 +181,7 @@ public class ProceduralControlPanel : MonoBehaviour
     public void CancelButtonClick()
     {
         manager.RevertChanges();
-        flagsData.ProcGenOpen = false;
+        internalData.ProcGenOpen = false;
         gameObject.SetActive(false);
     }
 
@@ -201,7 +201,7 @@ public class ProceduralControlPanel : MonoBehaviour
         Cursor.visible = false;
         Cursor.visible = true;
 
-        flagsData.ProcGenOpen = false;
+        internalData.ProcGenOpen = false;
         gameObject.SetActive(false);
     }
 

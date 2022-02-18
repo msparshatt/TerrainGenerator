@@ -6,7 +6,7 @@ public class OperationList : MonoBehaviour
 {
     private List<Operation> operationList;
     private int executionIndex;
-    [SerializeField] private FlagsDataScriptable flagsData;
+    [SerializeField] private InternalDataScriptable internalData;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +28,7 @@ public class OperationList : MonoBehaviour
             operationList.Add(operation);
             executionIndex++;
 
-            flagsData.unsavedChanges = true;
+            internalData.unsavedChanges = true;
         }
     }
     
@@ -41,7 +41,7 @@ public class OperationList : MonoBehaviour
             operationList[executionIndex].Undo();
 
             if(executionIndex == 0)
-                flagsData.unsavedChanges = false;
+                internalData.unsavedChanges = false;
         }        
     }
     //executes the command at the current point in the command history
@@ -51,7 +51,7 @@ public class OperationList : MonoBehaviour
         {
             operationList[executionIndex].Do();
             executionIndex++;
-            flagsData.unsavedChanges = true;
+            internalData.unsavedChanges = true;
         }
     }
 }
