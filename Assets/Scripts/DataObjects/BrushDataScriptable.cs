@@ -5,9 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "brushData", menuName = "brush data", order = 1)]
 public class BrushDataScriptable : ScriptableObject
 {
-    public enum Modes {Sculpt, Paint}
-
-    public Modes brushMode;
     public int brushRadius;
     public float brushStrength;
     public float brushRotation;

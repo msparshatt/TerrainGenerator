@@ -15,3 +15,6 @@ MonoBehaviour:
   movementSpeed: 40
   cameraSensitivity: 0.6
   defaultTerrainResolution: 1025
+  resolutionMultiplier: 1
+  selectedColor: {r: 0.5310609, g: 0.58222055, b: 0.9622642, a: 0}
+  deselectedColor: {r: 0.98247015, g: 0.9672036, b: 0.990566, a: 0}

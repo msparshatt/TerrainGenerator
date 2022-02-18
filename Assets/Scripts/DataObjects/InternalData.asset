@@ -10,6 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88b6664ea369349db88b4f84c544a263, type: 3}
-  m_Name: FlagsData
+  m_Name: InternalData
   m_EditorClassIdentifier: 
   sliderChanged: 0
+  ProcGenOpen: 0
+  unsavedChanges: 0
+  detectMaximaAndMinima: 0
+  AmbientOcclusion: 0

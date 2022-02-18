@@ -9,4 +9,6 @@ public class SettingsDataScriptable : ScriptableObject
     public float cameraSensitivity = 1.0f;
     public int defaultTerrainResolution = 1025;
     public int resolutionMultiplier = 1;
+    public Color selectedColor;
+    public Color deselectedColor;
 }
