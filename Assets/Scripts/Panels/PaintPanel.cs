@@ -52,7 +52,7 @@ public class PaintPanel : MonoBehaviour
         manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
 
-        SelectTextureIcon(0);
+        SelectTextureIcon(1);
     }
 
     // Update is called once per frame
