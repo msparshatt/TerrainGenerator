@@ -31434,6 +31434,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sculptBrushScrollView: {fileID: 1956119571}
   sculptBrushPanel: {fileID: 765287363}
+  sidePanels: {fileID: 1262097358}
   brushDeleteButton: {fileID: 782116048}
   brushImage: {fileID: 264371375}
   playerInput: {fileID: 963194231}

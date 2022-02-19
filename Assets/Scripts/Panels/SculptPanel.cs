@@ -11,6 +11,7 @@ public class SculptPanel : MonoBehaviour
     [Header("UI elements")]
     [SerializeField] private GameObject sculptBrushScrollView;
     [SerializeField] private GameObject sculptBrushPanel;
+    [SerializeField] private GameObject sidePanels;
     [SerializeField] private Button brushDeleteButton;
     [SerializeField] private RawImage brushImage;
     [SerializeField] private PlayerInput playerInput;
@@ -53,11 +54,14 @@ public class SculptPanel : MonoBehaviour
     public void BrushButtonClick()
     {
         bool active = !sculptBrushPanel.activeSelf;
-        //CloseAllPanels();
-        sculptBrushPanel.SetActive(active);
 
-        if(active)
+        sidePanels.GetComponent<PanelController>().CloseAllPanels();
+
+        if(active) {
+            sidePanels.SetActive(true);
+            sculptBrushPanel.SetActive(true);
             brushImage.color = settingsData.selectedColor;
+        }
     }
 
     public void SelectBrushIcon(int buttonIndex)
