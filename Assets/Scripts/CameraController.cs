@@ -10,7 +10,8 @@ using SimpleFileBrowser;
 public class CameraController : MonoBehaviour
 {
     [Header("Terrain settings")]
-    [SerializeField] private BrushDataScriptable brushData;
+    [SerializeField] private BrushDataScriptable sculptBrushData;
+    [SerializeField] private BrushDataScriptable paintBrushData;
     [SerializeField] private Terrain mainTerrain;
 
     [Header("Settings")]
@@ -26,10 +27,17 @@ public class CameraController : MonoBehaviour
     [SerializeField] private GameObject userInterface;
     [SerializeField] private GameObject[] panels;
     private bool uiVisible = true;
+
     //sliders which can be controlled using the scroll wheel
-    [SerializeField] private Slider radiusSlider;
-    [SerializeField] private Slider strengthSlider;
-    [SerializeField] private Slider rotationSlider;
+    [Header("Sculpt Sliders")]
+    [SerializeField] private Slider sculptRadiusSlider;
+    [SerializeField] private Slider sculptStrengthSlider;
+    [SerializeField] private Slider sculptRotationSlider;
+
+    [Header("Paint Sliders")]
+    [SerializeField] private Slider paintRadiusSlider;
+    [SerializeField] private Slider paintStrengthSlider;
+    [SerializeField] private Slider paintRotationSlider;
 
     //store the operation which is currently being performed
     private Operation operation;
@@ -120,6 +128,22 @@ public class CameraController : MonoBehaviour
                 value = 1;
             } else if (value < 0) {
                 value = -1;
+            }
+
+            Slider strengthSlider;
+            Slider rotationSlider;
+            Slider radiusSlider;
+
+            if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
+                strengthSlider = sculptStrengthSlider;
+                rotationSlider = sculptRotationSlider;
+                radiusSlider = sculptRadiusSlider;
+            } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
+                strengthSlider = paintStrengthSlider;
+                rotationSlider = paintRotationSlider;
+                radiusSlider = paintRadiusSlider;
+            } else {
+                return;
             }
 
             if(modifier1)
@@ -260,7 +284,18 @@ public class CameraController : MonoBehaviour
                 return;
             }
 
-            float radius = brushData.brushRadius / (mainTerrain.terrainData.size.x);
+            float radius = 0;
+            float rotation = 0;
+            Texture2D shape = null;
+            if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
+                radius = sculptBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                rotation = sculptBrushData.brushRotation;
+                shape = sculptBrushData.brush;
+            } else if (internalData.mode == InternalDataScriptable.Modes.Paint) {
+                radius = paintBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                rotation = paintBrushData.brushRotation;
+                shape = paintBrushData.brush;
+            }
 
             Vector3 location = raycastTarget.point;
             float posX = ((location.x - mainTerrain.transform.position.x) / mainTerrain.terrainData.size.x);
@@ -274,8 +309,8 @@ public class CameraController : MonoBehaviour
 
             //Debug.Log(posX + ":" + posZ);
             mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(posX, posZ, radius, radius));
-            mainTerrain.materialTemplate.SetTexture("_CursorTexture", brushData.brush);
-            mainTerrain.materialTemplate.SetFloat("_CursorRotation", -brushData.brushRotation);
+            mainTerrain.materialTemplate.SetTexture("_CursorTexture", shape);
+            mainTerrain.materialTemplate.SetFloat("_CursorRotation", -rotation);
         } else {
             mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         }

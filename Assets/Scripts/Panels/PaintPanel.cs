@@ -34,6 +34,7 @@ public class PaintPanel : MonoBehaviour
 
     private GameResources gameResources;
     private List<GameObject> textureIcons;
+    private List<GameObject> brushIcons;
     private List<string> customTextures;
     private int textureIndex;
     private TerrainManager manager;
@@ -49,6 +50,7 @@ public class PaintPanel : MonoBehaviour
     {
         gameResources = GameResources.instance;
         textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
+        brushIcons = UIHelper.SetupPanel(gameResources.brushes, paintBrushScrollView.transform, SelectBrushIcon);
         manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
 
@@ -203,6 +205,34 @@ public class PaintPanel : MonoBehaviour
                 brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
             }
         }*/
+    }
+
+    public void RadiusSliderChange(float value)
+    {
+        paintBrushData.brushRadius = (int)value;
+    }
+
+    public void StrengthSliderChange(float value)
+    {
+        paintBrushData.brushStrength = value;
+    }
+
+    public void RotationSliderChange(float value)
+    {
+        paintBrushData.brushRotation = value;
+    }
+
+    public void BrushButtonClick()
+    {
+        bool active = !paintBrushPanel.activeSelf;
+
+        sidePanels.GetComponent<PanelController>().CloseAllPanels();
+
+        if(active) {
+            sidePanels.SetActive(true);
+            paintBrushPanel.SetActive(true);
+            //brushImage.color = settingsData.selectedColor;
+        }
     }
 
 }
