@@ -22,10 +22,10 @@ public class PaintPanel : MonoBehaviour
     [SerializeField] private RawImage textureImage;
     [SerializeField] private Slider paintScaleSlider;
 
-
-
     [Header("Elements")]
     [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private GameObject gameState;
+
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable paintBrushData;
@@ -36,6 +36,8 @@ public class PaintPanel : MonoBehaviour
     private List<string> customTextures;
     private int textureIndex;
     private TerrainManager manager;
+    private Controller controller;
+
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +49,9 @@ public class PaintPanel : MonoBehaviour
         gameResources = GameResources.instance;
         textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
         manager = TerrainManager.instance;
+        controller = gameState.GetComponent<Controller>();
+
+        SelectTextureIcon(0);
     }
 
     // Update is called once per frame
@@ -70,7 +75,7 @@ public class PaintPanel : MonoBehaviour
         textureImage.texture = gameResources.icons[buttonIndex];
         textureIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.icons.Count - customTextures.Count)) {
+        if(buttonIndex >= (gameResources.icons.Count - controller.customTextures.Count)) {
             textureDeleteButton.interactable = true;
         } else {
             textureDeleteButton.interactable = false;

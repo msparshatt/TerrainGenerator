@@ -23809,6 +23809,7 @@ MonoBehaviour:
   textureImage: {fileID: 2145951008}
   paintScaleSlider: {fileID: 1483324329}
   playerInput: {fileID: 963194231}
+  gameState: {fileID: 645851194}
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
 --- !u!1 &747282742
