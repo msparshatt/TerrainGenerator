@@ -7,11 +7,13 @@ public class MainBar : MonoBehaviour
 {
     [SerializeField] private Button[] buttons;
     [SerializeField] private GameObject[] panels;
+    [SerializeField] private GameObject sidePanels;
     [SerializeField] private InternalDataScriptable internalData;
 
     private Color unselectedColor = Color.white;
     private Color selectedColor = Color.grey;
 
+    private int selectedPanel;
     public void Start()
     {
         HideAllPanels();
@@ -21,9 +23,14 @@ public class MainBar : MonoBehaviour
 
     public void ButtonClick(int index)
     {
-        HideAllPanels();
-        ShowPanel(index);
-        internalData.mode = (InternalDataScriptable.Modes)index;
+        if(index != selectedPanel) {
+            HideAllPanels();
+            ShowPanel(index);
+            internalData.mode = (InternalDataScriptable.Modes)index;
+
+            sidePanels.GetComponent<PanelController>().CloseAllPanels();
+            selectedPanel = index;
+        }
     }
 
     private void ShowPanel(int index)
