@@ -7,6 +7,7 @@ public class MainBar : MonoBehaviour
 {
     [SerializeField] private Button[] buttons;
     [SerializeField] private GameObject[] panels;
+    [SerializeField] private InternalDataScriptable internalData;
 
     private Color unselectedColor = Color.white;
     private Color selectedColor = Color.grey;
@@ -15,12 +16,14 @@ public class MainBar : MonoBehaviour
     {
         HideAllPanels();
         ShowPanel(0);
+        internalData.mode = (InternalDataScriptable.Modes)0;
     }
 
     public void ButtonClick(int index)
     {
         HideAllPanels();
         ShowPanel(index);
+        internalData.mode = (InternalDataScriptable.Modes)index;
     }
 
     private void ShowPanel(int index)
