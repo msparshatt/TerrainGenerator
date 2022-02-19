@@ -191,7 +191,9 @@ public class CameraController : MonoBehaviour
             return;
 
         
-        projectImage(); 
+        if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint) {
+            projectImage(); 
+        }
 
         //sculpt/paint on left mouse button       
         if(mouseDown) {
@@ -220,7 +222,7 @@ public class CameraController : MonoBehaviour
                     }
 
                     mainTerrain.GetComponent<TerrainSculpter>().SculptTerrain(mode, raycastTarget.point, operation);
-                } else {
+                } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
                     TerrainPainter painter = mainTerrain.GetComponent<TerrainPainter>();
                     TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;
                     if(modifier1) {
