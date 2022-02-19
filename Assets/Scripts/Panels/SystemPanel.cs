@@ -154,24 +154,7 @@ public class SystemPanel : MonoBehaviour
 
     public void ResetButtonClick()
     {
-        FlatButtonClick();
-        /*ClearButtonClick();
-
-        SelectBrushIcon(0);
-        SelectMaterialIcon(0, 0);
-        SelectMaterialIcon(1, 1);
-        SelectMaterialIcon(2, 2);
-        SelectMaterialIcon(3, 3);
-        SelectMaterialIcon(4, 4);
-
-        for(int index = 1; index < 5; index++) {
-            mixFactorSliders[index].value = 0;
-            mixtypeDropdowns[index].value = 0;
-        }
-
-        SelectTextureIcon(1);
-    */
-        internalData.unsavedChanges = false;
+        controller.Reset();
     }
 
     private void CloseAllPanels()

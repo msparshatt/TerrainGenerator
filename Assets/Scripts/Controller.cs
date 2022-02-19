@@ -245,4 +245,25 @@ public class Controller : MonoBehaviour
         paintPanel.GetComponent<PaintPanel>().InitialisePaintPanel();
         systemPanel.GetComponent<SystemPanel>().InitialiseSystemPanel();
     }
+
+    public void Reset() {
+        manager.CreateFlatTerrain();
+        manager.ClearOverlay();
+
+        sculptPanel.GetComponent<SculptPanel>().SelectBrushIcon(0);
+        paintPanel.GetComponent<PaintPanel>().SelectBrushIcon(0);
+        paintPanel.GetComponent<PaintPanel>().SelectTextureIcon(1);
+
+        for(int index = 0; index < 5; index++) {
+            materialPanel.GetComponent<MaterialsPanel>().SelectMaterialIcon(index, index);
+        }
+
+        for(int index = 1; index < 5; index++) {
+            materialPanel.GetComponent<MaterialsPanel>().mixFactorSliders[index].value = 0;
+            materialPanel.GetComponent<MaterialsPanel>().mixtypeDropdowns[index].value = 0;
+        }
+
+        internalData.unsavedChanges = false;
+
+    }
 }

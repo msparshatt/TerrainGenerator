@@ -12,9 +12,9 @@ public class MaterialsPanel : MonoBehaviour
 
     [Header("UI elements")]
     [SerializeField] private Slider scaleSlider;
-    [SerializeField] private TMP_Dropdown[] mixtypeDropdowns;
-    [SerializeField] private Slider[] mixFactorSliders;
-    [SerializeField] private Slider[] offsetSliders;
+    public TMP_Dropdown[] mixtypeDropdowns;
+    public Slider[] mixFactorSliders;
+    public Slider[] offsetSliders;
     [SerializeField] private GameObject gameState;
     [SerializeField] private Button materialDeleteButton;
     [SerializeField] private RawImage[] materialImages;
