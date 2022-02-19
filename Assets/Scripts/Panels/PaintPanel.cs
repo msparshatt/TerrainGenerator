@@ -50,7 +50,7 @@ public class PaintPanel : MonoBehaviour
     {
         gameResources = GameResources.instance;
         textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
-        brushIcons = UIHelper.SetupPanel(gameResources.brushes, paintBrushScrollView.transform, SelectBrushIcon);
+        brushIcons = UIHelper.SetupPanel(gameResources.paintBrushes, paintBrushScrollView.transform, SelectBrushIcon);
         manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
 
