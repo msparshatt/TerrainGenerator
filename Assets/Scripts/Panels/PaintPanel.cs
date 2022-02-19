@@ -25,6 +25,7 @@ public class PaintPanel : MonoBehaviour
     [Header("Elements")]
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameObject gameState;
+    [SerializeField] private GameObject sidePanels;
 
 
     [Header("Data Objects")]
@@ -63,10 +64,13 @@ public class PaintPanel : MonoBehaviour
     public void TextureButtonClick()
     {
         bool active = !texturePanel.activeSelf;
-        texturePanel.SetActive(active);
+        sidePanels.GetComponent<PanelController>().CloseAllPanels();
 
-        if(active)
+        if(active) {
+            sidePanels.SetActive(true);
+            texturePanel.SetActive(true);
             textureImage.color = settingsData.selectedColor;
+        }
     }
 
     public void SelectTextureIcon(int buttonIndex)

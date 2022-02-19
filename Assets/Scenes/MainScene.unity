@@ -23810,6 +23810,7 @@ MonoBehaviour:
   paintScaleSlider: {fileID: 1483324329}
   playerInput: {fileID: 963194231}
   gameState: {fileID: 645851194}
+  sidePanels: {fileID: 1262097358}
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
 --- !u!1 &747282742
@@ -52785,8 +52786,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 746692203}
+        m_TargetAssemblyTypeName: PaintPanel, Assembly-CSharp
         m_MethodName: TextureButtonClick
         m_Mode: 1
         m_Arguments:
