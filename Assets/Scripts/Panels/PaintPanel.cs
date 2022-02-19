@@ -83,10 +83,10 @@ public class PaintPanel : MonoBehaviour
 
         for (int i = 0; i < textureIcons.Count; i++) {
             if(i == buttonIndex) {
-                textureIcons[i].GetComponent<Image>().color = Color.green;
+                textureIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
 
             } else {
-                textureIcons[i].GetComponent<Image>().color = Color.white;
+                textureIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
             }
         }
     }
