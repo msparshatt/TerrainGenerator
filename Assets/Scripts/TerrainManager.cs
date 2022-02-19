@@ -446,7 +446,7 @@ public class TerrainManager
 
     public void ApplyTextures()
     {
-        if(shaderRunning)
+        if(shaderRunning || doNotApply)
             return;
 
         Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 

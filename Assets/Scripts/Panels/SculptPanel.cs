@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using SimpleFileBrowser;
 
 public class SculptPanel : MonoBehaviour
 {
@@ -10,6 +13,8 @@ public class SculptPanel : MonoBehaviour
     [SerializeField] private GameObject sculptBrushPanel;
     [SerializeField] private Button brushDeleteButton;
     [SerializeField] private RawImage brushImage;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private GameObject gameState;
 
 
     [Header("Data Objects")]
@@ -21,13 +26,22 @@ public class SculptPanel : MonoBehaviour
     private int brushIndex;
 
     private GameResources gameResources;
+    private Controller controller;
 
 
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    public void InitialiseSculptPanel()
+    {
         gameResources = GameResources.instance;
-        UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
+        controller = gameState.GetComponent<Controller>();
+        
+        brushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
+
+        SelectBrushIcon(0);
     }
 
     // Update is called once per frame
@@ -36,13 +50,23 @@ public class SculptPanel : MonoBehaviour
         
     }
 
+    public void BrushButtonClick()
+    {
+        bool active = !sculptBrushPanel.activeSelf;
+        //CloseAllPanels();
+        sculptBrushPanel.SetActive(active);
+
+        if(active)
+            brushImage.color = settingsData.selectedColor;
+    }
+
     public void SelectBrushIcon(int buttonIndex)
     {
         brushData.brush = gameResources.brushes[buttonIndex];
         brushImage.texture = brushData.brush;
         brushIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.brushes.Count - customBrushes.Count)) {
+        if(buttonIndex >= (gameResources.brushes.Count - controller.customBrushes.Count)) {
             brushDeleteButton.interactable = true;
         } else {
             brushDeleteButton.interactable = false;
@@ -73,13 +97,43 @@ public class SculptPanel : MonoBehaviour
         brushData.brushRotation = value;
     }
 
-    public void BrushButtonClick()
+    public void BrushImportButtonclick()
     {
-        bool active = !sculptBrushPanel.activeSelf;
-        //CloseAllPanels();
-        sculptBrushPanel.SetActive(active);
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
+        FileBrowser.SetDefaultFilter( ".png" );
 
-        if(active)
-            brushImage.color = settingsData.selectedColor;
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnBrushImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnBrushImport(string filename)
+    {      
+        if(filename != "") {
+            controller.LoadCustomBrush(filename);
+            SelectBrushIcon(gameResources.brushes.Count - 1);
+        }
+    }
+
+    public void BrushDeleteButtonClick()
+    {
+        int customBrushIndex = brushIndex + customBrushes.Count - gameResources.brushes.Count;
+
+        customBrushes.RemoveAt(customBrushIndex);
+        gameResources.brushes.RemoveAt(brushIndex);
+        Destroy(brushIcons[brushIndex]);
+        brushIcons.RemoveAt(brushIndex);
+        
+        SelectBrushIcon(0);
+    }
+
+    public void AddButton(Texture2D texture)
+    {
+        GameObject newButton;
+        int ObjectIndex = brushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(sculptBrushScrollView.transform);
+        brushIcons.Add(newButton);
     }
 }

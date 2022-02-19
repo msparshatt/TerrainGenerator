@@ -40,6 +40,10 @@ public class PaintPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    public void InitialisePaintPanel()
+    {
         gameResources = GameResources.instance;
         textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
         manager = TerrainManager.instance;
@@ -49,6 +53,15 @@ public class PaintPanel : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void TextureButtonClick()
+    {
+        bool active = !texturePanel.activeSelf;
+        texturePanel.SetActive(active);
+
+        if(active)
+            textureImage.color = settingsData.selectedColor;
     }
 
     public void SelectTextureIcon(int buttonIndex)
@@ -135,5 +148,27 @@ public class PaintPanel : MonoBehaviour
     public void PaintResetTilingButtonClick()
     {
         paintScaleSlider.value = 1.0f;
+    }
+
+    public void AddBrushButton(Texture2D texture)
+    {
+        /*GameObject newButton;
+        int ObjectIndex = brushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(sculptBrushScrollView.transform);
+        brushIcons.Add(newButton);*/
+    }
+
+    public void AddTextureButton(Texture2D texture)
+    {
+        GameObject newButton;
+        int ObjectIndex = textureIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectTextureIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(textureScrollView.transform);
+        textureIcons.Add(newButton);
     }
 }
