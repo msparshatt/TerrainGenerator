@@ -53,6 +53,7 @@ public class PaintPanel : MonoBehaviour
         controller = gameState.GetComponent<Controller>();
 
         SelectTextureIcon(1);
+        SelectBrushIcon(0);
     }
 
     // Update is called once per frame
@@ -78,7 +79,7 @@ public class PaintPanel : MonoBehaviour
         paintBrushData.paintTexture = (Texture2D)gameResources.textures[buttonIndex];
         textureImage.texture = gameResources.icons[buttonIndex];
         textureIndex = buttonIndex;
-
+       
         if(buttonIndex >= (gameResources.icons.Count - controller.customTextures.Count)) {
             textureDeleteButton.interactable = true;
         } else {
@@ -180,4 +181,28 @@ public class PaintPanel : MonoBehaviour
         newButton.transform.SetParent(textureScrollView.transform);
         textureIcons.Add(newButton);
     }
+
+    //Brush Panel
+    public void SelectBrushIcon(int buttonIndex)
+    {
+        paintBrushData.brush = gameResources.brushes[buttonIndex];
+        paintBrushImage.texture = paintBrushData.brush;
+/*        brushIndex = buttonIndex;
+
+        if(buttonIndex >= (gameResources.brushes.Count - controller.customBrushes.Count)) {
+            brushDeleteButton.interactable = true;
+        } else {
+            brushDeleteButton.interactable = false;
+        }        
+
+        for (int i = 0; i < brushIcons.Count; i++) {
+            if(i == buttonIndex) {
+                brushIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
+
+            } else {
+                brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
+            }
+        }*/
+    }
+
 }
