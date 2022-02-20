@@ -217,6 +217,8 @@ public class CameraController : MonoBehaviour
         
         if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint) {
             projectImage(); 
+        } else {
+            mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         }
 
         //sculpt/paint on left mouse button       

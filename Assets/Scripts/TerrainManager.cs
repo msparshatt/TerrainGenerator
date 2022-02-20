@@ -195,6 +195,7 @@ public class TerrainManager
 
         currentTerrain.terrainData = copyData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = copyData;    
+        currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
     }
 
     public void RevertChanges()
@@ -281,6 +282,7 @@ public class TerrainManager
         }
 
         FindMaximaAndMinima();
+        currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         ApplyTextures();
     }
 
