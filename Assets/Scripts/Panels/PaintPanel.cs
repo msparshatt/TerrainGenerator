@@ -35,11 +35,11 @@ public class PaintPanel : MonoBehaviour
     private GameResources gameResources;
     private List<GameObject> textureIcons;
     private List<GameObject> brushIcons;
-    private List<string> customTextures;
     private int textureIndex;
     private TerrainManager manager;
     private Controller controller;
 
+    private int brushIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -73,19 +73,23 @@ public class PaintPanel : MonoBehaviour
             sidePanels.SetActive(true);
             texturePanel.SetActive(true);
             textureImage.color = settingsData.selectedColor;
+            paintBrushImage.color = settingsData.deselectedColor;
+        } else {
+            textureImage.color = settingsData.deselectedColor;
         }
     }
 
     public void SelectTextureIcon(int buttonIndex)
     {
         paintBrushData.paintTexture = (Texture2D)gameResources.textures[buttonIndex];
-        textureImage.texture = gameResources.icons[buttonIndex];
         textureIndex = buttonIndex;
-       
+
         if(buttonIndex >= (gameResources.icons.Count - controller.customTextures.Count)) {
             textureDeleteButton.interactable = true;
+            textureImage.texture =  gameResources.textures[buttonIndex];
         } else {
             textureDeleteButton.interactable = false;
+            textureImage.texture = gameResources.icons[buttonIndex];
         }        
 
         for (int i = 0; i < textureIcons.Count; i++) {
@@ -99,9 +103,9 @@ public class PaintPanel : MonoBehaviour
     }
     public void TextureDeleteButtonClick()
     {
-        int customTextureIndex = textureIndex + customTextures.Count - gameResources.textures.Count;
+        int customTextureIndex = textureIndex + controller.customTextures.Count - gameResources.textures.Count;
 
-        customTextures.RemoveAt(customTextureIndex);
+        controller.customTextures.RemoveAt(customTextureIndex);
         gameResources.textures.RemoveAt(textureIndex);
         Destroy(textureIcons[textureIndex]);
         textureIcons.RemoveAt(textureIndex);
@@ -109,30 +113,11 @@ public class PaintPanel : MonoBehaviour
         SelectTextureIcon(0);
     }
 
-    public void LoadCustomTexture(string filename)
-    {
-        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
-        byte[] bytes = File.ReadAllBytes(filename);
-
-        texture.filterMode = FilterMode.Trilinear;
-        texture.LoadImage(bytes);
-
-        gameResources.textures.Add(texture);
-
-        //Add the brush to the  brush selection panel          
-        GameObject newButton;
-        int ObjectIndex = textureIcons.Count;
-        Vector2 scale = new Vector2(1.0f, 1.0f);
-
-        newButton = UIHelper.MakeButton(texture, delegate {SelectTextureIcon(ObjectIndex); }, ObjectIndex);
-        newButton.transform.SetParent(paintBrushScrollView.transform);
-        textureIcons.Add(newButton);
-    }
     public void OnTextureImport(string filename)        
     {       
         if(filename != "") {
-            LoadCustomTexture(filename);
-            customTextures.Add(filename);
+            controller.LoadCustomTexture(filename);
+            controller.customTextures.Add(filename);
 
             SelectTextureIcon(gameResources.textures.Count - 1);
         }
@@ -164,13 +149,13 @@ public class PaintPanel : MonoBehaviour
 
     public void AddBrushButton(Texture2D texture)
     {
-        /*GameObject newButton;
+        GameObject newButton;
         int ObjectIndex = brushIcons.Count;
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
         newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
-        newButton.transform.SetParent(sculptBrushScrollView.transform);
-        brushIcons.Add(newButton);*/
+        newButton.transform.SetParent(paintBrushScrollView.transform);
+        brushIcons.Add(newButton);
     }
 
     public void AddTextureButton(Texture2D texture)
@@ -187,14 +172,14 @@ public class PaintPanel : MonoBehaviour
     //Brush Panel
     public void SelectBrushIcon(int buttonIndex)
     {
-        paintBrushData.brush = gameResources.brushes[buttonIndex];
+        paintBrushData.brush = gameResources.paintBrushes[buttonIndex];
         paintBrushImage.texture = paintBrushData.brush;
-/*        brushIndex = buttonIndex;
+        brushIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.brushes.Count - controller.customBrushes.Count)) {
-            brushDeleteButton.interactable = true;
+        if(buttonIndex >= (gameResources.paintBrushes.Count - controller.customPaintBrushes.Count)) {
+            paintBrushDeleteButton.interactable = true;
         } else {
-            brushDeleteButton.interactable = false;
+            paintBrushDeleteButton.interactable = false;
         }        
 
         for (int i = 0; i < brushIcons.Count; i++) {
@@ -204,7 +189,7 @@ public class PaintPanel : MonoBehaviour
             } else {
                 brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
             }
-        }*/
+        }
     }
 
     public void RadiusSliderChange(float value)
@@ -231,8 +216,41 @@ public class PaintPanel : MonoBehaviour
         if(active) {
             sidePanels.SetActive(true);
             paintBrushPanel.SetActive(true);
-            //brushImage.color = settingsData.selectedColor;
+            paintBrushImage.color = settingsData.selectedColor;
+            textureImage.color = settingsData.deselectedColor;
+        } else {
+            paintBrushImage.color = settingsData.deselectedColor;
         }
+    }
+
+    public void BrushImportButtonclick()
+    {
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
+        FileBrowser.SetDefaultFilter( ".png" );
+
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnBrushImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnBrushImport(string filename)
+    {      
+        if(filename != "") {
+            controller.LoadCustomPaintBrush(filename);
+            SelectBrushIcon(gameResources.paintBrushes.Count - 1);
+            controller.customPaintBrushes.Add(filename);
+        }
+    }
+
+    public void BrushDeleteButtonClick()
+    {
+        int customBrushIndex = brushIndex + controller.customPaintBrushes.Count - gameResources.paintBrushes.Count;
+
+        controller.customPaintBrushes.RemoveAt(customBrushIndex);
+        gameResources.paintBrushes.RemoveAt(brushIndex);
+        Destroy(brushIcons[brushIndex]);
+        brushIcons.RemoveAt(brushIndex);
+        
+        SelectBrushIcon(0);
     }
 
 }

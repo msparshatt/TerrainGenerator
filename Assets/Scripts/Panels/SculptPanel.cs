@@ -23,7 +23,6 @@ public class SculptPanel : MonoBehaviour
     [SerializeField] private SettingsDataScriptable settingsData;
 
     private List<GameObject> brushIcons;
-    private List<string> customBrushes;
     private int brushIndex;
 
     private GameResources gameResources;
@@ -70,7 +69,7 @@ public class SculptPanel : MonoBehaviour
         brushImage.texture = brushData.brush;
         brushIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.brushes.Count - controller.customBrushes.Count)) {
+        if(buttonIndex >= (gameResources.brushes.Count - controller.customSculptBrushes.Count)) {
             brushDeleteButton.interactable = true;
         } else {
             brushDeleteButton.interactable = false;
@@ -115,14 +114,15 @@ public class SculptPanel : MonoBehaviour
         if(filename != "") {
             controller.LoadCustomBrush(filename);
             SelectBrushIcon(gameResources.brushes.Count - 1);
+            controller.customSculptBrushes.Add(filename);
         }
     }
 
     public void BrushDeleteButtonClick()
     {
-        int customBrushIndex = brushIndex + customBrushes.Count - gameResources.brushes.Count;
+        int customBrushIndex = brushIndex + controller.customSculptBrushes.Count - gameResources.brushes.Count;
 
-        customBrushes.RemoveAt(customBrushIndex);
+        controller.customSculptBrushes.RemoveAt(customBrushIndex);
         gameResources.brushes.RemoveAt(brushIndex);
         Destroy(brushIcons[brushIndex]);
         brushIcons.RemoveAt(brushIndex);

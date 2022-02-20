@@ -127,11 +127,11 @@ public class MaterialsPanel : MonoBehaviour
 
         if(buttonIndex >= (gameResources.materials.Count - controller.customMaterials.Count)) {
             materialDeleteButton.interactable = true;
+            materialImages[panel].texture = gameResources.materials[buttonIndex].mainTexture;
         } else {
             materialDeleteButton.interactable = false;
+            materialImages[panel].texture = gameResources.icons[buttonIndex];
         }        
-
-        materialImages[panel].texture = gameResources.icons[buttonIndex];
 
         manager.SetBaseMaterials(panel, mat);
 
@@ -164,6 +164,7 @@ public class MaterialsPanel : MonoBehaviour
             controller.LoadCustomMaterial(filename);
             controller.customMaterials.Add(filename);
 
+            Debug.Log(materialPanelIndex);
             SelectMaterialIcon(gameResources.materials.Count - 1);
         }
     }

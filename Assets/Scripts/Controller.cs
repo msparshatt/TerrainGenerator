@@ -29,7 +29,8 @@ public class Controller : MonoBehaviour
     [SerializeField] private GameObject sidePanels;
 
     public List<string> customMaterials;
-    public List<string> customBrushes;
+    public List<string> customPaintBrushes;
+    public List<string> customSculptBrushes;
     private int brushIndex;
 
     public List<string> customTextures;
@@ -61,7 +62,11 @@ public class Controller : MonoBehaviour
         paintBrushData.brushRotation = 0;
         paintBrushData.textureScale = 1.0f;
 
-        customBrushes = new List<string>();
+
+        InitialiseMainPanels();
+
+        customSculptBrushes = new List<string>();
+        customPaintBrushes = new List<string>();
         LoadCustomBrushes();
         customTextures = new List<string>();
         LoadCustomTextures();
@@ -70,7 +75,6 @@ public class Controller : MonoBehaviour
 
         InitialiseFlags();
 
-        InitialiseMainPanels();
         manager.ApplyTextures();
     }
 
@@ -100,11 +104,18 @@ public class Controller : MonoBehaviour
 
     public void SaveCustomBrushes()
     {                
-        PlayerPrefs.SetInt("CustomBrushCount", customBrushes.Count);
+        PlayerPrefs.SetInt("CustomBrushCount", customSculptBrushes.Count);
 
-        if(customBrushes.Count > 0) {
-            for(int i = 0; i < customBrushes.Count; i++)                
-                PlayerPrefs.SetString("CustomBrush_" + i, customBrushes[i]);
+        if(customSculptBrushes.Count > 0) {
+            for(int i = 0; i < customSculptBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomBrush_" + i, customSculptBrushes[i]);
+        }        
+
+        PlayerPrefs.SetInt("CustomPaintBrushCount", customPaintBrushes.Count);
+
+        if(customPaintBrushes.Count > 0) {
+            for(int i = 0; i < customPaintBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomPaintBrush_" + i, customPaintBrushes[i]);
         }        
     }
 
@@ -117,7 +128,18 @@ public class Controller : MonoBehaviour
                 string name = PlayerPrefs.GetString("CustomBrush_" + i);
 
                 LoadCustomBrush(name);
-                customBrushes.Add(name);
+                customSculptBrushes.Add(name);
+            }
+        }
+        
+        count = PlayerPrefs.GetInt("CustomPaintBrushCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomPaintBrush_" + i);
+
+                LoadCustomPaintBrush(name);
+                customPaintBrushes.Add(name);
             }
         }
     }
@@ -181,7 +203,7 @@ public class Controller : MonoBehaviour
         Material material = new Material(Shader.Find("Standard")); 
         byte[] bytes = File.ReadAllBytes(filename);
 
-        Texture2D materialTexture = new Texture2D(218,128, TextureFormat.DXT5, false);
+        Texture2D materialTexture = new Texture2D(128,128, TextureFormat.DXT5, false);
         materialTexture.filterMode = FilterMode.Bilinear;
         materialTexture.LoadImage(bytes);
 
@@ -220,6 +242,20 @@ public class Controller : MonoBehaviour
 
         //Add the brush to the  brush selection panel          
         sculptPanel.GetComponent<SculptPanel>().AddButton(texture);
+    }
+
+    public void LoadCustomPaintBrush(string filename)
+    {
+        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
+        byte[] bytes = File.ReadAllBytes(filename);
+
+        texture.filterMode = FilterMode.Trilinear;
+        texture.LoadImage(bytes);
+
+        gameResources.paintBrushes.Add(texture);
+
+        //Add the brush to the  brush selection panel          
+        paintPanel.GetComponent<PaintPanel>().AddBrushButton(texture);
     }
 
     private void CloseAllPanels()
