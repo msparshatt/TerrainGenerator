@@ -284,11 +284,11 @@ public class Controller : MonoBehaviour
         paintPanel.GetComponent<PaintPanel>().SelectBrushIcon(0);
         paintPanel.GetComponent<PaintPanel>().SelectTextureIcon(1);
 
-        for(int index = 0; index < 5; index++) {
+        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
             materialPanel.GetComponent<MaterialsPanel>().SelectMaterialIcon(index, index);
         }
 
-        for(int index = 1; index < 5; index++) {
+        for(int index = 1; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
             materialPanel.GetComponent<MaterialsPanel>().mixFactorSliders[index].value = 0;
             materialPanel.GetComponent<MaterialsPanel>().mixtypeDropdowns[index].value = 0;
         }

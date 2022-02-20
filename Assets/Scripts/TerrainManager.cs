@@ -509,7 +509,7 @@ public class TerrainManager
         Texture2DArray inputTextures = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT5, false);
         Texture2DArray inputAOs = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT1, false);
 
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             Graphics.CopyTexture(baseMaterials[i].mainTexture, 0, 0, inputTextures, i, 0);
             Graphics.CopyTexture(baseMaterials[i].GetTexture("_OcclusionMap"), 0, 0, inputAOs, i, 0);
         }
@@ -517,7 +517,7 @@ public class TerrainManager
 
         textureShader.SetTexture(kernelHandle, "textures", inputTextures);
         textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);
-        textureShader.SetInt("textureCount", 5);
+        textureShader.SetInt("textureCount", InternalDataScriptable.NUMBER_MATERIALS);
         textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
 
         //send maxima and minima

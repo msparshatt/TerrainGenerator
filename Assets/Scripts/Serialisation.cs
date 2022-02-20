@@ -57,11 +57,10 @@ public class Serialisation : MonoBehaviour
         manager.CreateTerrainFromHeightmap(data.heightmap);
 
         int materialPanelIndex = 0;
-        int no_textures = 5;
 
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
-        int[] mixTypes = new int[no_textures];
-        float[] mixFactors = new float[no_textures];
+        int[] mixTypes = new int[InternalDataScriptable.NUMBER_MATERIALS];
+        float[] mixFactors = new float[InternalDataScriptable.NUMBER_MATERIALS];
 
         if(data.baseTexture == -1) {
             materials.SelectMaterialIcon(0, materials.AddBaseTexture(data.baseTexture_colors));
@@ -78,7 +77,7 @@ public class Serialisation : MonoBehaviour
         mixTypes[1] = data.mixType;
         mixFactors[1] = 1- data.mixFactor;
 
-        for(int index = 2; index < 5; index++) {
+        for(int index = 2; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
             mixTypes[index] = 1;
 
             mixFactors[index] = 0f;
@@ -115,13 +114,12 @@ public class Serialisation : MonoBehaviour
         manager.CreateTerrainFromHeightmap(data.heightmap);
 
         int materialPanelIndex = 0;
-        int no_textures = 5;
 
         manager.doNotApply = true;
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
-        int[] mixTypes = new int[no_textures];
-        float[] mixFactors = new float[no_textures];
-        for(int index = 0; index < no_textures; index++) {
+        int[] mixTypes = new int[InternalDataScriptable.NUMBER_MATERIALS];
+        float[] mixFactors = new float[InternalDataScriptable.NUMBER_MATERIALS];
+        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
             if(data.baseTexture[index] == -1) {
                 materials.SelectMaterialIcon(index, materials.AddBaseTexture(data.baseTexture_colors[index]));
             } else {
@@ -200,13 +198,12 @@ public class Serialisation : MonoBehaviour
             Debug.Log("SAVE: Store base textures");
 
             //save the selected materials
-            int no_textures = 5;
-            data.baseTexture = new int[no_textures];
-            data.baseTexture_colors = new byte[no_textures][];
-            data.mixFactor = new float[no_textures];
-            data.mixType = new int[no_textures];
+            data.baseTexture = new int[InternalDataScriptable.NUMBER_MATERIALS];
+            data.baseTexture_colors = new byte[InternalDataScriptable.NUMBER_MATERIALS][];
+            data.mixFactor = new float[InternalDataScriptable.NUMBER_MATERIALS];
+            data.mixType = new int[InternalDataScriptable.NUMBER_MATERIALS];
             
-            for(int index = 0; index < no_textures; index++) {
+            for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
                 if(internalData.currentMaterialIndices[index] >= (gameResources.materials.Count - internalData.customMaterials.Count)) {
                     data.baseTexture[index] = -1;
                     texture = (Texture2D)gameResources.materials[internalData.currentMaterialIndices[index]].mainTexture;

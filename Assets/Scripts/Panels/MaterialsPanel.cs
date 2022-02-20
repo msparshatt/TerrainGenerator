@@ -55,7 +55,7 @@ public class MaterialsPanel : MonoBehaviour
 
         MixFactorSliderChange();
         MaterialDropdownSelect();
-        for(int index = 0; index < 5; index++)
+        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++)
         {
             SelectMaterialIcon(index, index);
         }
@@ -93,7 +93,7 @@ public class MaterialsPanel : MonoBehaviour
     {
         bool oldDetect = internalData.detectMaximaAndMinima;
         internalData.detectMaximaAndMinima = false;
-        for(int i = 1; i < 5; i++) {
+        for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             int mixType = mixtypeDropdowns[i].value + 1;
 
             if(mixType == (int)MixTypes.Peaks || mixType == (int)MixTypes.Valleys)
@@ -111,7 +111,7 @@ public class MaterialsPanel : MonoBehaviour
 
     public void MixFactorSliderChange()
     {
-        for(int i = 1; i < 5; i++) {
+        for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             manager.SetMixFactor(i, mixFactorSliders[i].value);
         }
 
@@ -183,7 +183,7 @@ public class MaterialsPanel : MonoBehaviour
     }
     public void OffsetSliderChange()
     {
-        for(int i = 1; i < 5; i++) {
+        for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             manager.SetOffset(i, offsetSliders[i].value);
         }
 
@@ -198,7 +198,7 @@ public class MaterialsPanel : MonoBehaviour
 
         sidePanels.GetComponent<PanelController>().CloseAllPanels();
 
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             materialImages[i].color = settingsData.deselectedColor;
         }
 
@@ -278,7 +278,7 @@ public class MaterialsPanel : MonoBehaviour
 
     public void UpdateControls(int[] mixTypes, float[] mixFactors)
     {
-        for(int i = 1; i < 5; i++) {
+        for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             mixtypeDropdowns[i].value = mixTypes[i] - 1;
             mixFactorSliders[i].value = mixFactors[i];
         }

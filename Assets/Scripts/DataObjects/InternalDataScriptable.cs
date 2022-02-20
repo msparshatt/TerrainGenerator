@@ -6,6 +6,7 @@ using UnityEngine;
 public class InternalDataScriptable : ScriptableObject
 {
     public enum Modes {System, Materials, Sculpt, Paint};
+    public const int NUMBER_MATERIALS = 5;
 
     public bool sliderChanged = false;  //used to update the base textures after one of the sliders has changed value
     public bool ProcGenOpen = false;    //is the procedural generation panel open
