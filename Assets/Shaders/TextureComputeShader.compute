@@ -41,9 +41,9 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
 
         if(mixTypes[index] == 1) {                  //by height (top)
             value = height;
-        } else if (mixTypes[index] == 2) {          //by height (bottom)
+        } else if (mixTypes[index] == 3) {          //by height (bottom)
             value = 1 - height;
-        } else if (mixTypes[index] == 3 || mixTypes[index] == 4) {          //by slope (steep/shallow)
+        } else if (mixTypes[index] == 2 || mixTypes[index] == 4) {          //by slope (steep/shallow)
             float minHeight = 10;
             float maxHeight = 0;
 

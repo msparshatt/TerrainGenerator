@@ -14,4 +14,15 @@ public class InternalDataScriptable : ScriptableObject
 
     public bool ambientOcclusion;
     public Modes mode;
+
+    public List<string> customMaterials;
+    public List<string> customPaintBrushes;
+    public List<string> customSculptBrushes;
+    public List<string> customTextures;
+
+    public float materialScale;
+    public float paintScale;
+
+    public int[] currentMaterialIndices;
+
 }

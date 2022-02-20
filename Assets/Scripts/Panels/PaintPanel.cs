@@ -31,6 +31,7 @@ public class PaintPanel : MonoBehaviour
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable paintBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
+    [SerializeField] private InternalDataScriptable internalData;
 
     private GameResources gameResources;
     private List<GameObject> textureIcons;
@@ -84,7 +85,7 @@ public class PaintPanel : MonoBehaviour
         paintBrushData.paintTexture = (Texture2D)gameResources.textures[buttonIndex];
         textureIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.icons.Count - controller.customTextures.Count)) {
+        if(buttonIndex >= (gameResources.icons.Count - internalData.customTextures.Count)) {
             textureDeleteButton.interactable = true;
             textureImage.texture =  gameResources.textures[buttonIndex];
         } else {
@@ -103,9 +104,9 @@ public class PaintPanel : MonoBehaviour
     }
     public void TextureDeleteButtonClick()
     {
-        int customTextureIndex = textureIndex + controller.customTextures.Count - gameResources.textures.Count;
+        int customTextureIndex = textureIndex + internalData.customTextures.Count - gameResources.textures.Count;
 
-        controller.customTextures.RemoveAt(customTextureIndex);
+        internalData.customTextures.RemoveAt(customTextureIndex);
         gameResources.textures.RemoveAt(textureIndex);
         Destroy(textureIcons[textureIndex]);
         textureIcons.RemoveAt(textureIndex);
@@ -117,7 +118,7 @@ public class PaintPanel : MonoBehaviour
     {       
         if(filename != "") {
             controller.LoadCustomTexture(filename);
-            controller.customTextures.Add(filename);
+            internalData.customTextures.Add(filename);
 
             SelectTextureIcon(gameResources.textures.Count - 1);
         }
@@ -140,6 +141,7 @@ public class PaintPanel : MonoBehaviour
     public void PaintScaleSliderChange(float value)
     {
         paintBrushData.textureScale = value;
+        internalData.paintScale = value;
     }
 
     public void PaintResetTilingButtonClick()
@@ -176,7 +178,7 @@ public class PaintPanel : MonoBehaviour
         paintBrushImage.texture = paintBrushData.brush;
         brushIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.paintBrushes.Count - controller.customPaintBrushes.Count)) {
+        if(buttonIndex >= (gameResources.paintBrushes.Count - internalData.customPaintBrushes.Count)) {
             paintBrushDeleteButton.interactable = true;
         } else {
             paintBrushDeleteButton.interactable = false;
@@ -237,15 +239,15 @@ public class PaintPanel : MonoBehaviour
         if(filename != "") {
             controller.LoadCustomPaintBrush(filename);
             SelectBrushIcon(gameResources.paintBrushes.Count - 1);
-            controller.customPaintBrushes.Add(filename);
+            internalData.customPaintBrushes.Add(filename);
         }
     }
 
     public void BrushDeleteButtonClick()
     {
-        int customBrushIndex = brushIndex + controller.customPaintBrushes.Count - gameResources.paintBrushes.Count;
+        int customBrushIndex = brushIndex + internalData.customPaintBrushes.Count - gameResources.paintBrushes.Count;
 
-        controller.customPaintBrushes.RemoveAt(customBrushIndex);
+        internalData.customPaintBrushes.RemoveAt(customBrushIndex);
         gameResources.paintBrushes.RemoveAt(brushIndex);
         Destroy(brushIcons[brushIndex]);
         brushIcons.RemoveAt(brushIndex);
@@ -253,4 +255,8 @@ public class PaintPanel : MonoBehaviour
         SelectBrushIcon(0);
     }
 
+    public void UpdateControls()
+    {
+        paintScaleSlider.value = internalData.paintScale;
+    }
 }

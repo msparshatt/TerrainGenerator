@@ -28,13 +28,7 @@ public class Controller : MonoBehaviour
 
     [SerializeField] private GameObject sidePanels;
 
-    public List<string> customMaterials;
-    public List<string> customPaintBrushes;
-    public List<string> customSculptBrushes;
-    private int brushIndex;
-
     public List<string> customTextures;
-    private int textureIndex;
 
     private GameResources gameResources;
     private TerrainManager manager;
@@ -62,15 +56,15 @@ public class Controller : MonoBehaviour
         paintBrushData.brushRotation = 0;
         paintBrushData.textureScale = 1.0f;
 
+        internalData.customSculptBrushes = new List<string>();
+        internalData.customPaintBrushes = new List<string>();
+        internalData.customTextures = new List<string>();
+        internalData.customMaterials = new List<string>();
 
         InitialiseMainPanels();
 
-        customSculptBrushes = new List<string>();
-        customPaintBrushes = new List<string>();
         LoadCustomBrushes();
-        customTextures = new List<string>();
         LoadCustomTextures();
-        customMaterials = new List<string>();
         LoadCustomMaterials();
 
         InitialiseFlags();
@@ -104,18 +98,18 @@ public class Controller : MonoBehaviour
 
     public void SaveCustomBrushes()
     {                
-        PlayerPrefs.SetInt("CustomBrushCount", customSculptBrushes.Count);
+        PlayerPrefs.SetInt("CustomBrushCount", internalData.customSculptBrushes.Count);
 
-        if(customSculptBrushes.Count > 0) {
-            for(int i = 0; i < customSculptBrushes.Count; i++)                
-                PlayerPrefs.SetString("CustomBrush_" + i, customSculptBrushes[i]);
+        if(internalData.customSculptBrushes.Count > 0) {
+            for(int i = 0; i < internalData.customSculptBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomBrush_" + i, internalData.customSculptBrushes[i]);
         }        
 
-        PlayerPrefs.SetInt("CustomPaintBrushCount", customPaintBrushes.Count);
+        PlayerPrefs.SetInt("CustomPaintBrushCount", internalData.customPaintBrushes.Count);
 
-        if(customPaintBrushes.Count > 0) {
-            for(int i = 0; i < customPaintBrushes.Count; i++)                
-                PlayerPrefs.SetString("CustomPaintBrush_" + i, customPaintBrushes[i]);
+        if(internalData.customPaintBrushes.Count > 0) {
+            for(int i = 0; i < internalData.customPaintBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomPaintBrush_" + i, internalData.customPaintBrushes[i]);
         }        
     }
 
@@ -128,7 +122,7 @@ public class Controller : MonoBehaviour
                 string name = PlayerPrefs.GetString("CustomBrush_" + i);
 
                 LoadCustomBrush(name);
-                customSculptBrushes.Add(name);
+                internalData.customSculptBrushes.Add(name);
             }
         }
         
@@ -139,7 +133,7 @@ public class Controller : MonoBehaviour
                 string name = PlayerPrefs.GetString("CustomPaintBrush_" + i);
 
                 LoadCustomPaintBrush(name);
-                customPaintBrushes.Add(name);
+                internalData.customPaintBrushes.Add(name);
             }
         }
     }
@@ -172,10 +166,10 @@ public class Controller : MonoBehaviour
     {        
         int matCount = 0;
 
-        if(customMaterials.Count > 0) {
-            for(int i = 0; i < customMaterials.Count; i++) {
-                if(customMaterials[i] != "") {
-                    PlayerPrefs.SetString("CustomMaterial_" + i, customMaterials[i]);
+        if(internalData.customMaterials.Count > 0) {
+            for(int i = 0; i < internalData.customMaterials.Count; i++) {
+                if(internalData.customMaterials[i] != "") {
+                    PlayerPrefs.SetString("CustomMaterial_" + i, internalData.customMaterials[i]);
                     matCount++;
                 }
             }
@@ -193,7 +187,7 @@ public class Controller : MonoBehaviour
                 string name = PlayerPrefs.GetString("CustomMaterial_" + i);
 
                 LoadCustomMaterial(name);
-                customMaterials.Add(name);
+                internalData.customMaterials.Add(name);
             }
         }
     }
@@ -257,7 +251,7 @@ public class Controller : MonoBehaviour
         //Add the brush to the  brush selection panel          
         paintPanel.GetComponent<PaintPanel>().AddBrushButton(texture);
     }
-
+    
     private void CloseAllPanels()
     {
         ClosaAllMainPanels();

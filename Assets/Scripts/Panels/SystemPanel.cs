@@ -94,14 +94,6 @@ public class SystemPanel : MonoBehaviour
     }
 
 
-    public int RemapTextureIndex(int index)
-    {
-        int[] newIndices = {0, 1, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 57, 53, 54};
-
-        Debug.Log(index + " : " + newIndices[index]);
-        return newIndices[index];
-    }
-
     public void SaveButtonClick(bool exitOnSave = false)
     {
         Debug.Log("SAVE: Opening file browser");

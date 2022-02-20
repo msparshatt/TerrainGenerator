@@ -8,7 +8,6 @@ public class TerrainManager
     //scriptable object containing any terrain data    
     //[SerializeField] private TerrainScriptable terrainData;
     private Terrain currentTerrain = null;
-    private Material[] baseMaterials;
 
     private Material terrainMaterial;
     private Shader materialShader;
@@ -21,6 +20,7 @@ public class TerrainManager
     private ExportTerrain exportTerrain;
 
     //how to mix the two base materials
+    public Material[] baseMaterials;
     public int[] mixTypes;
     public float[] mixFactors;
     private float[] offsets;

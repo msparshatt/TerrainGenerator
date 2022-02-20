@@ -1949,8 +1949,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 645851196}
+        m_TargetAssemblyTypeName: Serialisation, Assembly-CSharp
         m_MethodName: DontUpdateOldSaveFile
         m_Mode: 1
         m_Arguments:
@@ -5019,6 +5019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scaleSlider: {fileID: 1676185298}
+  aoToggle: {fileID: 834042172}
   mixtypeDropdowns:
   - {fileID: 0}
   - {fileID: 1044053469}
@@ -11426,8 +11427,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 746692203}
+        m_TargetAssemblyTypeName: PaintPanel, Assembly-CSharp
         m_MethodName: BrushDeleteButtonClick
         m_Mode: 1
         m_Arguments:
@@ -20479,6 +20480,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+  oldSavePanel: {fileID: 1080871917}
+  materialsPanel: {fileID: 149128288}
+  sculptPanel: {fileID: 1006123578}
+  paintPanel: {fileID: 746692198}
 --- !u!114 &645851198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20505,9 +20510,6 @@ MonoBehaviour:
   paintPanel: {fileID: 746692198}
   systemPanel: {fileID: 1819768948}
   sidePanels: {fileID: 1262097358}
-  customMaterials: []
-  customPaintBrushes: []
-  customSculptBrushes: []
   customTextures: []
 --- !u!1 &655327133
 GameObject:
@@ -21636,9 +21638,9 @@ MonoBehaviour:
     m_Options:
     - m_Text: Top
       m_Image: {fileID: 0}
-    - m_Text: Bottom
-      m_Image: {fileID: 0}
     - m_Text: Steep
+      m_Image: {fileID: 0}
+    - m_Text: Bottom
       m_Image: {fileID: 0}
     - m_Text: Shallow
       m_Image: {fileID: 0}
@@ -23223,9 +23225,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 746692198}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 746692203}
+        m_TargetAssemblyTypeName: PaintPanel, Assembly-CSharp
+        m_MethodName: BrushImportButtonclick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24571,7 +24573,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paintBrushScrollView: {fileID: 919666767}
   paintBrushPanel: {fileID: 2047536146}
-  paintBrushDeleteButton: {fileID: 782116048}
+  paintBrushDeleteButton: {fileID: 370496396}
   paintBrushImage: {fileID: 1513268157}
   textureScrollView: {fileID: 1944993085}
   texturePanel: {fileID: 494810032}
@@ -24583,6 +24585,7 @@ MonoBehaviour:
   sidePanels: {fileID: 1262097358}
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
+  internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!1 &747282742
 GameObject:
   m_ObjectHideFlags: 0
@@ -32293,6 +32296,7 @@ MonoBehaviour:
   gameState: {fileID: 645851194}
   brushData: {fileID: 11400000, guid: 783d84cd7cf1027c6b33a1d5e1a87f40, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
+  internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!1 &1006962733
 GameObject:
   m_ObjectHideFlags: 0
@@ -33452,9 +33456,9 @@ MonoBehaviour:
     m_Options:
     - m_Text: Top
       m_Image: {fileID: 0}
-    - m_Text: Bottom
-      m_Image: {fileID: 0}
     - m_Text: Steep
+      m_Image: {fileID: 0}
+    - m_Text: Bottom
       m_Image: {fileID: 0}
     - m_Text: Shallow
       m_Image: {fileID: 0}
@@ -36693,9 +36697,9 @@ MonoBehaviour:
     m_Options:
     - m_Text: Top
       m_Image: {fileID: 0}
-    - m_Text: Bottom
-      m_Image: {fileID: 0}
     - m_Text: Steep
+      m_Image: {fileID: 0}
+    - m_Text: Bottom
       m_Image: {fileID: 0}
     - m_Text: Shallow
       m_Image: {fileID: 0}
@@ -42158,8 +42162,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 645851196}
+        m_TargetAssemblyTypeName: Serialisation, Assembly-CSharp
         m_MethodName: UpdateOldSaveFile
         m_Mode: 1
         m_Arguments:
@@ -43045,8 +43049,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 746692203}
+        m_TargetAssemblyTypeName: PaintPanel, Assembly-CSharp
         m_MethodName: TextureDeleteButtonClick
         m_Mode: 1
         m_Arguments:
@@ -46534,8 +46538,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 746692203}
+        m_TargetAssemblyTypeName: PaintPanel, Assembly-CSharp
         m_MethodName: TextureImportButtonClick
         m_Mode: 1
         m_Arguments:
@@ -48498,9 +48502,9 @@ MonoBehaviour:
     m_Options:
     - m_Text: Top
       m_Image: {fileID: 0}
-    - m_Text: Bottom
-      m_Image: {fileID: 0}
     - m_Text: Steep
+      m_Image: {fileID: 0}
+    - m_Text: Bottom
       m_Image: {fileID: 0}
     - m_Text: Shallow
       m_Image: {fileID: 0}
@@ -49954,8 +49958,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 1819768953}
+        m_TargetAssemblyTypeName: SystemPanel, Assembly-CSharp
         m_MethodName: LoadButtonClick
         m_Mode: 1
         m_Arguments:
@@ -62941,8 +62945,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ControlPanel, Assembly-CSharp
+      - m_Target: {fileID: 1819768953}
+        m_TargetAssemblyTypeName: SystemPanel, Assembly-CSharp
         m_MethodName: SaveButtonClick
         m_Mode: 6
         m_Arguments:

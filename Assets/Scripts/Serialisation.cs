@@ -7,6 +7,12 @@ public class Serialisation : MonoBehaviour
 {
     [SerializeField] private Texture2D busyCursor;
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private GameObject oldSavePanel;
+
+    [SerializeField] private GameObject materialsPanel;
+    [SerializeField] private GameObject sculptPanel;
+    [SerializeField] private GameObject paintPanel;
+
     private string savefileName;
     private TerrainManager manager;
     private GameResources gameResources;
@@ -52,55 +58,55 @@ public class Serialisation : MonoBehaviour
 
         int materialPanelIndex = 0;
         int no_textures = 5;
-        
-        //fix
+
+        MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
+        int[] mixTypes = new int[no_textures];
+        float[] mixFactors = new float[no_textures];
+
         if(data.baseTexture == -1) {
-            //SelectMaterialIcon(0, AddBaseTexture(data.baseTexture_colors));
+            materials.SelectMaterialIcon(0, materials.AddBaseTexture(data.baseTexture_colors));
         } else {
-            //SelectMaterialIcon(0, RemapTextureIndex(data.baseTexture));
+            materials.SelectMaterialIcon(0, RemapTextureIndex(data.baseTexture));
         }
 
         if(data.baseTexture2 == -1) {
-            //SelectMaterialIcon(1, AddBaseTexture(data.baseTexture2_colors));
+            materials.SelectMaterialIcon(1, materials.AddBaseTexture(data.baseTexture2_colors));
         } else {
-            //SelectMaterialIcon(1, RemapTextureIndex(data.baseTexture2));
+            materials.SelectMaterialIcon(1, RemapTextureIndex(data.baseTexture2));
         }
 
-        manager.mixTypes[1] = data.mixType;
-/*        if(data.mixType == 2)
-            slopeToggles[1].isOn = true;
-        else
-            heightToggles[1].isOn = true;*/
-
-        manager.mixFactors[1] = 1- data.mixFactor;
-        //mixFactorSliders[1].value = 1 - data.mixFactor;
+        mixTypes[1] = data.mixType;
+        mixFactors[1] = 1- data.mixFactor;
 
         for(int index = 2; index < 5; index++) {
-            //SelectMaterialIcon(index, index);
-            manager.mixTypes[index] = 1;
-            //heightToggles[index].isOn = true;
+            mixTypes[index] = 1;
 
-            manager.mixFactors[index] = 0f;
-            //mixFactorSliders[index].value = 0f;
+            mixFactors[index] = 0f;
         }
-
         if(data.tiling == 0)
             data.tiling = 1;
 
-        //scaleSlider.value = data.tiling;
+        internalData.materialScale = data.tiling;
+        internalData.ambientOcclusion = data.aoActive;
+
+        manager.doNotApply = true;
+        materials.UpdateControls(mixTypes, mixFactors);
+        manager.doNotApply = false;
+        manager.ApplyTextures();
+
 
         if(data.paintTiling == 0)
             data.paintTiling = 1;
-        //paintScaleSlider.value = data.paintTiling;
 
-        //aoToggle.isOn = data.aoActive;
-        
+        internalData.paintScale = data.paintTiling;
+        paintPanel.GetComponent<PaintPanel>().UpdateControls();
+
         Texture2D texture = new Texture2D(10,10);
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
         manager.SetOverlay(texture);
 
-        //OldSavePanel.SetActive(true);
+        oldSavePanel.SetActive(true);
     }
 
     public void Version2Load(string fileContents)
@@ -110,41 +116,46 @@ public class Serialisation : MonoBehaviour
 
         int materialPanelIndex = 0;
         int no_textures = 5;
-        
+
+        manager.doNotApply = true;
+        MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
+        int[] mixTypes = new int[no_textures];
+        float[] mixFactors = new float[no_textures];
         for(int index = 0; index < no_textures; index++) {
             if(data.baseTexture[index] == -1) {
-            //    SelectMaterialIcon(index, AddBaseTexture(data.baseTexture_colors[index]));
+                materials.SelectMaterialIcon(index, materials.AddBaseTexture(data.baseTexture_colors[index]));
             } else {
-            //    SelectMaterialIcon(index, data.baseTexture[index]);
+                materials.SelectMaterialIcon(index, data.baseTexture[index]);
             }
 
             if(index > 0)
             {
-                manager.mixTypes[index] = data.mixType[index];
-/*                if(data.mixType[index] == 1)
-                    heightToggles[index].isOn = true;
-                else
-                    slopeToggles[index].isOn = true;*/
-
-                manager.mixFactors[index] = data.mixFactor[index];
-                //mixFactorSliders[index].value = data.mixFactor[index];
+                mixTypes[index] = data.mixType[index];
+                mixFactors[index] = data.mixFactor[index];
             } else {
-                manager.mixTypes[0] = 0;
-                manager.mixFactors[0] = 0f;
+                mixTypes[0] = 0;
+                mixFactors[0] = 0f;
             }
         }
 
         if(data.tiling == 0)
             data.tiling = 1;
 
-        //scaleSlider.value = data.tiling;
+        internalData.materialScale = data.tiling;
+        internalData.ambientOcclusion = data.aoActive;
+
+        materials.UpdateControls(mixTypes, mixFactors);
+        manager.doNotApply = false;
+
+        manager.ApplyTextures();
 
         if(data.paintTiling == 0)
             data.paintTiling = 1;
-        //paintScaleSlider.value = data.paintTiling;
 
-        //aoToggle.isOn = data.aoActive;
-        
+        internalData.paintScale = data.paintTiling;
+        paintPanel.GetComponent<PaintPanel>().UpdateControls();
+
+
         Texture2D texture = new Texture2D(10,10);
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
@@ -159,22 +170,22 @@ public class Serialisation : MonoBehaviour
         //save new version
         Save(savefileName, false);
 
-        //OldSavePanel.SetActive(false);
+        oldSavePanel.SetActive(false);
     }
 
     public void DontUpdateOldSaveFile()
     {
-        //OldSavePanel.SetActive(false);
+        oldSavePanel.SetActive(false);
     }
 
     public void Save(string filename, bool exitOnSave)
     {
-        /*if(filename != null && filename != "") {
+        if(filename != null && filename != "") {
             savefileName = filename;
             Debug.Log("Saving to " + filename);
-            Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
-            //force the cursor to update
+            //change cursor to busy icon and then force update
+            Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
             Cursor.visible = false;
             Cursor.visible = true;
 
@@ -184,9 +195,11 @@ public class Serialisation : MonoBehaviour
 
             data.version = 2;
             Debug.Log("SAVE: Store heightmap");
+            //save the heightmap
             data.heightmap = manager.GetHeightmapAsBytes();
             Debug.Log("SAVE: Store base textures");
 
+            //save the selected materials
             int no_textures = 5;
             data.baseTexture = new int[no_textures];
             data.baseTexture_colors = new byte[no_textures][];
@@ -194,12 +207,12 @@ public class Serialisation : MonoBehaviour
             data.mixType = new int[no_textures];
             
             for(int index = 0; index < no_textures; index++) {
-                if(currentMaterialIndices[index] >= (gameResources.materials.Count - customMaterials.Count)) {
+                if(internalData.currentMaterialIndices[index] >= (gameResources.materials.Count - internalData.customMaterials.Count)) {
                     data.baseTexture[index] = -1;
-                    texture = (Texture2D)gameResources.materials[currentMaterialIndices[index]].mainTexture;
+                    texture = (Texture2D)gameResources.materials[internalData.currentMaterialIndices[index]].mainTexture;
                     data.baseTexture_colors[index] = texture.EncodeToPNG();
                 } else {
-                    data.baseTexture[index] = currentMaterialIndices[index];
+                    data.baseTexture[index] = internalData.currentMaterialIndices[index];
                     data.baseTexture_colors[index] = null;
                 }
 
@@ -207,13 +220,13 @@ public class Serialisation : MonoBehaviour
                 data.mixFactor[index] = manager.mixFactors[index];
             }
 
-            data.tiling = scaleSlider.value;
-            data.aoActive = aoToggle.isOn;
+            data.tiling = internalData.materialScale;
+            data.aoActive = internalData.ambientOcclusion;
 
             Debug.Log("SAVE: Store overlay texture");
             texture = manager.GetOverlay();
             data.overlayTexture = texture.EncodeToPNG();
-            data.paintTiling = paintScaleSlider.value;
+            data.paintTiling = internalData.paintScale;
 
             Debug.Log("SAVE: Create json string");
             string json = JsonUtility.ToJson(data);
@@ -229,7 +242,14 @@ public class Serialisation : MonoBehaviour
         }
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 
-        internalData.unsavedChanges = false;*/
+        internalData.unsavedChanges = false;
     }
 
+    public int RemapTextureIndex(int index)
+    {
+        int[] newIndices = {0, 1, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 57, 53, 54};
+
+        Debug.Log(index + " : " + newIndices[index]);
+        return newIndices[index];
+    }
 }
