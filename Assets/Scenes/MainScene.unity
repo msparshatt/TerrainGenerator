@@ -4909,6 +4909,7 @@ GameObject:
   - component: {fileID: 149128291}
   - component: {fileID: 149128290}
   - component: {fileID: 149128293}
+  - component: {fileID: 149128294}
   m_Layer: 5
   m_Name: MaterialsPanel
   m_TagString: Untagged
@@ -5052,6 +5053,25 @@ MonoBehaviour:
   sidePanels: {fileID: 1262097358}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+--- !u!114 &149128294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149128288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09287d030837f695989dce31fe52aa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  imageButtons:
+  - {fileID: 1222507869}
+  - {fileID: 354707521}
+  - {fileID: 1244628381}
+  - {fileID: 327421952}
+  - {fileID: 2134270815}
+  settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
 --- !u!1 &152854462
 GameObject:
   m_ObjectHideFlags: 0
@@ -24466,6 +24486,7 @@ GameObject:
   - component: {fileID: 746692201}
   - component: {fileID: 746692200}
   - component: {fileID: 746692203}
+  - component: {fileID: 746692204}
   m_Layer: 5
   m_Name: PaintPanel
   m_TagString: Untagged
@@ -24586,6 +24607,22 @@ MonoBehaviour:
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+--- !u!114 &746692204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746692198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09287d030837f695989dce31fe52aa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  imageButtons:
+  - {fileID: 1513268157}
+  - {fileID: 2145951008}
+  settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
 --- !u!1 &747282742
 GameObject:
   m_ObjectHideFlags: 0
@@ -32183,6 +32220,7 @@ GameObject:
   - component: {fileID: 1006123581}
   - component: {fileID: 1006123580}
   - component: {fileID: 1006123583}
+  - component: {fileID: 1006123584}
   m_Layer: 5
   m_Name: SculptPanel
   m_TagString: Untagged
@@ -32297,6 +32335,21 @@ MonoBehaviour:
   brushData: {fileID: 11400000, guid: 783d84cd7cf1027c6b33a1d5e1a87f40, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+--- !u!114 &1006123584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1006123578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09287d030837f695989dce31fe52aa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  imageButtons:
+  - {fileID: 264371375}
+  settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
 --- !u!1 &1006962733
 GameObject:
   m_ObjectHideFlags: 0
