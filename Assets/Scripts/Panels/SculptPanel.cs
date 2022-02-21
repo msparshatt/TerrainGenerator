@@ -61,6 +61,8 @@ public class SculptPanel : MonoBehaviour
             sidePanels.SetActive(true);
             sculptBrushPanel.SetActive(true);
             brushImage.color = settingsData.selectedColor;
+        } else {
+            brushImage.color = settingsData.deselectedColor;
         }
     }
 
