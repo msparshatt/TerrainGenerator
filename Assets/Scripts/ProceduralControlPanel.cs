@@ -52,7 +52,6 @@ public class ProceduralControlPanel : MonoBehaviour
     [Header("Erosion UI")]
     public Toggle erodeToggle;
     public Slider erosionIterationsSlider;
-    public Slider erosionFactorsetSlider;
     public Slider erosionCapcitySlider;
     public Slider erosionErosionSpeedSlider;
     public Slider erosionDepositSpeedSlider;
@@ -143,7 +142,6 @@ public class ProceduralControlPanel : MonoBehaviour
             erosion = true;
             procGen.erosionIsOn = true;
             procGen.erosionIterations = (int)erosionIterationsSlider.value;
-            procGen.erosionFactor = erosionFactorsetSlider.value;
 
             procGen.sedimentCapaFactor = erosionCapcitySlider.value;
             procGen.eroSpeed = erosionErosionSpeedSlider.value;
@@ -157,7 +155,6 @@ public class ProceduralControlPanel : MonoBehaviour
             erosion = false;
             procGen.erosionIsOn = false;
             procGen.erosionIterations = 0;
-            procGen.erosionFactor = 0f;
         }
 
         procGen.ClearLayers();

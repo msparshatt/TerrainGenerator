@@ -39,7 +39,6 @@ public class ProceduralGeneration
     public ComputeShader erosionShader;
 
     public bool erosionIsOn;
-    public float erosionFactor;
     public int erosionIterations;
 
     public int lifetime;
