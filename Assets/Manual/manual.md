@@ -174,26 +174,28 @@ New textures can be imported by clicking on the import button. See [Importing br
 ### Perlin
 
 Controls the settings for the perlin noise.
-Xoffset & Yoffset: the position within the noise.
-Scale: the size of the noise
-Iterations: how many layers of perlin noise to add.
-Factor: How much to change the affect of each successive iteraion
+
+- Xoffset & Yoffset: the position within the noise.
+- Scale: the size of the noise
+- Iterations: how many layers of perlin noise to add.
+- Factor: How much to change the affect of each successive iteraion
 
 ### Voronoi
 
 Controls the settings for the voronoi noise
-Xoffset & Yoffset: the position within the noise.
-Cell Size: the size of the voronoi cells
-Valleys: Creates valleys between each section of voronoi noise
+
+- Xoffset & Yoffset: the position within the noise.
+- Cell Size: the size of the voronoi cells
+- Valleys: Creates valleys between each section of voronoi noise
 
 ### Factor
 The amount of Perlin vs Voronoi noise to use
 
 ### Settings
 
-Min height: Set a minimum height
-Height factor: Multiply all heights by this amount
-Clamp Edges: Ensures the heights tend towards the midpoint as they get closer to the edge
+- Min height: Set a minimum height
+- Height factor: Multiply all heights by this amount
+- Clamp Edges: Ensures the heights tend towards the midpoint as they get closer to the edge
 
 \newpage
 
@@ -203,8 +205,9 @@ Clamp Edges: Ensures the heights tend towards the midpoint as they get closer to
 ### Terraces
 
 Add a terrace effect to the terrain. You can add up to three layers of terraces.
-Count - the number of terraces to have in this layer
-Shape - the shape of the terraces
+
+- Count - the number of terraces to have in this layer
+- Shape - the shape of the terraces
 
 ### Erode
 
@@ -227,8 +230,8 @@ A top down view of the heightmap
 
 ## Buttons
 
-Cancel: Cancel the procedutal generation and return the terrain to it's previous form
-Apply: permanently apply the procedurally generated terrain
+- Cancel: Cancel the procedutal generation and return the terrain to it's previous form
+- Apply: permanently apply the procedurally generated terrain
 
 \newpage
 
