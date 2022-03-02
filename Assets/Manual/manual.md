@@ -3,6 +3,28 @@ title: "Terrain Generator Manual"
 geometry: "top=1cm"
 ---
 
+# Controls
+|Key    |Action    |
+|-------|----------|
+|W      | Forwards |
+|S      | Back     |
+|A      | Left     |
+|D      | Right    |
+|Q      | Down     |
+|E      | Up       |
+|Shift  | Increase camera speed |
+|Control + Z | Undo |
+|Control + Y | Redo |
+|Space  | Hide UI  |
+|P      | Take a screenshot (note it doesn't hide the UI) |
+|mousewheel | adjust brush radius |
+|Shift + mousewheel | adjust brush strength |
+| Control + mousewheel | rotate brush |
+|left mouse  | interact |
+|right mouse | rotate camera |
+
+\newpage
+
 # System tab
 
 ![System tab image](Screenshots/system.png)
@@ -222,25 +244,4 @@ Brushes should be square, greyscale images. Black areas are transparent, white a
 These should be square jpg or png images. Images with a resolution of around 2kx2k work best. Importing large materials can slow down paint operations.
 
 \newpage
-
-# Controls
-
-W - Forwards
-S - Back
-A - Left
-D - Right
-Q - Down
-E - Up
-Shift - Increase camera speed
-Control + Z - Undo
-Control + Y - Redo
-Space - Hide UI
-P - Take a screenshot (note it doesn't hide the UI)
-
-mousewheel - adjust brush radius
-Shift + mousewheel - adjust brush strength
-Control + mousewheel - rotate brush
-
-left mouse - interact
-right mouse - rotate camera
 
