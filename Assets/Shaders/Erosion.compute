@@ -1,3 +1,4 @@
+#include "noiseSimplex.cginc"
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Erosion
 
@@ -64,6 +65,8 @@ void Erosion (uint3 id : SV_DispatchThreadID)
 {
     //initialise variables
     float2 position = startPos[id.x];
+    //float2 seed = float2(.7432854, .342757);
+    //float2 position = float2(snoise(seed), snoise(seed + 17.0));
     float2 newPosition = position;
     
     float speed = 0;
