@@ -231,7 +231,7 @@ A top down view of the heightmap
 ## Buttons
 
 - Cancel: Cancel the procedutal generation and return the terrain to it's previous form
-- Apply: permanently apply the procedurally generated terrain
+- Apply: permanently apply the procedurally generated terrain. This cannot be undone.
 
 \newpage
 
