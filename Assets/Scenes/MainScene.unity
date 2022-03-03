@@ -47604,6 +47604,7 @@ GameObject:
   - component: {fileID: 1485169820}
   - component: {fileID: 1485169819}
   - component: {fileID: 1485169818}
+  - component: {fileID: 1485169822}
   m_Layer: 5
   m_Name: StampPanel
   m_TagString: Untagged
@@ -47696,6 +47697,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1485169822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485169817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9611344631c86e877a440dbcda867127, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sculptBrushScrollView: {fileID: 0}
+  sculptBrushPanel: {fileID: 0}
+  sidePanels: {fileID: 0}
+  brushDeleteButton: {fileID: 0}
+  brushImage: {fileID: 0}
+  playerInput: {fileID: 963194231}
+  gameState: {fileID: 645851194}
+  brushData: {fileID: 11400000, guid: 1b2ab539caa4f0f81a8e5560f8249ed9, type: 2}
+  settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
+  internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!1 &1488027167
 GameObject:
   m_ObjectHideFlags: 0
