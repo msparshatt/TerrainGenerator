@@ -274,7 +274,7 @@ public class CameraController : MonoBehaviour
                     if(modifier1) {
                         mode = TerrainStamper.StampMode.Lower;
                     }
-                    stamper.ModifyTerrain(mode, raycastTarget.point, null);
+                    stamper.ModifyTerrain(mode, raycastTarget.point, operation);
                 }
             }
         }

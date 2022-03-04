@@ -34,7 +34,7 @@ public class TerrainStamper : MonoBehaviour
 
         ModifyRectangle rectangle = GetModifyRectangle(location);
         float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
-        //float[,] changes = new float[rectangle.size.y, rectangle.size.x];
+        float[,] changes = new float[rectangle.size.y, rectangle.size.x];
 
         for (int x = 0; x < rectangle.size.x; x++)
         {
@@ -52,17 +52,18 @@ public class TerrainStamper : MonoBehaviour
                 if(newY >= 0 && newY < rectangle.size.y && newX >= 0 && newX < rectangle.size.x) {
                     maskValue = rectangle.mask[newY + rectangle.offset.y, newX + rectangle.offset.x];
                 }
+                   
+                float strength = brushData.brushStrength;
+                if(mode == StampMode.Lower)
+                    strength *= -1;
 
-                if(mode == StampMode.Raise)
-                    heights[y, x] += maskValue  * brushData.brushStrength;
-                else
-                    heights[y, x] -= maskValue  * brushData.brushStrength;
-                //changes[y,x] =  (effectIncrement * Time.smoothDeltaTime * maskValue);
+                heights[y, x] += maskValue  * brushData.brushStrength;
+                changes[y,x] =  maskValue  * brushData.brushStrength;
             }
         }
 
         terrainData.SetHeights(rectangle.topLeft.x, rectangle.topLeft.y, heights);
-        //sculptOperation.AddSubOperation(new SculptSubOperation(terrain, rectangle.topLeft, rectangle.size, changes));
+        operation.AddSubOperation(new SculptSubOperation(terrain, rectangle.topLeft, rectangle.size, changes));
     }
 
     //utility functions
