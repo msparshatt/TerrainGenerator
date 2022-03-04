@@ -69,6 +69,7 @@ public class Controller : MonoBehaviour
         LoadCustomBrushes();
         LoadCustomTextures();
         LoadCustomMaterials();
+        LoadCustomStamps();
 
         InitialiseFlags();
 
@@ -90,6 +91,7 @@ public class Controller : MonoBehaviour
     public void DoExit()
     {
         SaveCustomBrushes();
+        SaveCustomStamps();
         SaveCustomTextures();
         SaveCustomMaterials();
 
@@ -137,6 +139,30 @@ public class Controller : MonoBehaviour
 
                 LoadCustomPaintBrush(name);
                 internalData.customPaintBrushes.Add(name);
+            }
+        }
+    }
+
+    public void SaveCustomStamps()
+    {
+        PlayerPrefs.SetInt("CustomStampCount", internalData.customStampBrushes.Count);
+
+        if(internalData.customStampBrushes.Count > 0) {
+            for(int i = 0; i < internalData.customStampBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomStamp_" + i, internalData.customStampBrushes[i]);
+        }        
+    }
+
+    public void LoadCustomStamps()
+    {
+        int count = PlayerPrefs.GetInt("CustomStampCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomStamp_" + i);
+
+                LoadCustomStampBrush(name);
+                internalData.customStampBrushes.Add(name);
             }
         }
     }
