@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "InternalData", menuName = "internal data", order = 1)]
 public class InternalDataScriptable : ScriptableObject
 {
-    public enum Modes {System, Materials, Sculpt, Paint};
+    public enum Modes {System, Materials, Sculpt, Paint, Stamp};
     public const int NUMBER_MATERIALS = 5;
 
     public bool sliderChanged = false;  //used to update the base textures after one of the sliders has changed value

@@ -44,5 +44,55 @@ public class StampPanel : MonoBehaviour
 
     public void InitialiseStampPanel()
     {
+        gameResources = GameResources.instance;
+        SelectBrushIcon(0);
     }
+
+    public void BrushButtonClick()
+    {
+/*        bool active = !sculptBrushPanel.activeSelf;
+
+        sidePanels.GetComponent<PanelController>().CloseAllPanels();
+
+        if(active) {
+            sidePanels.SetActive(true);
+            sculptBrushPanel.SetActive(true);
+            brushImage.color = settingsData.selectedColor;
+        } else {
+            brushImage.color = settingsData.deselectedColor;
+        }*/
+    }
+
+    public void SelectBrushIcon(int buttonIndex)
+    {
+        brushData.brush = gameResources.stampBrushes[buttonIndex];
+        brushImage.texture = brushData.brush;
+        brushIndex = buttonIndex;
+
+/*        if(buttonIndex >= (gameResources.brushes.Count - internalData.customSculptBrushes.Count)) {
+            brushDeleteButton.interactable = true;
+        } else {
+            brushDeleteButton.interactable = false;
+        }        
+
+        for (int i = 0; i < brushIcons.Count; i++) {
+            if(i == buttonIndex) {
+                brushIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
+
+            } else {
+                brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
+            }
+        }*/
+    }
+
+    public void RadiusSliderChange(float value)
+    {
+        brushData.brushRadius = (int)value;
+    }
+
+    public void RotationSliderChange(float value)
+    {
+        brushData.brushRotation = value;
+    }
+
 }

@@ -25,6 +25,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private GameObject paintPanel;
     [SerializeField] private GameObject systemPanel;
+    [SerializeField] private GameObject stampPanel;
 
     [SerializeField] private GameObject sidePanels;
 
@@ -274,6 +275,7 @@ public class Controller : MonoBehaviour
         sculptPanel.GetComponent<SculptPanel>().InitialiseSculptPanel();
         paintPanel.GetComponent<PaintPanel>().InitialisePaintPanel();
         systemPanel.GetComponent<SystemPanel>().InitialiseSystemPanel();
+        stampPanel.GetComponent<StampPanel>().InitialiseStampPanel();
     }
 
     public void Reset() {

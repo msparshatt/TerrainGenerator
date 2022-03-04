@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
     [Header("Terrain settings")]
     [SerializeField] private BrushDataScriptable sculptBrushData;
     [SerializeField] private BrushDataScriptable paintBrushData;
+    [SerializeField] private BrushDataScriptable stampBrushData;
     [SerializeField] private Terrain mainTerrain;
 
     [Header("Settings")]
@@ -39,6 +40,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider paintStrengthSlider;
     [SerializeField] private Slider paintRotationSlider;
 
+    [Header("Stamp Sliders")]
+    [SerializeField] private Slider stampRadiusSlider;
+    [SerializeField] private Slider stampRotationSlider;
     //store the operation which is currently being performed
     private Operation operation;
 
@@ -142,11 +146,15 @@ public class CameraController : MonoBehaviour
                 strengthSlider = paintStrengthSlider;
                 rotationSlider = paintRotationSlider;
                 radiusSlider = paintRadiusSlider;
+            } else if(internalData.mode == InternalDataScriptable.Modes.Stamp) {
+                strengthSlider = null;
+                rotationSlider = stampRotationSlider;
+                radiusSlider = stampRadiusSlider;
             } else {
                 return;
             }
 
-            if(modifier1)
+            if(modifier1 && strengthSlider != null)
                 strengthSlider.value -= value / 50;
             else if(modifier2)
                 rotationSlider.value -= value * 5;
@@ -215,7 +223,7 @@ public class CameraController : MonoBehaviour
             return;
 
         
-        if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint) {
+        if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint || internalData.mode == InternalDataScriptable.Modes.Stamp) {
             projectImage(); 
         } else {
             mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
@@ -257,6 +265,9 @@ public class CameraController : MonoBehaviour
                     Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
 
                     painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
+                } else if(internalData.mode == InternalDataScriptable.Modes.Stamp) {
+                    TerrainStamper stamper = mainTerrain.GetComponent<TerrainStamper>();
+                    stamper.ModifyTerrain(raycastTarget.point, 1f, null);
                 }
             }
         }
@@ -297,6 +308,10 @@ public class CameraController : MonoBehaviour
                 radius = paintBrushData.brushRadius / (mainTerrain.terrainData.size.x);
                 rotation = paintBrushData.brushRotation;
                 shape = paintBrushData.brush;
+            } else if (internalData.mode == InternalDataScriptable.Modes.Stamp) {
+                radius = stampBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                rotation = stampBrushData.brushRotation;
+                shape = stampBrushData.brush;
             }
 
             Vector3 location = raycastTarget.point;

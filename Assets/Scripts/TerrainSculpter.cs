@@ -5,15 +5,6 @@ using UnityEngine;
 
 public class TerrainSculpter : MonoBehaviour
 {
-    private struct ModifyRectangle
-    {
-        public Vector2Int topLeft;
-        public Vector2Int size;
-        public Vector2Int offset;
-
-        public float[,] mask;
-    }
-
     public enum SculptMode {Raise, Lower, Flatten}
     [SerializeField] private BrushDataScriptable brushData;
 
