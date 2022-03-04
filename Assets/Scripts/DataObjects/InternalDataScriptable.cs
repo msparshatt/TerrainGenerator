@@ -19,6 +19,7 @@ public class InternalDataScriptable : ScriptableObject
     public List<string> customMaterials;
     public List<string> customPaintBrushes;
     public List<string> customSculptBrushes;
+    public List<string> customStampBrushes;
     public List<string> customTextures;
 
     public float materialScale;

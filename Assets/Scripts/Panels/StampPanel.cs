@@ -49,6 +49,7 @@ public class StampPanel : MonoBehaviour
     public void InitialiseStampPanel()
     {
         gameResources = GameResources.instance;
+        controller = gameState.GetComponent<Controller>();
         brushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollView.transform, SelectBrushIcon);
         SelectBrushIcon(0);
 
@@ -79,11 +80,11 @@ public class StampPanel : MonoBehaviour
         brushImage.texture = brushData.brush;
         brushIndex = buttonIndex;
 
-/*        if(buttonIndex >= (gameResources.brushes.Count - internalData.customSculptBrushes.Count)) {
+        if(buttonIndex >= (gameResources.brushes.Count - internalData.customStampBrushes.Count)) {
             brushDeleteButton.interactable = true;
         } else {
             brushDeleteButton.interactable = false;
-        }        */
+        }       
 
         for (int i = 0; i < brushIcons.Count; i++) {
             if(i == buttonIndex) {
@@ -108,5 +109,46 @@ public class StampPanel : MonoBehaviour
     public void HeightSliderChange(float value)
     {
         brushData.brushStrength = value;
+    }
+
+    public void BrushImportButtonclick()
+    {
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
+        FileBrowser.SetDefaultFilter( ".png" );
+
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnBrushImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnBrushImport(string filename)
+    {      
+        if(filename != "") {
+            controller.LoadCustomStampBrush(filename);
+            SelectBrushIcon(gameResources.stampBrushes.Count - 1);
+            internalData.customStampBrushes.Add(filename);
+        }
+    }
+
+    public void BrushDeleteButtonClick()
+    {
+        int customBrushIndex = brushIndex + internalData.customStampBrushes.Count - gameResources.stampBrushes.Count;
+
+        internalData.customStampBrushes.RemoveAt(customBrushIndex);
+        gameResources.stampBrushes.RemoveAt(brushIndex);
+        Destroy(brushIcons[brushIndex]);
+        brushIcons.RemoveAt(brushIndex);
+        
+        SelectBrushIcon(0);
+    }
+
+    public void AddButton(Texture2D texture)
+    {
+        GameObject newButton;
+        int ObjectIndex = brushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(stampBrushScrollView.transform);
+        brushIcons.Add(newButton);
     }
 }

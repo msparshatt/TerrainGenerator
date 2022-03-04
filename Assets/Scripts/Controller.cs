@@ -18,14 +18,15 @@ public class Controller : MonoBehaviour
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private BrushDataScriptable sculptBrushData;
     [SerializeField] private BrushDataScriptable paintBrushData;
+    [SerializeField] private BrushDataScriptable stampBrushData;
 
     [Header("Panels")]
     [SerializeField] private GameObject mainPanels;
     [SerializeField] private GameObject sculptPanel;
+    [SerializeField] private GameObject stampPanel;
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private GameObject paintPanel;
     [SerializeField] private GameObject systemPanel;
-    [SerializeField] private GameObject stampPanel;
 
     [SerializeField] private GameObject sidePanels;
 
@@ -58,6 +59,7 @@ public class Controller : MonoBehaviour
         paintBrushData.textureScale = 1.0f;
 
         internalData.customSculptBrushes = new List<string>();
+        internalData.customStampBrushes = new List<string>();
         internalData.customPaintBrushes = new List<string>();
         internalData.customTextures = new List<string>();
         internalData.customMaterials = new List<string>();
@@ -237,6 +239,20 @@ public class Controller : MonoBehaviour
 
         //Add the brush to the  brush selection panel          
         sculptPanel.GetComponent<SculptPanel>().AddButton(texture);
+    }
+
+    public void LoadCustomStampBrush(string filename)
+    {
+        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
+        byte[] bytes = File.ReadAllBytes(filename);
+
+        texture.filterMode = FilterMode.Trilinear;
+        texture.LoadImage(bytes);
+
+        gameResources.stampBrushes.Add(texture);
+
+        //Add the brush to the  brush selection panel          
+        stampPanel.GetComponent<StampPanel>().AddButton(texture);
     }
 
     public void LoadCustomPaintBrush(string filename)
