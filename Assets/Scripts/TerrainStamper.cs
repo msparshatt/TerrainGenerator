@@ -33,7 +33,7 @@ public class TerrainStamper : MonoBehaviour
         TerrainData terrainData = terrain.terrainData;
 
         ModifyRectangle rectangle = GetModifyRectangle(location);
-        float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.y, rectangle.size.x);
+        float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
         //float[,] changes = new float[rectangle.size.y, rectangle.size.x];
 
         for (int x = 0; x < rectangle.size.x; x++)
