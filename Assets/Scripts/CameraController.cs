@@ -267,7 +267,7 @@ public class CameraController : MonoBehaviour
                     painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
                 } else if(internalData.mode == InternalDataScriptable.Modes.Stamp) {
                     TerrainStamper stamper = mainTerrain.GetComponent<TerrainStamper>();
-                    stamper.ModifyTerrain(raycastTarget.point, 1f, null);
+                    stamper.ModifyTerrain(raycastTarget.point, null);
                 }
             }
         }

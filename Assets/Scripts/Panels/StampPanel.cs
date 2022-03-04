@@ -95,4 +95,8 @@ public class StampPanel : MonoBehaviour
         brushData.brushRotation = value;
     }
 
+    public void HeightSliderChange(float value)
+    {
+        brushData.brushStrength = value;
+    }
 }

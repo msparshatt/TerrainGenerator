@@ -27,7 +27,7 @@ public class TerrainStamper : MonoBehaviour
         return new Vector2(newX, newY);
     }
 
-    public void ModifyTerrain(Vector3 location, float effectIncrement, Operation operation)
+    public void ModifyTerrain(Vector3 location, Operation operation)
     {
         TerrainData terrainData = terrain.terrainData;
 
@@ -52,7 +52,7 @@ public class TerrainStamper : MonoBehaviour
                     maskValue = rectangle.mask[newY + rectangle.offset.y, newX + rectangle.offset.x];
                 }
 
-                heights[y, x] = maskValue;
+                heights[y, x] = (maskValue - 0.5f) * brushData.brushStrength + 0.5f;
                 //changes[y,x] =  (effectIncrement * Time.smoothDeltaTime * maskValue);
             }
         }
