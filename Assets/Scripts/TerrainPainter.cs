@@ -22,7 +22,7 @@ public class TerrainPainter : MonoBehaviour
         return new Vector2(newX, newY);
     }
 
-    public void PaintTerrain(PaintMode mode, Texture2D texture, Vector3 location, Operation operation)
+    public async void PaintTerrain(PaintMode mode, Texture2D texture, Vector3 location, Operation operation)
     {
         //get terrain data
         TerrainData terrainData = terrain.terrainData;
@@ -33,44 +33,17 @@ public class TerrainPainter : MonoBehaviour
         int textureSizeY = texture.height;
         int offset = brushData.brushRadius / 2;
 
-        //calculate the position within the overlay
-        Vector3 tempCoord = (location - terrain.GetPosition());
-        Vector2 locationInTerrain = TranslateCoordinates(new Vector2(tempCoord.x, tempCoord.z), new Vector2(terrainSize.x, terrainSize.z), new Vector2(textureSizeX, textureSizeY));
+        ModifyRectangle rectangle = new ModifyRectangle(location, brushData, terrain, new Vector2Int(textureSizeX, textureSizeY));
 
-        int startX = (int)(locationInTerrain.x - ((offset * textureSizeX)  / terrainSize.x ));
-        int startY = (int)(locationInTerrain.y - ((offset * textureSizeY)  / terrainSize.y));
+        Color[] pixels = texture.GetPixels(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y); 
 
-        int width = (int)((brushData.brushRadius * textureSizeX) / terrainSize.x);
-        int length = (int)((brushData.brushRadius * textureSizeY) / terrainSize.y);
-
-        float[,] mask = brushData.getMask(length, width);
-        int maskOffsetX = 0;
-        int maskOffsetY = 0;
-
-        if(startX + width >= textureSizeX) {
-            width = (int)(textureSizeX - startX - 1);
-        } else if(startX < 0) {
-            width += startX;
-            maskOffsetX = - startX;
-            startX = 0;
-        }
-        if(startY + length >= textureSizeY) {
-            length = (int)(textureSizeY - startY - 1);
-        } else if(startY < 0) {
-            length += startY;
-            maskOffsetY = - startY;
-            startY = 0;
-        }
-
-        Color[] pixels = texture.GetPixels(startX, startY, width, length); 
-
-        int arrayLength = width * length;
+        int arrayLength = rectangle.fullSize.x * rectangle.fullSize.y;
         Color[] paint = new Color[arrayLength];
         int count = 0;
-        for(int i = 0; i < length; i++) {
-            int y = (int)((startY + i) * brushData.textureScale % brushData.paintTexture.height);
-            for(int j = 0; j < width; j++) {
-                int x = (int)((startX + j) * brushData.textureScale % brushData.paintTexture.width);
+        for(int i = 0; i < rectangle.size.y; i++) {
+            int y = (int)(i * brushData.textureScale % brushData.paintTexture.height);
+            for(int j = 0; j < rectangle.size.x; j++) {
+                int x = (int)(j * brushData.textureScale % brushData.paintTexture.width);
 
                 paint[count] = brushData.paintTexture.GetPixel(x, y);                
                 count++;
@@ -81,28 +54,15 @@ public class TerrainPainter : MonoBehaviour
             Debug.Log(paint_old[li] + ":" + paint[li]);
         }*/
 
-        Color[] changes = texture.GetPixels(startX, startY, width, length); //get another copy of the color data in order to store any changes
+        Color[] changes = texture.GetPixels(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y); //get another copy of the color data in order to store any changes
 
         int index = 0;
         float maskValue = 0;
-        for (int y = 0; y < length; y++)
+        for (int y = 0; y < rectangle.size.y; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < rectangle.size.x; x++)
             {
-                float posX = x - (width / 2);
-                float posY = y - (length / 2);
-
-                Vector2 rotatedVector = RotateVector(posX, posY, -brushData.brushRotation);
-
-                int newX = Mathf.RoundToInt(rotatedVector.x) + (width / 2);
-                int newY = Mathf.RoundToInt(rotatedVector.y) + (length / 2);
-
-                maskValue = 0;
-                if(newY >= 0 && newY < length && newX >= 0 && newX < width) {
-                    maskValue = mask[newY + maskOffsetY, newX + maskOffsetX] * brushData.brushStrength * 5;
-                }
-
-//                maskValue = mask[y + maskOffsetY, x + maskOffsetX] * brushData.brushStrength * 5;
+                maskValue = rectangle.GetMaskValue(new Vector2(x, y), -brushData.brushRotation, brushData.brushStrength);
 
                 if(mode == PaintMode.Erase) {
                     pixels[index].a -= maskValue;
@@ -118,17 +78,14 @@ public class TerrainPainter : MonoBehaviour
                         pixels[index].a += maskValue;
                     }
                 }
+                changes[index] = pixels[index] - changes[index];
                 index++;
             }
         }        
 
-        for(int i = 0; i < changes.Length; i++) {
-            changes[i] = pixels[i] - changes[i];
-        }
-
-        texture.SetPixels(startX, startY, width, length, pixels);
+        texture.SetPixels(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y, pixels);
         texture.Apply(true);
-        operation.AddSubOperation(new PaintSubOperation(terrain, texture, new Vector2Int(startX, startY), new Vector2Int(width, length), changes));
+        operation.AddSubOperation(new PaintSubOperation(terrain, texture, new Vector2Int(rectangle.topLeft.x, rectangle.topLeft.y), new Vector2Int(rectangle.size.x, rectangle.size.y), changes));
     }
 
     public void UndoPaint(Texture2D texture, Vector2Int topLeft, Vector2Int size, Color[] changes)
@@ -167,14 +124,5 @@ public class TerrainPainter : MonoBehaviour
 
         texture.SetPixels(0,0, sizeX, sizeY, data);
         texture.Apply(true);
-    }
-
-    //utility functions
-    //translate coordinate from gamespace to heightmap/texture space
-    private Vector2 TranslateCoordinates(Vector2 coords, Vector2 terrainSize, Vector2 mapSize)
-    {
-        float x = coords.x * mapSize.x / terrainSize.x;
-        float y = coords.y * mapSize.y / terrainSize.y;
-        return new Vector2(x, y);
     }
 }
