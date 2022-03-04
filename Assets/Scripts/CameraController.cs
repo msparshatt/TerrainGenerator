@@ -43,6 +43,8 @@ public class CameraController : MonoBehaviour
     [Header("Stamp Sliders")]
     [SerializeField] private Slider stampRadiusSlider;
     [SerializeField] private Slider stampRotationSlider;
+    [SerializeField] private Slider stampHeightSlider;
+
     //store the operation which is currently being performed
     private Operation operation;
 
@@ -147,7 +149,7 @@ public class CameraController : MonoBehaviour
                 rotationSlider = paintRotationSlider;
                 radiusSlider = paintRadiusSlider;
             } else if(internalData.mode == InternalDataScriptable.Modes.Stamp) {
-                strengthSlider = null;
+                strengthSlider = stampHeightSlider;
                 rotationSlider = stampRotationSlider;
                 radiusSlider = stampRadiusSlider;
             } else {

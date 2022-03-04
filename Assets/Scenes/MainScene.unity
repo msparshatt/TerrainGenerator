@@ -32135,6 +32135,7 @@ MonoBehaviour:
   paintRotationSlider: {fileID: 248495176}
   stampRadiusSlider: {fileID: 928928808}
   stampRotationSlider: {fileID: 159497262}
+  stampHeightSlider: {fileID: 1342125547}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
