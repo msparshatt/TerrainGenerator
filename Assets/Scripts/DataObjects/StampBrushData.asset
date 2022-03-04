@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb38d9395703d6d729e476bf3720798f, type: 3}
   m_Name: StampBrushData
   m_EditorClassIdentifier: 
-  brushRadius: 0
-  brushStrength: 0
+  brushRadius: 50
+  brushStrength: 0.5
   brushRotation: 0
-  brush: {fileID: 0}
+  brush: {fileID: 2800000, guid: e23ab3ad03be818eea2a006bf34c0a1f, type: 3}
   paintTexture: {fileID: 0}
   textureScale: 0
