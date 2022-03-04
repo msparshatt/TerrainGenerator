@@ -10,7 +10,6 @@ public class ButtonController : MonoBehaviour
 
     public void DeselectButtons()
     {
-        Debug.Log("Deselecting");   
         for(int index = 0; index < imageButtons.Length; index++) {
             imageButtons[index].color = settingsData.deselectedColor;
         }
