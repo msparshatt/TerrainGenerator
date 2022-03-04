@@ -58,6 +58,8 @@ public class CameraController : MonoBehaviour
     //true when the mouseDown button is held down
     private bool mouseDown;
 
+    //true after applying a stamp to avoid applying the stamp multiple times on a single mouse click
+    private bool stampApplied;
     void Start()
     {
         mainTerrainData = mainTerrain.terrainData;
@@ -75,6 +77,7 @@ public class CameraController : MonoBehaviour
 
         internalData.sliderChanged = false;
         internalData.unsavedChanges = false;
+        stampApplied = false;
     }
 
     //Callback functions for new input system
@@ -267,7 +270,7 @@ public class CameraController : MonoBehaviour
                     Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
 
                     painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
-                } else if(internalData.mode == InternalDataScriptable.Modes.Stamp) {
+                } else if(internalData.mode == InternalDataScriptable.Modes.Stamp && !stampApplied) {
                     TerrainStamper stamper = mainTerrain.GetComponent<TerrainStamper>();
                     TerrainStamper.StampMode mode = TerrainStamper.StampMode.Raise;
 
@@ -275,6 +278,7 @@ public class CameraController : MonoBehaviour
                         mode = TerrainStamper.StampMode.Lower;
                     }
                     stamper.ModifyTerrain(mode, raycastTarget.point, operation);
+                    stampApplied = true;
                 }
             }
         }
@@ -284,8 +288,9 @@ public class CameraController : MonoBehaviour
             //TerrainManager.instance.
             gameObject.GetComponent<OperationList>().AddOperation(operation);
             operation = null;
+            stampApplied = false;
 
-            if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
+            if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Stamp) {
                 TerrainManager.instance.FindMaximaAndMinima();
                 TerrainManager.instance.ApplyTextures();
             }
