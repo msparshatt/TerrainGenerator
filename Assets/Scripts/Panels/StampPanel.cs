@@ -9,8 +9,8 @@ using SimpleFileBrowser;
 public class StampPanel : MonoBehaviour
 {
    [Header("UI elements")]
-    [SerializeField] private GameObject sculptBrushScrollView;
-    [SerializeField] private GameObject sculptBrushPanel;
+    [SerializeField] private GameObject stampBrushScrollView;
+    [SerializeField] private GameObject stampBrushPanel;
     [SerializeField] private GameObject sidePanels;
     [SerializeField] private Button brushDeleteButton;
     [SerializeField] private RawImage brushImage;
@@ -49,6 +49,7 @@ public class StampPanel : MonoBehaviour
     public void InitialiseStampPanel()
     {
         gameResources = GameResources.instance;
+        brushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollView.transform, SelectBrushIcon);
         SelectBrushIcon(0);
 
         //initialise the brush data
@@ -59,17 +60,17 @@ public class StampPanel : MonoBehaviour
 
     public void BrushButtonClick()
     {
-/*        bool active = !sculptBrushPanel.activeSelf;
+        bool active = !stampBrushPanel.activeSelf;
 
         sidePanels.GetComponent<PanelController>().CloseAllPanels();
 
         if(active) {
             sidePanels.SetActive(true);
-            sculptBrushPanel.SetActive(true);
+            stampBrushPanel.SetActive(true);
             brushImage.color = settingsData.selectedColor;
         } else {
             brushImage.color = settingsData.deselectedColor;
-        }*/
+        }
     }
 
     public void SelectBrushIcon(int buttonIndex)
@@ -82,7 +83,7 @@ public class StampPanel : MonoBehaviour
             brushDeleteButton.interactable = true;
         } else {
             brushDeleteButton.interactable = false;
-        }        
+        }        */
 
         for (int i = 0; i < brushIcons.Count; i++) {
             if(i == buttonIndex) {
@@ -91,7 +92,7 @@ public class StampPanel : MonoBehaviour
             } else {
                 brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
             }
-        }*/
+        }
     }
 
     public void RadiusSliderChange(float value)
