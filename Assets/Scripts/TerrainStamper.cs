@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TerrainStamper : MonoBehaviour
 {
+    public enum StampMode {Raise, Lower}
     [SerializeField] private BrushDataScriptable brushData;
 
     private Terrain terrain;
@@ -27,12 +28,12 @@ public class TerrainStamper : MonoBehaviour
         return new Vector2(newX, newY);
     }
 
-    public void ModifyTerrain(Vector3 location, Operation operation)
+    public void ModifyTerrain(StampMode mode, Vector3 location, Operation operation)
     {
         TerrainData terrainData = terrain.terrainData;
 
         ModifyRectangle rectangle = GetModifyRectangle(location);
-        float[,] heights = new float[rectangle.size.y, rectangle.size.x];//terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
+        float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.y, rectangle.size.x);
         //float[,] changes = new float[rectangle.size.y, rectangle.size.x];
 
         for (int x = 0; x < rectangle.size.x; x++)
@@ -52,7 +53,10 @@ public class TerrainStamper : MonoBehaviour
                     maskValue = rectangle.mask[newY + rectangle.offset.y, newX + rectangle.offset.x];
                 }
 
-                heights[y, x] = (maskValue - 0.5f) * brushData.brushStrength + 0.5f;
+                if(mode == StampMode.Raise)
+                    heights[y, x] += maskValue  * brushData.brushStrength;
+                else
+                    heights[y, x] -= maskValue  * brushData.brushStrength;
                 //changes[y,x] =  (effectIncrement * Time.smoothDeltaTime * maskValue);
             }
         }
