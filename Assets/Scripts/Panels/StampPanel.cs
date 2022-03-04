@@ -17,6 +17,10 @@ public class StampPanel : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameObject gameState;
 
+    [Header("UI Elements")]
+    [SerializeField] private Slider radiusSlider;
+    [SerializeField] private Slider rotationSlider;
+    [SerializeField] private Slider heightSlider;
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
@@ -46,6 +50,11 @@ public class StampPanel : MonoBehaviour
     {
         gameResources = GameResources.instance;
         SelectBrushIcon(0);
+
+        //initialise the brush data
+        brushData.brushRadius = (int)radiusSlider.value;
+        brushData.brushRotation = rotationSlider.value;
+        brushData.brushStrength = heightSlider.value;
     }
 
     public void BrushButtonClick()
