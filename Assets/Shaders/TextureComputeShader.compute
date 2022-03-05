@@ -6,9 +6,9 @@
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 RWTexture2D<float4> aoResult;
-Texture2D<float4> heightMap;
 Texture2DArray<float4> textures;
 Texture2DArray<float4> aotextures;
+StructuredBuffer<float> heightmap;
 int textureCount;
 float factors[10];
 int mixTypes[10];
@@ -32,8 +32,9 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
     float4 pixelAO = float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0);
     float f = 0;
 
-    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height);
-    float height = heightMap[hmPos].r * 2; //the red channel of the heightmap texture contains values between 0 and 0.5f
+    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height); //convert from texture coords to heightmap coords
+    int hmIndex = hmPos.x + hmPos.y * heightMapResolution;
+    float height = heightmap[hmIndex];
 
     for(int index = 1; index < textureCount; index ++) {
         float minValue = 1 - factors[index] - FUDGEFACTOR;
@@ -50,9 +51,8 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             for(int i = -1; i <= 1; i++) {
                 for(int j = -1; j <= 1; j++) {
 
-                    int2 newPos = int2(hmPos.x + i, hmPos.y + j);
-
-                    height = heightMap[newPos].r * 2;
+                    int newIndex = hmIndex + i + j * heightMapResolution;
+                    height = heightmap[newIndex];
 
                     minHeight = min(minHeight, height);
                     maxHeight = max(maxHeight, height);

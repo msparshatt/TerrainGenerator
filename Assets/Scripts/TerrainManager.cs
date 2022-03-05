@@ -426,7 +426,7 @@ public class TerrainManager
         return unityHeights;
     }
 
-    //convert a 2D float array into a 1D byte array in order to write it to a file
+    //convert a 2D float array into a 1D array
     private float[] ConvertTo1DArray(float[,] nmbs)
     {
         float[] nmbsBytes = new float[nmbs.GetLength(0) * nmbs.GetLength(1) * 2];
@@ -518,7 +518,11 @@ public class TerrainManager
         textureShader.SetTexture(kernelHandle, "textures", inputTextures);
         textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);
         textureShader.SetInt("textureCount", InternalDataScriptable.NUMBER_MATERIALS);
-        textureShader.SetTexture(kernelHandle, "heightMap", currentTerrain.terrainData.heightmapTexture);
+
+        float[] mapArray = ConvertTo1DArray(currentTerrain.terrainData.GetHeights(0, 0, currentTerrain.terrainData.heightmapResolution, currentTerrain.terrainData.heightmapResolution));
+        ComputeBuffer heightMapBuffer = new ComputeBuffer(mapArray.Length, sizeof(float));
+        heightMapBuffer.SetData(mapArray);
+        textureShader.SetBuffer(kernelHandle, "heightmap", heightMapBuffer);
 
         //send maxima and minima
         textureShader.SetVectorArray("maxima", maxima.ToArray());
@@ -536,6 +540,9 @@ public class TerrainManager
         RenderTexture.active = aotex;
         aoTexture.ReadPixels(new Rect(0, 0, aotex.width, aotex.height), 0, 0);
         aoTexture.Apply();
+
+        heightMapBuffer.Release();
+
         shaderRunning = false;
 
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
