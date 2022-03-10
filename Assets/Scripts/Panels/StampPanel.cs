@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using SimpleFileBrowser;
 
-public class StampPanel : MonoBehaviour
+public class StampPanel : MonoBehaviour, IPanel
 {
    [Header("UI elements")]
     [SerializeField] private GameObject stampBrushScrollView;
@@ -46,7 +46,7 @@ public class StampPanel : MonoBehaviour
         
     }
 
-    public void InitialiseStampPanel()
+    public void InitialisePanel()
     {
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
@@ -141,7 +141,7 @@ public class StampPanel : MonoBehaviour
         SelectBrushIcon(0);
     }
 
-    public void AddButton(Texture2D texture)
+    public void AddButton(Texture2D texture, int index = 0)
     {
         GameObject newButton;
         int ObjectIndex = brushIcons.Count;

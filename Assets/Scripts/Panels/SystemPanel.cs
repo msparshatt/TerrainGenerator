@@ -8,7 +8,7 @@ using SimpleFileBrowser;
 using UnityEngine.InputSystem;
 using TMPro;
 
-public class SystemPanel : MonoBehaviour
+public class SystemPanel : MonoBehaviour, IPanel
 {
 
     [Header("UI elements")]
@@ -43,7 +43,7 @@ public class SystemPanel : MonoBehaviour
     {
     }
 
-    public void InitialiseSystemPanel()
+    public void InitialisePanel()
     {
         manager = TerrainManager.instance;
         serialiser = gameState.GetComponent<Serialisation>();

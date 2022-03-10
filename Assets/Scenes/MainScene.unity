@@ -21530,7 +21530,13 @@ MonoBehaviour:
   sculptBrushData: {fileID: 11400000, guid: 783d84cd7cf1027c6b33a1d5e1a87f40, type: 2}
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
   stampBrushData: {fileID: 11400000, guid: 1b2ab539caa4f0f81a8e5560f8249ed9, type: 2}
-  mainPanels: {fileID: 885611966}
+  mainPanel: {fileID: 885611966}
+  panels:
+  - {fileID: 1819768948}
+  - {fileID: 149128288}
+  - {fileID: 1006123578}
+  - {fileID: 746692198}
+  - {fileID: 1485169817}
   sculptPanel: {fileID: 1006123578}
   stampPanel: {fileID: 1485169817}
   materialPanel: {fileID: 149128288}

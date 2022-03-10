@@ -21,7 +21,8 @@ public class Controller : MonoBehaviour
     [SerializeField] private BrushDataScriptable stampBrushData;
 
     [Header("Panels")]
-    [SerializeField] private GameObject mainPanels;
+    [SerializeField] private GameObject mainPanel;
+    [SerializeField] private GameObject[] panels;
     [SerializeField] private GameObject sculptPanel;
     [SerializeField] private GameObject stampPanel;
     [SerializeField] private GameObject materialPanel;
@@ -236,7 +237,7 @@ public class Controller : MonoBehaviour
 
         gameResources.materials.Add(material);
 
-        materialPanel.GetComponent<MaterialsPanel>().AddButton(materialTexture);
+        materialPanel.GetComponent<IPanel>().AddButton(materialTexture);
     }
 
     public void LoadCustomTexture(string filename)
@@ -250,7 +251,7 @@ public class Controller : MonoBehaviour
         gameResources.textures.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        paintPanel.GetComponent<PaintPanel>().AddTextureButton(texture);
+        paintPanel.GetComponent<IPanel>().AddButton(texture, 1);
     }
 
     public void LoadCustomBrush(string filename)
@@ -264,7 +265,7 @@ public class Controller : MonoBehaviour
         gameResources.brushes.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        sculptPanel.GetComponent<SculptPanel>().AddButton(texture);
+        sculptPanel.GetComponent<IPanel>().AddButton(texture);
     }
 
     public void LoadCustomStampBrush(string filename)
@@ -278,7 +279,7 @@ public class Controller : MonoBehaviour
         gameResources.stampBrushes.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        stampPanel.GetComponent<StampPanel>().AddButton(texture);
+        stampPanel.GetComponent<IPanel>().AddButton(texture);
     }
 
     public void LoadCustomPaintBrush(string filename)
@@ -292,7 +293,7 @@ public class Controller : MonoBehaviour
         gameResources.paintBrushes.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        paintPanel.GetComponent<PaintPanel>().AddBrushButton(texture);
+        paintPanel.GetComponent<IPanel>().AddButton(texture, 0);
     }
     
     private void CloseAllPanels()
@@ -303,7 +304,7 @@ public class Controller : MonoBehaviour
 
     private void ClosaAllMainPanels()
     {
-        mainPanels.GetComponent<PanelController>().CloseAllPanels();
+        mainPanel.GetComponent<PanelController>().CloseAllPanels();
     }
 
     private void CloseAllSidePanels()
@@ -313,28 +314,17 @@ public class Controller : MonoBehaviour
 
     public void InitialiseMainPanels()
     {
-        materialPanel.GetComponent<MaterialsPanel>().InitialiseMaterialPanel();
-        sculptPanel.GetComponent<SculptPanel>().InitialiseSculptPanel();
-        paintPanel.GetComponent<PaintPanel>().InitialisePaintPanel();
-        systemPanel.GetComponent<SystemPanel>().InitialiseSystemPanel();
-        stampPanel.GetComponent<StampPanel>().InitialiseStampPanel();
+        for(int index = 0; index < panels.Length; index++) {
+            panels[index].GetComponent<IPanel>().InitialisePanel();
+        }
     }
 
     public void Reset() {
         manager.CreateFlatTerrain();
         manager.ClearOverlay();
 
-        sculptPanel.GetComponent<SculptPanel>().SelectBrushIcon(0);
-        paintPanel.GetComponent<PaintPanel>().SelectBrushIcon(0);
-        paintPanel.GetComponent<PaintPanel>().SelectTextureIcon(1);
-
-        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-            materialPanel.GetComponent<MaterialsPanel>().SelectMaterialIcon(index, index);
-        }
-
-        for(int index = 1; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-            materialPanel.GetComponent<MaterialsPanel>().mixFactorSliders[index].value = 0;
-            materialPanel.GetComponent<MaterialsPanel>().mixtypeDropdowns[index].value = 0;
+        for(int index = 0; index < panels.Length; index++) {
+            panels[index].GetComponent<IPanel>().ResetPanel();
         }
 
         internalData.unsavedChanges = false;

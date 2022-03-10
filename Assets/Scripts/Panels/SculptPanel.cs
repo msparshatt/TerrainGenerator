@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using SimpleFileBrowser;
 
-public class SculptPanel : MonoBehaviour
+public class SculptPanel : MonoBehaviour, IPanel
 {
     [Header("UI elements")]
     [SerializeField] private GameObject sculptBrushScrollView;
@@ -35,13 +35,18 @@ public class SculptPanel : MonoBehaviour
     {
     }
 
-    public void InitialiseSculptPanel()
+    public void InitialisePanel()
     {
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
         
         brushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
 
+        SelectBrushIcon(0);
+    }
+
+    public void ResetPanel()
+    {
         SelectBrushIcon(0);
     }
 

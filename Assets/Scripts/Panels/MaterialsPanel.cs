@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using SimpleFileBrowser;
 
-public class MaterialsPanel : MonoBehaviour
+public class MaterialsPanel : MonoBehaviour, IPanel
 {
     private enum MixTypes  {Top = 1, Bottom, Steep, Shallow, Peaks, Valleys, Random};
 
@@ -41,7 +41,7 @@ public class MaterialsPanel : MonoBehaviour
     {
     }
 
-    public void InitialiseMaterialPanel()
+    public void InitialisePanel()
     {
         manager = TerrainManager.instance;
         gameResources = GameResources.instance;
@@ -60,6 +60,18 @@ public class MaterialsPanel : MonoBehaviour
             SelectMaterialIcon(index, index);
         }
         manager.doNotApply = false;
+    }
+
+    public void ResetPanel()
+    {
+        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
+            SelectMaterialIcon(index, index);
+        }
+
+        for(int index = 1; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
+            mixFactorSliders[index].value = 0;
+            mixtypeDropdowns[index].value = 0;
+        }
     }
 
     // Update is called once per frame
@@ -265,7 +277,7 @@ public class MaterialsPanel : MonoBehaviour
         return index;
     }
 
-    public void AddButton(Texture2D texture)
+    public void AddButton(Texture2D texture, int index = 0)
     {
         GameObject newButton;
         int ObjectIndex = materialIcons.Count;

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using SimpleFileBrowser;
 using UnityEngine.InputSystem;
 
-public class PaintPanel : MonoBehaviour
+public class PaintPanel : MonoBehaviour, IPanel
 {
     [Header("Brush Elements")]
     [SerializeField] private GameObject paintBrushScrollView;
@@ -47,7 +47,7 @@ public class PaintPanel : MonoBehaviour
     {
     }
 
-    public void InitialisePaintPanel()
+    public void InitialisePanel()
     {
         gameResources = GameResources.instance;
         textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
@@ -57,6 +57,12 @@ public class PaintPanel : MonoBehaviour
 
         SelectTextureIcon(1);
         SelectBrushIcon(0);
+    }
+
+    public void ResetPanel()
+    {
+        SelectBrushIcon(0);
+        SelectTextureIcon(1);
     }
 
     // Update is called once per frame
@@ -149,6 +155,14 @@ public class PaintPanel : MonoBehaviour
         paintScaleSlider.value = 1.0f;
     }
 
+    public void AddButton(Texture2D texture, int index = 0)
+    {
+        if(index == 0)
+            AddBrushButton(texture);
+        else
+            AddTextureButton(texture);
+    }
+    
     public void AddBrushButton(Texture2D texture)
     {
         GameObject newButton;
