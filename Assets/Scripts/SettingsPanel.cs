@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SettingsPanel : MonoBehaviour
@@ -10,6 +11,8 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private SettingsDataScriptable dataScriptable;
     [SerializeField] private Dropdown ResolutionDropdown;
     [SerializeField] private GameObject aboutPanel;
+
+    [SerializeField] private PlayerInput playerInput;
 
     private float defaultSpeed = 40.0f;
     private float defaultSensitivity = 1.0f;
@@ -69,5 +72,13 @@ public class SettingsPanel : MonoBehaviour
     public void Start()
     {
         ReloadButtonClick();
+    }
+
+    public void QWERTToggle(bool isOn)
+    {
+        if(isOn)
+            playerInput.SwitchCurrentActionMap("QWERTY");
+        else
+            playerInput.SwitchCurrentActionMap("AZERTY");
     }
 }
