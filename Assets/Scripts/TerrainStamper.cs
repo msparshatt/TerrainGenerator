@@ -28,11 +28,11 @@ public class TerrainStamper : MonoBehaviour
             {                   
                 float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -brushData.brushRotation, brushData.brushStrength);
                 float strength = brushData.brushStrength;
-                if(mode == StampMode.Lower)
+                if(mode == StampMode.Lower) 
                     strength *= -1;
 
-                heights[y, x] += maskValue  * brushData.brushStrength;
-                changes[y,x] =  maskValue  * brushData.brushStrength;
+                heights[y, x] += maskValue  * strength;
+                changes[y,x] =  maskValue  * strength;
             }
         }
 
