@@ -138,7 +138,7 @@ public class SculptPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0);
     }
 
-    public void AddButton(Texture2D texture)
+    public void AddButton(Texture2D texture, int index = 0)
     {
         GameObject newButton;
         int ObjectIndex = brushIcons.Count;
