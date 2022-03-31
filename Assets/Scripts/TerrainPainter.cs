@@ -6,7 +6,7 @@ using UnityEngine;
 public class TerrainPainter : MonoBehaviour
 {
     public enum PaintMode {Paint, Erase}
-    public BrushDataScriptable brushData;
+    public PaintBrushDataScriptable brushData;
 
     private Terrain terrain;
     public void Start()
@@ -45,7 +45,10 @@ public class TerrainPainter : MonoBehaviour
             for(int j = 0; j < rectangle.size.x; j++) {
                 int x = (int)(j * brushData.textureScale % brushData.paintTexture.width);
 
-                paint[count] = brushData.paintTexture.GetPixel(x, y);                
+                if(brushData.useTexture)
+                    paint[count] = brushData.paintTexture.GetPixel(x, y);                
+                else
+                    paint[count] = brushData.color;
                 count++;
             }
         }

@@ -21,6 +21,10 @@ public class PaintPanel : MonoBehaviour, IPanel
     [SerializeField] private Button textureDeleteButton;
     [SerializeField] private RawImage textureImage;
     [SerializeField] private Slider paintScaleSlider;
+    [SerializeField] private Toggle textureToggle;
+
+    [Header("Color Elements")]
+    [SerializeField] private ColorPicker colorPicker;
 
     [Header("Elements")]
     [SerializeField] private PlayerInput playerInput;
@@ -29,7 +33,7 @@ public class PaintPanel : MonoBehaviour, IPanel
 
 
     [Header("Data Objects")]
-    [SerializeField] private BrushDataScriptable paintBrushData;
+    [SerializeField] private PaintBrushDataScriptable paintBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
 
@@ -55,6 +59,8 @@ public class PaintPanel : MonoBehaviour, IPanel
         manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
 
+        colorPicker.onColorChanged += delegate {ColorPickerChange(); };
+        colorPicker.color = Color.white;
         SelectTextureIcon(1);
         SelectBrushIcon(0);
     }
@@ -272,5 +278,15 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void UpdateControls()
     {
         paintScaleSlider.value = internalData.paintScale;
+    }
+
+    public void TextureToggleChange(bool isOn)
+    {
+        paintBrushData.useTexture = isOn;
+    }
+
+    public void ColorPickerChange()
+    {
+        paintBrushData.color = colorPicker.color;
     }
 }

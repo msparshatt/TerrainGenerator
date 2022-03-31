@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
 {
     [Header("Terrain settings")]
     [SerializeField] private BrushDataScriptable sculptBrushData;
-    [SerializeField] private BrushDataScriptable paintBrushData;
+    [SerializeField] private PaintBrushDataScriptable paintBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
     [SerializeField] private Terrain mainTerrain;
 

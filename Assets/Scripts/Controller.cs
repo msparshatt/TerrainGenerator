@@ -17,7 +17,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private BrushDataScriptable sculptBrushData;
-    [SerializeField] private BrushDataScriptable paintBrushData;
+    [SerializeField] private PaintBrushDataScriptable paintBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
 
     [Header("Panels")]
@@ -52,12 +52,13 @@ public class Controller : MonoBehaviour
         sculptBrushData.brushRadius = 50;
         sculptBrushData.brushStrength = 0.05f;
         sculptBrushData.brushRotation = 0;
-        sculptBrushData.textureScale = 1.0f;
 
         paintBrushData.brushRadius = 50;
         paintBrushData.brushStrength = 0.05f;
         paintBrushData.brushRotation = 0;
         paintBrushData.textureScale = 1.0f;
+        paintBrushData.useTexture = true;
+        paintBrushData.color = Color.white;
 
         internalData.customSculptBrushes = new List<string>();
         internalData.customStampBrushes = new List<string>();
