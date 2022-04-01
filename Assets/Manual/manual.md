@@ -152,19 +152,39 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 
 \newpage
 
-# Paint Tab
-![Paint tab image](Screenshots/paint.png)
-
-Paint textures over the terrain
+# Stamp tab
+![Stamp tab image](Screenshots/stamppanel.png)
 
 - **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
 - **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
 - **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
 
+## Brush buttons
+
+![Brush selector image](Screenshots/stampbrush_selector.png)
+
+Click on the brush picture in order to bring up the list of available brushes.
+
+New brushes can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
+
+\newpage
+
+# Paint Tab
+![Paint tab image](Screenshots/paintpanel.png)
+
+Paint textures or colors over the terrain
+
+- **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
+- **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
+
+- **Texture** Paint the selected texture
 - **Textures** Choose the texture to paint
 - **Clear** Clears any painted textures
 - **Tiling** Will scale the texture to be painted
 - **Reset** Resets the tiling value to 1
+- **Color** Paint the selected color
+- **Color Picker** Choose which color to paint
 
 The paint controls are
 
@@ -268,6 +288,7 @@ Click on the import button and then select the image file to import.
 
 ## Brushes
 Brushes should be square, greyscale images. Black areas are transparent, white areas are completely opaque.
+Note any stamps which work with Unity's terrain system can be imported.
 
 ## Materials and textures
 These should be square jpg or png images. Images with a resolution of around 2kx2k work best. Importing large materials can slow down paint operations.

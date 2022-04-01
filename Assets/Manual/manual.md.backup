@@ -7,7 +7,7 @@ geometry: "top=1cm"
 
 You can switch between QWERTY and AZERTY controls in the settings panel.
 
-##QWERTY
+## QWERTY
 
 |Key    |Action    |
 |-------|----------|
@@ -28,7 +28,7 @@ You can switch between QWERTY and AZERTY controls in the settings panel.
 |left mouse  | interact |
 |right mouse | rotate camera |
 
-##AZERTY
+## AZERTY
 
 |Key    |Action    |
 |-------|----------|
@@ -152,19 +152,39 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 
 \newpage
 
-# Paint Tab
-![Paint tab image](Screenshots/paint.png)
-
-Paint textures over the terrain
+# Stamp tab
+![Stamp tab image](Screenshots/stamppanel.png)
 
 - **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
 - **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
 - **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
 
+## Brush buttons
+
+![Brush selector image](Screenshots/stampbrush_selector.png)
+
+Click on the brush picture in order to bring up the list of available brushes.
+
+New brushes can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
+
+\newpage
+
+# Paint Tab
+![Paint tab image](Screenshots/paintpanel.png)
+
+Paint textures or colors over the terrain
+
+- **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
+- **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
+
+- **Texture** Paint the selected texture
 - **Textures** Choose the texture to paint
 - **Clear** Clears any painted textures
 - **Tiling** Will scale the texture to be painted
 - **Reset** Resets the tiling value to 1
+- **Color** Paint the selected color
+- **Color Picker** Choose which color to paint
 
 The paint controls are
 
