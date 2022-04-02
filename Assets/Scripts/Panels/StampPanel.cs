@@ -59,6 +59,11 @@ public class StampPanel : MonoBehaviour, IPanel
         brushData.brushStrength = heightSlider.value;
     }
 
+    public void ResetPanel()
+    {
+        SelectBrushIcon(0);
+    }
+    
     public void BrushButtonClick()
     {
         bool active = !stampBrushPanel.activeSelf;
