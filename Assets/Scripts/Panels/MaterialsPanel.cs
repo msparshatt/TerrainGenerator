@@ -83,6 +83,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     //settings panel
     public void AOToggleChange(bool isOn)
     {
+        internalData.ambientOcclusion = isOn;
         manager.SetAO(isOn);
     }
 
