@@ -37,11 +37,14 @@ public class Serialisation : MonoBehaviour
             string fileContents = sr.ReadToEnd();
             sr.Close();        
 
+
             //read the file version
             Version data = JsonUtility.FromJson<Version>(fileContents);
 
             if(data.version <= 1) {
-                Version1Load(fileContents);
+                bool version4 = fileContents.Contains("baseTexture2");
+
+                Version1Load(fileContents, version4);
             } else {
                 Version2Load(fileContents);
             }
@@ -51,7 +54,7 @@ public class Serialisation : MonoBehaviour
         }        
     }
 
-    public void Version1Load(string fileContents)
+    public void Version1Load(string fileContents, bool version4)
     {
         SaveData_v1 data = JsonUtility.FromJson<SaveData_v1>(fileContents);
         manager.CreateTerrainFromHeightmap(data.heightmap);
@@ -62,20 +65,35 @@ public class Serialisation : MonoBehaviour
         int[] mixTypes = new int[InternalDataScriptable.NUMBER_MATERIALS];
         float[] mixFactors = new float[InternalDataScriptable.NUMBER_MATERIALS];
 
-        if(data.baseTexture == -1) {
-            materials.SelectMaterialIcon(0, materials.AddBaseTexture(data.baseTexture_colors));
-        } else {
-            materials.SelectMaterialIcon(0, RemapTextureIndex(data.baseTexture));
-        }
+        Debug.Log(version4);
+        if(version4) {
+            if(data.baseTexture == -1) {
+                materials.SelectMaterialIcon(0, materials.AddBaseTexture(data.baseTexture_colors));
+            } else {
+                materials.SelectMaterialIcon(0, RemapTextureIndex(data.baseTexture, true));
+            }
 
-        if(data.baseTexture2 == -1) {
-            materials.SelectMaterialIcon(1, materials.AddBaseTexture(data.baseTexture2_colors));
+            if(data.baseTexture2 == -1) {
+                materials.SelectMaterialIcon(1, materials.AddBaseTexture(data.baseTexture2_colors));
+            } else {
+                materials.SelectMaterialIcon(1, RemapTextureIndex(data.baseTexture2, true));
+            }
         } else {
-            materials.SelectMaterialIcon(1, RemapTextureIndex(data.baseTexture2));
+            if(data.baseTexture == -1) {
+                materials.SelectMaterialIcon(0, materials.AddBaseTexture(data.baseTexture_colors));
+            } else {
+                materials.SelectMaterialIcon(0, RemapTextureIndex(data.baseTexture, false));
+            }
+
+            materials.SelectMaterialIcon(1, 1);
         }
 
         mixTypes[1] = data.mixType;
-        mixFactors[1] = 1- data.mixFactor;
+
+        if(data.mixFactor > 0)
+            data.mixFactor = 1 - data.mixFactor;
+
+        mixFactors[1] = data.mixFactor;
 
         for(int index = 2; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
             mixTypes[index] = 1;
@@ -242,11 +260,18 @@ public class Serialisation : MonoBehaviour
         internalData.unsavedChanges = false;
     }
 
-    public int RemapTextureIndex(int index)
+    public int RemapTextureIndex(int index, bool version4)
     {
-        int[] newIndices = {0, 1, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 57, 53, 54};
+        int result = 0;
+        if(version4) {
+            int[] newIndices = {0, 1, 7, 8, 9, 17, 18, 25, 26, 27, 28, 29, 35, 36, 37, 44, 45, 52, 22, 69, 70, 56, 57, 53, 54};
+            result = newIndices[index];
+        } else {
+            int[] newIndices = {0, 7, 8, 9, 36, 17, 18, 43, 28, 35, 45, 52, 22, 69, 70, 77, 56, 53, 54};
+            result = newIndices[index];
+        }
 
-        Debug.Log(index + " : " + newIndices[index]);
-        return newIndices[index];
+        Debug.Log(index + " : " + result);
+        return result;
     }
 }
