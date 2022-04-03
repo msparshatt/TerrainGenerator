@@ -38,9 +38,8 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IDragHandler, IPo
     }
 
     public event Action<Color> onColorChanged;
-    public int test;
 
-    private void Awake()
+    public void Awake()
     {
         rectTransform = transform as RectTransform;
         image = GetComponent<Image>();

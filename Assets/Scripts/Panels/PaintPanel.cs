@@ -59,6 +59,7 @@ public class PaintPanel : MonoBehaviour, IPanel
         manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
 
+        colorPicker.Awake();
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
         colorPicker.color = Color.white;
         SelectTextureIcon(1);
