@@ -26,6 +26,8 @@ public class TerrainManager
     private float[] offsets;
     public bool doNotApply;
 
+    public Color[] colors;
+
     private Vector2 textureScale;
 
     private static TerrainManager _instance;
@@ -90,6 +92,11 @@ public class TerrainManager
         ClearMaximaAndMinima();
         maxima.Add(new Vector4(-1, -1, -1, -1));
         minima.Add(new Vector4(-1, -1, -1, -1));
+
+        colors = new Color[InternalDataScriptable.NUMBER_MATERIALS];
+        for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++){
+            colors[i] = Color.white;
+        }
     }
 
     public void SetupTerrain(SettingsDataScriptable _settingsData, InternalDataScriptable _internalData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
@@ -136,6 +143,15 @@ public class TerrainManager
     public void SetBaseMaterials(int index, Material material)
     {
         baseMaterials[index] = material;
+
+        if(!doNotApply)
+            ApplyTextures();
+    }
+
+    public void SetBaseColor(int index, Color color)
+    {
+        colors[index] = color;
+        baseMaterials[index] = null;
 
         if(!doNotApply)
             ApplyTextures();
@@ -460,8 +476,10 @@ public class TerrainManager
         shaderRunning = true;
         int hmResolution = currentTerrain.terrainData.heightmapResolution;
 
-        int width = baseMaterials[0].mainTexture.width;
-        int height = baseMaterials[0].mainTexture.height;
+        int width = 2048;
+        int height = 2048;
+        textureShader.SetInt("width", width);
+        textureShader.SetInt("height", height);
 
         //create textures to hold the result
         RenderTexture tex = new RenderTexture(width,height,24);
@@ -473,8 +491,6 @@ public class TerrainManager
 
         //send parameters to the compute shader
         textureShader.SetFloat("tiling", textureScale.x);
-        textureShader.SetInt("width", width);
-        textureShader.SetInt("height", height);
         float[] factors =  new float[20];
         factors[4] = mixFactors[1];
         factors[8] = mixFactors[2];
@@ -505,15 +521,30 @@ public class TerrainManager
 
         Texture2D tempTexture;
 
-        tempTexture = (Texture2D)(baseMaterials[0].mainTexture);
-        Texture2DArray inputTextures = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT5, false);
-        Texture2DArray inputAOs = new Texture2DArray(tempTexture.width, tempTexture.height, 5, TextureFormat.DXT1, false);
+        //tempTexture = (Texture2D)(baseMaterials[0].mainTexture);
+        Texture2DArray inputTextures = new Texture2DArray(2048, 2048, 5, TextureFormat.DXT5, false);
+        Texture2DArray inputAOs = new Texture2DArray(2048, 2048, 5, TextureFormat.DXT1, false);
+
+        float[] colorValues = new float[InternalDataScriptable.NUMBER_MATERIALS * 4];
 
         for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
-            Graphics.CopyTexture(baseMaterials[i].mainTexture, 0, 0, inputTextures, i, 0);
-            Graphics.CopyTexture(baseMaterials[i].GetTexture("_OcclusionMap"), 0, 0, inputAOs, i, 0);
+            if(baseMaterials[i] != null) {
+                Graphics.CopyTexture(baseMaterials[i].mainTexture, 0, 0, inputTextures, i, 0);
+                Graphics.CopyTexture(baseMaterials[i].GetTexture("_OcclusionMap"), 0, 0, inputAOs, i, 0);
+
+                colorValues[i * 4] = -1;
+                colorValues[i * 4 + 1] = -1;
+                colorValues[i * 4 + 2] = -1;
+                colorValues[i * 4 + 3] = -1;
+            } else {
+                colorValues[i * 4] = colors[i].r;
+                colorValues[i * 4 + 1] = colors[i].g;
+                colorValues[i * 4 + 2] = colors[i].b;
+                colorValues[i * 4 + 3] = colors[i].a;
+            }
         }
 
+        textureShader.SetFloats("colors", colorValues);
 
         textureShader.SetTexture(kernelHandle, "textures", inputTextures);
         textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);

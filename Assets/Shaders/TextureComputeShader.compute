@@ -9,6 +9,7 @@ RWTexture2D<float4> aoResult;
 Texture2DArray<float4> textures;
 Texture2DArray<float4> aotextures;
 StructuredBuffer<float> heightmap;
+float4 colors[10];
 int textureCount;
 float factors[10];
 int mixTypes[10];
@@ -28,7 +29,15 @@ float4 minima[1000];
 void ApplyTextures(uint3 id : SV_DispatchThreadID)
 {
     int3 pos = int3((id.x * tiling) % width, (id.y * tiling) % height, 0);
-    float4 pixelTexture = float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0);
+    float4 color;
+
+    if(colors[0].x > -1) {
+        color = colors[0];
+    } else {
+        color = textures[pos];
+    }
+
+    float4 pixelTexture = float4(color.x, color.y, color.z, 1.0);
     float4 pixelAO = float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0);
     float f = 0;
 
@@ -103,7 +112,14 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
         f = max(f, 0);
 
         pos[2] = index;
-        pixelTexture = pixelTexture * (1 - f) + float4(textures[pos].x, textures[pos].y, textures[pos].z, 1.0) * f;
+
+        if(colors[index].x > -1) {
+            color = colors[index];
+        } else {
+            color = textures[pos];
+        }
+
+        pixelTexture = pixelTexture * (1 - f) + float4(color.x, color.y, color.z, 1.0) * f;
         pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
     }
 
