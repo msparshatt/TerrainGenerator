@@ -12,6 +12,16 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private Slider sunPositionSlider;
     [SerializeField] private ColorPicker sunColorPicker;
 
+    [Header("Clouds")]
+    [SerializeField] private Material SkyMaterial;
+    [SerializeField] private GameObject SkyPlane;
+    [SerializeField] private Slider CloudXOffsetSlider;
+    [SerializeField] private Slider CloudYOffsetSlider;
+    [SerializeField] private Slider CloudScaleSlider;
+    [SerializeField] private Slider CloudStartSlider;
+    [SerializeField] private Slider CloudEndSlider;
+
+
 
     private bool autoColor = true;
     private TerrainManager manager;
@@ -46,7 +56,7 @@ public class SkyPanel : MonoBehaviour, IPanel
             if(sunHeightSlider.value <= 15) {
                 skyColor  =  Color.Lerp(Color.white, Color.red, (15 - sunHeightSlider.value) / 15);
             }
-            manager.SetSunColor(skyColor);
+            SetSunColor(skyColor);
         }
     }
 
@@ -63,7 +73,28 @@ public class SkyPanel : MonoBehaviour, IPanel
     public void ColorPickerChange()
     {
         if(!autoColor) {
-            manager.SetSunColor(sunColorPicker.color);
+            SetSunColor(sunColorPicker.color);
         }
+    }
+
+    private void SetSunColor(Color sunColor)
+    {
+        manager.SetSunColor(sunColor);
+
+        SkyMaterial.SetColor("_SunColor", sunColor);
+    }
+
+    public void CloudToggleChange(bool isOn)
+    {
+        SkyPlane.SetActive(isOn);
+    }
+
+    public void CloudSliderChange()
+    {
+        SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value);
+        SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value);
+        SkyMaterial.SetFloat("_Scale", CloudScaleSlider.value);
+        SkyMaterial.SetFloat("_CloudStart", CloudStartSlider.value);
+        SkyMaterial.SetFloat("_CloudEnd", CloudEndSlider.value);
     }
 }
