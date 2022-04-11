@@ -8,6 +8,7 @@ float PerlinXOffset;
 float PerlinYOffset;
 int PerlinIterations;
 float PerlinIterationFactor;
+float PerlinIterationRotation;
 int Resolution;
 
 //voronoi noise parameters
@@ -48,6 +49,14 @@ float2 Rand2D(float xPos, float yPos)
     y -= floor(y);
 
     return float2(x, y);
+}
+
+float2 RotateVector(float2 oldVector, float degrees)
+{
+    float rads = radians(degrees);
+    float newX = oldVector.x * cos(rads) - oldVector.y * sin(rads);
+    float newY = oldVector.x * sin(rads) + oldVector.y * cos(rads);
+    return float2(newX, newY);
 }
 
 float VoronoiNoise(float xPos, float yPos)
@@ -133,17 +142,18 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     int x = id.x % Resolution;
     int y = id.x / Resolution;
 
-    float xCoord = PerlinXOffset + x;
-    float yCoord = PerlinYOffset + y;
     float amplitude = 1.0;
     float scale = PerlinScale / 500.0;
 
     float perlin = 0;
     float totalAmplitude = 0;
 
+    float2 position = float2(PerlinXOffset + x, PerlinYOffset + y);
     //calculate sum of a series of perlin noise functions
     for(int i = 0; i < PerlinIterations; i++) {
-        float value = snoise(float2(xCoord * scale + 0.1, yCoord * scale + 0.1));
+        position = RotateVector(position, PerlinIterationRotation);
+
+        float value = snoise(float2(position.x * scale + 0.1, position.y * scale + 0.1));
         value = (value + 1) / 2;
         perlin += value * amplitude;
 

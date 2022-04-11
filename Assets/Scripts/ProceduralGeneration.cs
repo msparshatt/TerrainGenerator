@@ -21,6 +21,7 @@ public class ProceduralGeneration
     public float scale;
     public int iterations;
     public float iterationFactor;
+    public float iterationRotation;
 
 
     public float cellSize;
@@ -107,6 +108,7 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloat("PerlinYOffset", perlinOffset.y);
         proceduralGenerationShader.SetInt("PerlinIterations", iterations);
         proceduralGenerationShader.SetFloat("PerlinIterationFactor", iterationFactor);
+        proceduralGenerationShader.SetFloat("PerlinIterationRotation", iterationRotation);
 
         proceduralGenerationShader.SetInt("Resolution", size);
 
