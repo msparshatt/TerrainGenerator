@@ -44,6 +44,7 @@ public class TerrainManager
 
     private Texture2D busyCursor;
     private ComputeShader textureShader;
+    private Light sun;
 
     //flag to avoid running multipe compute shaders at the same time
     private bool shaderRunning;
@@ -99,9 +100,10 @@ public class TerrainManager
         }
     }
 
-    public void SetupTerrain(SettingsDataScriptable _settingsData, InternalDataScriptable _internalData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader)
+    public void SetupTerrain(SettingsDataScriptable _settingsData, InternalDataScriptable _internalData, Texture2D _busyCursor, ComputeShader _textureShader, Shader _materialShader, Light _sun)
     {
         materialShader = _materialShader;
+        sun = _sun;
         CreateTextures();
 
         settingsData = _settingsData;
@@ -129,6 +131,8 @@ public class TerrainManager
         terrainMaterial.mainTexture = newTexture;
         terrainMaterial.mainTextureScale = new Vector2(1f, 1f);
 
+        terrainMaterial.SetColor("_LightColor", sun.color);
+        terrainMaterial.SetVector("_MainLightPosition", sun.transform.position);
         aoTexture = new Texture2D((int)sizeX, (int)sizeY);// GraphicsFormat.R8G8B8A8_UNorm, true);
         painter.ClearTexture(aoTexture);
 
@@ -139,6 +143,12 @@ public class TerrainManager
         terrainMaterial.SetTexture("_OverlayTexture", newTexture);
     }
 
+    public void UpdateLighting()
+    {
+        terrainMaterial.SetColor("_LightColor", sun.color);
+        Vector3 sunPos = sun.transform.rotation * Vector3.forward * 500;
+        terrainMaterial.SetVector("_MainLightPosition", sunPos);
+    }
     //return an array of the names of all the current terrains
     public void SetBaseMaterials(int index, Material material)
     {

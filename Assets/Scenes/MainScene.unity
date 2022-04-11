@@ -22700,6 +22700,7 @@ MonoBehaviour:
   paintPanel: {fileID: 746692198}
   systemPanel: {fileID: 1819768948}
   sidePanels: {fileID: 1262097358}
+  sun: {fileID: 705507994}
   customTextures: []
 --- !u!1 &655327133
 GameObject:

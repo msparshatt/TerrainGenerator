@@ -31,6 +31,9 @@ public class Controller : MonoBehaviour
 
     [SerializeField] private GameObject sidePanels;
 
+    [Header("Lighting")]
+    [SerializeField] private Light sun;
+
     public List<string> customTextures;
 
     private GameResources gameResources;
@@ -45,7 +48,7 @@ public class Controller : MonoBehaviour
         //cache an instant of the terrain manager
         manager = TerrainManager.instance;
 
-        manager.SetupTerrain(settingsData, internalData, busyCursor, textureShader, materialShader);
+        manager.SetupTerrain(settingsData, internalData, busyCursor, textureShader, materialShader, sun);
         manager.CreateFlatTerrain();
 
         //set up brush settings
@@ -87,7 +90,7 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        manager.UpdateLighting();
     }
 
     public void DoExit()
