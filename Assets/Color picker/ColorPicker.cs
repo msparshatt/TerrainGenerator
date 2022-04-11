@@ -61,6 +61,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IDragHandler, IPo
             return;
         }
 
+        color = Color.white;
         ApplyColor();
     }
 

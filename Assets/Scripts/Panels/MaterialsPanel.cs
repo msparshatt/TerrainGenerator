@@ -74,14 +74,22 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         manager.doNotApply = false;
 
+        changeToggle = false;
+        colorPicker.Awake();
+        colorPicker.color = Color.white;
+        colorPicker.onColorChanged += delegate {ColorPickerChange(); };
+
         colors = new Color[InternalDataScriptable.NUMBER_MATERIALS];
         for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++){
             colors[i] = Color.white;
         }
 
-        colorPicker.Awake();
         colorPicker.color = Color.white;
-        colorPicker.onColorChanged += delegate {ColorPickerChange(); };
+
+        changeToggle = true;
+
+        Debug.Log(colors[0]);
+
     }
 
     public void ResetPanel()
@@ -232,28 +240,37 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void MaterialButtonClick(int index)
     {
+        Debug.Log(index);
+        Debug.Log(colors[index]);
+
         bool active = !materialPanel.activeSelf;
         if(index != materialPanelIndex)
             active = true;
+        Debug.Log(colors[index]);
 
         sidePanels.GetComponent<PanelController>().CloseAllPanels();
 
         for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             materialImages[i].color = settingsData.deselectedColor;
         }
+        Debug.Log(colors[index]);
 
         if(active) {
-            sidePanels.SetActive(true);
-            materialPanel.SetActive(true);
+        Debug.Log(colors[index]);
+            changeToggle = false;
             materialPanelIndex = index;
+            colorPicker.color = colors[materialPanelIndex];
+        Debug.Log(colors[index] + ":" + colorPicker.color);
+            sidePanels.SetActive(true);
+        Debug.Log(colors[index] + ":" + colorPicker.color);
+            materialPanel.SetActive(true);
+        Debug.Log(colors[index] + ":" + colorPicker.color);
 
             if(colorSelected[materialPanelIndex])
                 colorToggle.isOn = true;
             else
                 materialToggle.isOn = true;
 
-            changeToggle = false;
-            colorPicker.color = colors[materialPanelIndex];
             changeToggle = true;
 
             materialImages[index].color = settingsData.selectedColor;
@@ -350,10 +367,8 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void ColorPickerChange()
     {
+        colors[materialPanelIndex] = colorPicker.color;
         if(changeToggle) {
-            colors[materialPanelIndex] = colorPicker.color;
-
-
             if(colorToggle.isOn){
                 ToggleChange(true);
             } else {
