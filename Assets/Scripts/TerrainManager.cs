@@ -143,12 +143,34 @@ public class TerrainManager
         terrainMaterial.SetTexture("_OverlayTexture", newTexture);
     }
 
+    public void ApplyLighting(bool apply)
+    {
+        int lightOn = 0;
+        if(apply)
+            lightOn = 1;
+
+        terrainMaterial.SetInt("_ApplyLighting", lightOn);
+    }
+
+    public void MoveSun(float height, float position)
+    {
+        sun.transform.localRotation = Quaternion.Euler(height, position, 0);
+
+        UpdateLighting();
+    }
+
+    public void SetSunColor(Color sunColor)
+    {
+        sun.color = sunColor;
+        UpdateLighting();
+    }
     public void UpdateLighting()
     {
         terrainMaterial.SetColor("_LightColor", sun.color);
-        Vector3 sunPos = sun.transform.rotation * Vector3.forward * 500;
+        Vector3 sunPos = sun.transform.rotation * Vector3.back;
         terrainMaterial.SetVector("_MainLightPosition", sunPos);
     }
+
     //return an array of the names of all the current terrains
     public void SetBaseMaterials(int index, Material material)
     {

@@ -90,7 +90,7 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        manager.UpdateLighting();
+        //manager.UpdateLighting();
     }
 
     public void DoExit()
