@@ -13,6 +13,7 @@ Shader "Unlit/TerrainShader"
         _CursorTexture("Cursor Texture", 2D) = "white" {}
         _CursorRotation("Cursor Rotation", float) = 0
 
+        _ApplyLighting("ApplyLighting", int) = 0
         _MainLightPosition("MainLightPosition", Vector) = (0,0,0,0)
         _LightColor("LightColor", Color) = (1,1,1,1)
 
@@ -45,11 +46,12 @@ Shader "Unlit/TerrainShader"
                 float2 uv2 : TEXCOORD1;
                 float4 vertex : SV_POSITION;
 
-                float3 lightdir : TEXCOORD2;
+                /*float3 lightdir : TEXCOORD2;
 
 				float3 T : TEXCOORD3;
 				float3 B : TEXCOORD4;
-				float3 N : TEXCOORD5;
+				float3 N : TEXCOORD5;*/
+                fixed4 diff : COLOR0; // diffuse lighting color
             };
 
             sampler2D _MainTex;
@@ -62,6 +64,7 @@ Shader "Unlit/TerrainShader"
             float4 _OverlayTexture_ST;
             float4 _CursorLocation;
 
+            int _ApplyLighting;
             uniform float3 _MainLightPosition;
             uniform float4 _LightColor;          
 
@@ -72,18 +75,14 @@ Shader "Unlit/TerrainShader"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv2 = TRANSFORM_TEX(v.uv, _OverlayTexture);
 
-                float4 worldPosition = mul(unity_ObjectToWorld, v.vertex);
-				float3 lightDir = worldPosition.xyz - _MainLightPosition.xyz;
-				o.lightdir = normalize(lightDir);
-                float3 worldNormal = mul((float3x3)unity_ObjectToWorld, v.normal);
-                float3 worldTangent = mul((float3x3)unity_ObjectToWorld, v.tangent);
-				
-				float3 binormal = cross(v.normal, v.tangent.xyz); // *input.tangent.w;
-				float3 worldBinormal = mul((float3x3)unity_ObjectToWorld, binormal);
-                
-                o.N = normalize(worldNormal);
-				o.T = normalize(worldTangent);
-				o.B = normalize(worldBinormal);
+                // get vertex normal in world space
+                half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+                // dot product between normal and light direction for
+                // standard diffuse (Lambert) lighting
+                half nl = max(0, dot(worldNormal, _MainLightPosition.xyz));
+
+                // factor in the light color
+                o.diff = nl * _LightColor;
 
                 return o;
             }
@@ -143,27 +142,12 @@ Shader "Unlit/TerrainShader"
                 fixed4 col = Base(i);          
                 col = Overlay(col, i);
 
-                float3 tangentNormal = float3(1,1,1); //tex2D(_NormalMap, i.uv).xyz;
-				// and change range of values (0 ~ 1)
-				tangentNormal = normalize(tangentNormal * 2 - 1);
+                if(_ApplyLighting > 0) {
+                    float3 ambient = float3(0.1f, 0.1f, 0.1f) * 3 * col;
 
-				// 'TBN' transforms the world space into a tangent space
-				// we need its inverse matrix
-				// Tip : An inverse matrix of orthogonal matrix is its transpose matrix
-				float3x3 TBN = float3x3(normalize(i.T), normalize(i.B), normalize(i.N));
-				TBN = transpose(TBN);
-
-				// finally we got a normal vector from the normal map
-				float3 worldNormal = mul(TBN, tangentNormal);
-
-                float3 lightDir = normalize(i.lightdir);
-				// calc diffuse, as we did in pixel shader
-				float3 diffuse = saturate(dot(worldNormal, lightDir));
-				diffuse = col.rgb * diffuse *_LightColor;
-
-                float3 ambient = float3(0.1f, 0.1f, 0.1f) * 3 * col;
-
-                col = float4((ambient + diffuse), 1.0);
+                    float3 diffuse = col * i.diff;
+                    col = float4((ambient + diffuse), 1.0);
+                }
 
                 col = AddCursor(col, i);
 
