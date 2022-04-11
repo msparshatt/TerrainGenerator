@@ -12,6 +12,8 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private Slider sunPositionSlider;
     [SerializeField] private ColorPicker sunColorPicker;
 
+
+    private bool autoColor = true;
     private TerrainManager manager;
 
     // Update is called once per frame
@@ -38,10 +40,30 @@ public class SkyPanel : MonoBehaviour, IPanel
     public void LightSliderChange()
     {
         manager.MoveSun(sunHeightSlider.value, sunPositionSlider.value);
+
+        if(autoColor) {
+            Color skyColor = Color.white;
+            if(sunHeightSlider.value <= 15) {
+                skyColor  =  Color.Lerp(Color.white, Color.red, (15 - sunHeightSlider.value) / 15);
+            }
+            manager.SetSunColor(skyColor);
+        }
+    }
+
+    public void AutoColorToggleChange(bool isOn)
+    {
+        autoColor = isOn;
+
+        if(autoColor)
+            LightSliderChange();
+        else
+            ColorPickerChange();
     }
 
     public void ColorPickerChange()
     {
-        manager.SetSunColor(sunColorPicker.color);
+        if(!autoColor) {
+            manager.SetSunColor(sunColorPicker.color);
+        }
     }
 }
