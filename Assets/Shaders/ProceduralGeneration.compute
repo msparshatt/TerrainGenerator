@@ -6,10 +6,10 @@
 float PerlinScale;
 float PerlinXOffset;
 float PerlinYOffset;
-int PerlinIterations;
+uint PerlinIterations;
 float PerlinIterationFactor;
 float PerlinIterationRotation;
-int Resolution;
+uint Resolution;
 
 //voronoi noise parameters
 float VoronoiXOffset;
@@ -67,8 +67,8 @@ float VoronoiNoise(float xPos, float yPos)
     float xPosition = xcoord / CellSize;
     float yPosition = ycoord / CellSize;
 
-    int xBase = floor(xPosition);
-    int yBase = floor(yPosition);
+    uint xBase = floor(xPosition);
+    uint yBase = floor(yPosition);
 
     float minDistance = 100;
     float minDistance2 = 110;
@@ -119,7 +119,7 @@ float Terraces(int index, float height)
     if(TerraceParameters[index].x != -1) {
         float terraceHeight = height * TerraceParameters[index].x;
 
-        int heightFloor = floor(terraceHeight);
+        uint heightFloor = floor(terraceHeight);
         float difference = terraceHeight - heightFloor;
 
         float shape = TerraceParameters[index].y;
@@ -139,8 +139,8 @@ float Terraces(int index, float height)
 void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 {
     //calcuate the location in the heightmap
-    int x = id.x % Resolution;
-    int y = id.x / Resolution;
+    uint x = id.x % Resolution;
+    uint y = id.x / Resolution;
 
     float amplitude = 1.0;
     float scale = PerlinScale / 500.0;
@@ -150,7 +150,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
 
     float2 position = float2(PerlinXOffset + x, PerlinYOffset + y);
     //calculate sum of a series of perlin noise functions
-    for(int i = 0; i < PerlinIterations; i++) {
+    for(uint i = 0; i < PerlinIterations; i++) {
         position = RotateVector(position, PerlinIterationRotation);
 
         float value = snoise(float2(position.x * scale + 0.1, position.y * scale + 0.1));
@@ -202,7 +202,7 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     height = (height - 0.5f) * HeightScale + 0.5f;
 
     //add any terraces
-    for(int terraceIndex = 0; terraceIndex < 3; terraceIndex++) {
+    for(uint terraceIndex = 0; terraceIndex < 3; terraceIndex++) {
         height = Terraces(terraceIndex, height);
     }
 
