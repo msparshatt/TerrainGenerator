@@ -34,6 +34,7 @@ public class ProceduralControlPanel : MonoBehaviour
     public Slider minimumHeightSlider;
     public Slider heightScaleSlider;
     public Toggle clampToggle;
+    public Slider heightClampSlider;
 
 
     [Header("Terrace UI")]
@@ -136,6 +137,7 @@ public class ProceduralControlPanel : MonoBehaviour
         procGen.factor = factorSlider.value;
 
         procGen.clampEdges = clampToggle.isOn;
+        procGen.clampHeight = heightClampSlider.value;
         procGen.minHeight = minimumHeightSlider.value;
         procGen.heightscale = heightScaleSlider.value;
 

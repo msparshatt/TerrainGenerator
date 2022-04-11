@@ -31,6 +31,7 @@ public class ProceduralGeneration
 
     public float factor;
     public bool clampEdges;
+    public float clampHeight;
     public bool toggle;
 
     public float minHeight;
@@ -122,6 +123,7 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloat("MinHeight", minHeight);
         proceduralGenerationShader.SetFloat("HeightScale", heightscale);
         proceduralGenerationShader.SetBool("ClampEdges", clampEdges);
+        proceduralGenerationShader.SetFloat("ClampHeight", clampHeight);
 
         float[] terraceParameters = {-1, -1, 0, 0
         -1, -1, 0, 0,
