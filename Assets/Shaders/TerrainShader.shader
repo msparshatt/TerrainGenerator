@@ -61,23 +61,27 @@ Shader "Unlit/TerrainShader"
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 Base(v2f i)
             {
-                // sample the texture   
-                fixed4 col;
-                float factor = 0;
-
-
-                col = tex2D(_MainTex, i.uv);
+                fixed4 col = tex2D(_MainTex, i.uv);
 
                 fixed4 AO = tex2D(_AOTexture, i.uv);
                 col *= AO;
-            
 
+                return col;
+            }
+
+            fixed4 Overlay(fixed4 col, v2f i)
+            {
                 fixed4 overlay =  tex2D(_OverlayTexture, i.uv2);
 
                 col = (col * (1 - overlay.a)) + (overlay * overlay.a);
 
+                return col;
+            }
+
+            fixed4 AddCursor(fixed4 col, v2f i)
+            {
                 float angle = radians(_CursorRotation);
 
                 float centerX = _CursorLocation.x + _CursorLocation.z / 2;
@@ -103,9 +107,19 @@ Shader "Unlit/TerrainShader"
                         brushCol.a = brushCol.b * 0.7;
                         col = (col * (1 - brushCol.a)) + (brushCol * brushCol.a);
                     }
-//                fixed4 col = float4(i.uv.x, i.uv.y, 0, 1);
+
                 return col;
             }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed4 col = Base(i);          
+                col = Overlay(col, i);
+                col = AddCursor(col, i);
+
+                return col;
+            }
+
             ENDCG
         }
     }
