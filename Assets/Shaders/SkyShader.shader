@@ -8,12 +8,14 @@ Shader "Unlit/SkyShader"
         _CloudEnd("Cloud End", float) = 1
         _XOffset("X offset", float) = 0
         _YOffset("Y offset", float) = 0
+        _Rotation("Rotation", float) = 0
         _Scale("Scale", float) = 5
     }
     SubShader
     {
         Tags { "Queue"="Transparent" "RenderType"="Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
+        Cull Front
         
         LOD 100
         Pass
@@ -44,6 +46,7 @@ Shader "Unlit/SkyShader"
             float4 _SunColor;
             float _XOffset;
             float _YOffset;
+            float _Rotation;
             float _Scale;
 
             float SmoothStep(float start, float end, float value)
@@ -64,13 +67,27 @@ Shader "Unlit/SkyShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture
-                float value = snoise(float2((i.uv.x + _XOffset) * _Scale, (i.uv.y + _YOffset) * _Scale));
-                value = SmoothStep(_CloudStart, _CloudEnd, value);
+                fixed4 col = fixed4(0, 0, 0, 0);
 
+                if(i.uv.y > 0.5) {
+                    float cylinderSize = 0.5;
+                    
+                    float angle = (i.uv.x + _Rotation) * 2 * 3.14159;
+                    float a = sin(angle) + _XOffset;
+                    float b = cos(angle) + _YOffset;
+                    float value = 0;
+                    float amplitude = 1;
 
-                fixed4 col = fixed4(_SunColor.xyz, value);
+                    for(int index = 0; index < 2; index++) {
+                        value = snoise(float3(123 + a * cylinderSize * _Scale, 132 + b * cylinderSize * _Scale, 312 + i.uv.y * _Scale)) * amplitude;
+                        cylinderSize /= 2;
+                        amplitude /= 2;
+                    }
 
+                    value = SmoothStep(_CloudStart, _CloudEnd, value);
+
+                    col = fixed4(_SunColor.xyz * (1 - value) + value * fixed3(0.5, 0.5, 0.5) , value);
+                }
                 
                 return col;
             }
