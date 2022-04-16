@@ -39532,7 +39532,6 @@ MonoBehaviour:
   stampRadiusSlider: {fileID: 928928808}
   stampRotationSlider: {fileID: 159497262}
   stampHeightSlider: {fileID: 1342125547}
-  waterReflection: {fileID: 0}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44041,7 +44040,6 @@ MonoBehaviour:
   SkyPlane: {fileID: 118917807}
   CloudXOffsetSlider: {fileID: 1109076746}
   CloudYOffsetSlider: {fileID: 381300017}
-  CloudRotationSlider: {fileID: 1292227102}
   CloudIterationSlider: {fileID: 635794981}
   CloudScaleSlider: {fileID: 116318461}
   CloudStartSlider: {fileID: 955269813}
