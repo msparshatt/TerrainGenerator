@@ -14,7 +14,6 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     [Header("Clouds")]
     [SerializeField] private Material SkyMaterial;
-    [SerializeField] private Material SkyMaterial2;
     [SerializeField] private GameObject SkyPlane;
     [SerializeField] private Slider CloudXOffsetSlider;
     [SerializeField] private Slider CloudYOffsetSlider;
