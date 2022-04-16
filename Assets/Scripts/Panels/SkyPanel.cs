@@ -17,6 +17,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject SkyPlane;
     [SerializeField] private Slider CloudXOffsetSlider;
     [SerializeField] private Slider CloudYOffsetSlider;
+    [SerializeField] private Slider CloudIterationSlider;
     [SerializeField] private Slider CloudScaleSlider;
     [SerializeField] private Slider CloudStartSlider;
     [SerializeField] private Slider CloudEndSlider;
@@ -58,6 +59,8 @@ public class SkyPanel : MonoBehaviour, IPanel
             }
             SetSunColor(skyColor);
         }
+
+        CloudSliderChange();
     }
 
     public void AutoColorToggleChange(bool isOn)
@@ -93,6 +96,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     {
         SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value);
         SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value);
+        SkyMaterial.SetInt("_Iterations", (int)CloudIterationSlider.value);
         SkyMaterial.SetFloat("_Scale", CloudScaleSlider.value);
         SkyMaterial.SetFloat("_CloudStart", CloudStartSlider.value);
         SkyMaterial.SetFloat("_CloudEnd", CloudEndSlider.value);
