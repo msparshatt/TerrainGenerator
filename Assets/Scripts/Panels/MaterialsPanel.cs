@@ -87,9 +87,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         colorPicker.color = Color.white;
 
         changeToggle = true;
-
-        Debug.Log(colors[0]);
-
     }
 
     public void ResetPanel()
