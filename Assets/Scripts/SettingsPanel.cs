@@ -37,10 +37,10 @@ public class SettingsPanel : MonoBehaviour
     {
         movementSlider.value = PlayerPrefs.GetFloat("movementSpeed", defaultSpeed);
         sensitivitySlider.value = PlayerPrefs.GetFloat("cameraSensitivity", defaultSensitivity);
-        dataScriptable.defaultTerrainResolution = PlayerPrefs.GetInt("DefaultTerrainResolution");
+        dataScriptable.defaultTerrainResolution = 513; //PlayerPrefs.GetInt("DefaultTerrainResolution");
 
         if(dataScriptable.defaultTerrainResolution == 0)
-            dataScriptable.defaultTerrainResolution = 1025;
+            dataScriptable.defaultTerrainResolution = 513;
 
         ResolutionDropdown.value = PlayerPrefs.GetInt("ScreenshotResolution");
         //ResolutionDropDownChange(PlayerPrefs.GetInt("ScreenshotResolution"));
