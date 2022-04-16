@@ -159,6 +159,11 @@ public class TerrainManager
         UpdateLighting();
     }
 
+    public Vector3 GetSunPosition()
+    {
+        return sun.transform.rotation * Vector3.back;
+    }
+
     public void SetSunColor(Color sunColor)
     {
         sun.color = sunColor;
