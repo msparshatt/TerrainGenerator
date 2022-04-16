@@ -373,7 +373,7 @@ public class TerrainManager
         }
 
         Debug.Log("Creating terrain");
-        CreateTerrain(ConvertTo2DArray(heights));
+        CreateTerrain(ConvertTo2DArray(heights, 3));
         FindMaximaAndMinima();
     }
 
@@ -456,19 +456,20 @@ public class TerrainManager
     }
      
     //convert a 1D float array to a 2D height array so it can be applied to a terrain
-    private float[,] ConvertTo2DArray(float[] heightData)
+    private float[,] ConvertTo2DArray(float[] heightData, int borderSize = 0)
     {
-        int resolution = (int)Mathf.Sqrt(heightData.Length);
-        //Debug.Log(resolution);
+        int outerResolution = (int)Mathf.Sqrt(heightData.Length);
+        int innerResolution = outerResolution - borderSize * 2;
 
-        float[,] unityHeights = new float[resolution, resolution];
+        float[,] unityHeights = new float[innerResolution, innerResolution];
 
-        int index = 0;
-        for(int i = 0; i < resolution; i++) {
-            for(int j = 0; j < resolution; j++) {
+        int index = (outerResolution) * borderSize + borderSize;
+        for(int i = 0; i < innerResolution; i++) {
+            for(int j = 0; j < innerResolution; j++) {
                 unityHeights[i, j] = heightData[index];
                 index++;
             }            
+            index += borderSize * 2;
         }
 
         return unityHeights;
