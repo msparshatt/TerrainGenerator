@@ -14,6 +14,7 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     [Header("Clouds")]
     [SerializeField] private Material SkyMaterial;
+    [SerializeField] private Material SkyMaterial2;
     [SerializeField] private GameObject SkyPlane;
     [SerializeField] private Slider CloudXOffsetSlider;
     [SerializeField] private Slider CloudYOffsetSlider;
@@ -39,6 +40,8 @@ public class SkyPanel : MonoBehaviour, IPanel
         sunColorPicker.Awake();
         sunColorPicker.onColorChanged += delegate {ColorPickerChange(); };
         sunColorPicker.color = Color.white;
+
+        SkyMaterial.SetColor("_CloudColor", new Vector4(0.5f, 0.5f, 0.5f, 1));
 
         LightSliderChange();
     }

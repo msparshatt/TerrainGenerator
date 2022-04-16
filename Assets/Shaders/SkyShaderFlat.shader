@@ -3,7 +3,7 @@ Shader "Unlit/SkyShaderFlat"
     Properties
     {
         _SunColor("Sun color", Color) = (1, 1, 1, 1)
-        _MainTex ("Color (RGB) Alpha (A)", 2D) = "white"
+        _CloudColor("Cloud Color", Color) = (0.5, 0.5, 0.5, 0.5)
         _CloudStart("Cloud Start", float) = -1
         _CloudEnd("Cloud End", float) = 1
         _XOffset("X offset", float) = 0
@@ -47,6 +47,7 @@ Shader "Unlit/SkyShaderFlat"
             float _YOffset;
             float _Scale;
             float _Iterations;
+            float4 _CloudColor;
 
             float SmoothStep(float start, float end, float value)
             {
@@ -60,7 +61,7 @@ Shader "Unlit/SkyShaderFlat"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv = v.uv; 
                 return o;
             }
 
@@ -88,7 +89,7 @@ Shader "Unlit/SkyShaderFlat"
                 if(i.uv.y > 0.9)
                     value *= ((1 - i.uv.y) * 10);
 
-                col = fixed4(lerp(_SunColor.xyz, fixed3(0.5, 0.5, 0.5), value) , value);
+                col = fixed4(lerp(_SunColor.xyz, _CloudColor.xyz, value) , value);
                 
                 return col;
             }
