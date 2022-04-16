@@ -50,9 +50,9 @@ public class ProceduralGeneration
     public float startWater;
     public float gravity = 10;
 
-    public float sedimentCapaFactor;
-    public float depSpeed;
-    public float eroSpeed;
+    public float sedimentCapacityFactor;
+    public float depositSpeed;
+    public float erodeSpeed;
     public float evaporateSpeed;
 
     private int defaultTerrainResolution;
@@ -65,6 +65,8 @@ public class ProceduralGeneration
     private int counter = 0;
 
     private bool shaderRunning;
+
+    private int erosionBrushRadius = 3;
 
     private List<Layer> layerList = new List<Layer>();
 
@@ -101,7 +103,9 @@ public class ProceduralGeneration
 
         shaderRunning = true;
 
-        ComputeBuffer heightBuffer = new ComputeBuffer(size * size, sizeof(float));
+        int resolution = size + erosionBrushRadius * 2;
+
+        ComputeBuffer heightBuffer = new ComputeBuffer(resolution * resolution, sizeof(float));
         int kernelHandle = proceduralGenerationShader.FindKernel("GenerateTerrain");
 
         proceduralGenerationShader.SetFloat("PerlinScale", scale);
@@ -111,7 +115,7 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloat("PerlinIterationFactor", iterationFactor);
         proceduralGenerationShader.SetFloat("PerlinIterationRotation", iterationRotation);
 
-        proceduralGenerationShader.SetInt("Resolution", size);
+        proceduralGenerationShader.SetInt("Resolution", resolution);
 
         proceduralGenerationShader.SetFloat("VoronoiXOffset", voronoiOffset.x);
         proceduralGenerationShader.SetFloat("VoronoiYOffset", voronoiOffset.y);
@@ -140,7 +144,7 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloats("TerraceParameters", terraceParameters);
 
         proceduralGenerationShader.SetBuffer(kernelHandle, "Heights", heightBuffer);
-        int groups = Mathf.CeilToInt(size * size / 64f);
+        int groups = Mathf.CeilToInt(resolution * resolution / 64f);
 		proceduralGenerationShader.Dispatch(0, groups, 1, 1);
 
         float[] data = new float[heightBuffer.count];
@@ -153,75 +157,85 @@ public class ProceduralGeneration
         return data;
     }
 
-    public float[] Erosion(float[] mapArray, int size)
+    public float[] Erosion (float[] map, int mapSize) 
     {
-        int numIter = erosionIterations * 10000;
-        Vector2[] StartPos = new Vector2[numIter];
-        int seed = 578945;
+        //int erosionBrushRadius = 5;
+        float minSedimentCapacity = 0.01f;
 
-        Random.InitState(seed);
-        for (int i = 0; i < numIter; i++)
-        {
-            StartPos[i].x = Random.Range(0,size); 
-            StartPos[i].y = Random.Range(0,size); 
-        }
+        int numThreads = erosionIterations / 1024;
 
-        int kernelHandle = erosionShader.FindKernel("Erosion");
-        ComputeBuffer heightMapBuffer = new ComputeBuffer(mapArray.Length, sizeof(float));
-        heightMapBuffer.SetData(mapArray);
-        erosionShader.SetBuffer(kernelHandle, "map", heightMapBuffer);
+        // Create brush
+        List<int> brushIndexOffsets = new List<int> ();
+        List<float> brushWeights = new List<float> ();
 
-        ComputeBuffer startPosBuffer = new ComputeBuffer(numIter, 2*sizeof(float));
-        startPosBuffer.SetData(StartPos);
-        erosionShader.SetBuffer(kernelHandle, "startPos", startPosBuffer);
-
-        int brushSize = 5;
-        Vector3[] brush = new Vector3[brushSize * brushSize * 4];
-        float normalizeC = 0;
-        for(int i=0;i< brushSize;i++)
-        {
-            for(int j=0;j<brushSize;j++)
-            {
-                normalizeC += 1.1f * (i + j + 1);
-                brush[i * brushSize * 2 + j].z = (i + j + 1);
-                brush[(2 * brushSize - 1 - i) * brushSize * 2 + j].z = (i + j + 1);
-                brush[(2 * brushSize - 1 - i) * brushSize * 2 + (2 * brushSize - 1 - j)].z = (i + j + 1);
-                brush[i * brushSize * 2 + (2 * brushSize - 1 - j)].z = (i + j + 1);
+        float weightSum = 0;
+        for (int brushY = -erosionBrushRadius; brushY <= erosionBrushRadius; brushY++) {
+            for (int brushX = -erosionBrushRadius; brushX <= erosionBrushRadius; brushX++) {
+                float sqrDst = brushX * brushX + brushY * brushY;
+                if (sqrDst < erosionBrushRadius * erosionBrushRadius) {
+                    brushIndexOffsets.Add (brushY * mapSize + brushX);
+                    float brushWeight = 1 - Mathf.Sqrt (sqrDst) / erosionBrushRadius;
+                    weightSum += brushWeight;
+                    brushWeights.Add (brushWeight);
+                }
             }
         }
-        for (int i = 0; i < brushSize*2; i++)
-        {
-            for (int j = 0; j < brushSize*2; j++)
-            {
-                brush[i * brushSize * 2 + j].z /= normalizeC;
-                brush[i * brushSize * 2 + j].x = i - (brushSize - 1);
-                brush[i * brushSize * 2 + j].y = j - (brushSize - 1);
-            }
+        for (int i = 0; i < brushWeights.Count; i++) {
+            brushWeights[i] /= weightSum;
         }
 
-        ComputeBuffer brushBuffer = new ComputeBuffer(brush.Length, 3 * sizeof(float));
-        brushBuffer.SetData(brush);
-        erosionShader.SetBuffer(kernelHandle, "brush", brushBuffer);
+        // Send brush data to compute shader
+        ComputeBuffer brushIndexBuffer = new ComputeBuffer (brushIndexOffsets.Count, sizeof (int));
+        ComputeBuffer brushWeightBuffer = new ComputeBuffer (brushWeights.Count, sizeof (int));
+        brushIndexBuffer.SetData (brushIndexOffsets);
+        brushWeightBuffer.SetData (brushWeights);
+        erosionShader.SetBuffer (0, "brushIndices", brushIndexBuffer);
+        erosionShader.SetBuffer (0, "brushWeights", brushWeightBuffer);
 
-        erosionShader.SetInt("brushSize", brushSize);
-        erosionShader.SetInt("size", size);
-        erosionShader.SetInt("lifetime", lifetime);
-        erosionShader.SetFloat("startSpeed", startSpeed);
-        erosionShader.SetFloat("inertia", inertia);
-        erosionShader.SetFloat("startWater", startWater);
-        erosionShader.SetFloat("sedimentCapaFactor", sedimentCapaFactor);
-        erosionShader.SetFloat("depositSpeed", depSpeed);
-        erosionShader.SetFloat("erosionSpeed", eroSpeed);
-        erosionShader.SetFloat("gravity", gravity);
-        erosionShader.SetFloat("evaporateSpeed", evaporateSpeed);
+        // Generate random indices for droplet placement
+        int[] randomIndices = new int[erosionIterations];
+        for (int i = 0; i < erosionIterations; i++) {
+            int randomX = Random.Range (erosionBrushRadius, mapSize + erosionBrushRadius);
+            int randomY = Random.Range (erosionBrushRadius, mapSize + erosionBrushRadius);
+            randomIndices[i] = randomY * mapSize + randomX;
+        }
 
-        erosionShader.Dispatch(kernelHandle, numIter/1000, 1, 1);
+        // Send random indices to compute shader
+        ComputeBuffer randomIndexBuffer = new ComputeBuffer (randomIndices.Length, sizeof (int));
+        randomIndexBuffer.SetData (randomIndices);
+        erosionShader.SetBuffer (0, "randomIndices", randomIndexBuffer);
 
-        heightMapBuffer.GetData(mapArray);
-        heightMapBuffer.Release();
-        startPosBuffer.Release();
-        brushBuffer.Release();
+        // Heightmap buffer
+        ComputeBuffer mapBuffer = new ComputeBuffer (map.Length, sizeof (float));
+        mapBuffer.SetData (map);
+        erosionShader.SetBuffer (0, "map", mapBuffer);
 
-        return mapArray;
+        // Settings
+        erosionShader.SetInt ("borderSize", erosionBrushRadius);
+        erosionShader.SetInt ("mapSize", mapSize + erosionBrushRadius * 2);
+        erosionShader.SetInt ("brushLength", brushIndexOffsets.Count);
+        erosionShader.SetInt ("maxLifetime", lifetime);
+        erosionShader.SetFloat ("inertia", inertia);
+        erosionShader.SetFloat ("sedimentCapacityFactor", sedimentCapacityFactor);
+        erosionShader.SetFloat ("minSedimentCapacity", minSedimentCapacity);
+        erosionShader.SetFloat ("depositSpeed", depositSpeed);
+        erosionShader.SetFloat ("erodeSpeed", erodeSpeed);
+        erosionShader.SetFloat ("evaporateSpeed", evaporateSpeed);
+        erosionShader.SetFloat ("gravity", gravity);
+        erosionShader.SetFloat ("startSpeed", startSpeed);
+        erosionShader.SetFloat ("startWater", startWater);
+
+        // Run compute shader
+        erosionShader.Dispatch (0, numThreads, 1, 1);
+        mapBuffer.GetData (map);
+
+        // Release buffers
+        mapBuffer.Release ();
+        randomIndexBuffer.Release ();
+        brushIndexBuffer.Release ();
+        brushWeightBuffer.Release ();
+
+        return map;
     }
+
 }

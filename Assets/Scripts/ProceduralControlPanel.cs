@@ -145,11 +145,11 @@ public class ProceduralControlPanel : MonoBehaviour
         if(erodeToggle.isOn) {
             erosion = true;
             procGen.erosionIsOn = true;
-            procGen.erosionIterations = (int)erosionIterationsSlider.value;
+            procGen.erosionIterations = (int)erosionIterationsSlider.value * 10000;
 
-            procGen.sedimentCapaFactor = erosionCapcitySlider.value;
-            procGen.eroSpeed = erosionErosionSpeedSlider.value;
-            procGen.depSpeed = erosionDepositSpeedSlider.value;
+            procGen.sedimentCapacityFactor = erosionCapcitySlider.value;
+            procGen.erodeSpeed = erosionErosionSpeedSlider.value;
+            procGen.depositSpeed = erosionDepositSpeedSlider.value;
             procGen.evaporateSpeed = erosionEvaporationSlider.value;
             procGen.lifetime = (int)erosionLifetimeSlider.value;
             procGen.startSpeed = erosionStartSpeedSlider.value;
