@@ -4507,7 +4507,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &118917808
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -20584,6 +20584,10 @@ PrefabInstance:
     - target: {fileID: 170234, guid: a0cc482d2da03784692568b56c77c234, type: 3}
       propertyPath: m_Name
       value: Ocean_TransparentQueue
+      objectReference: {fileID: 0}
+    - target: {fileID: 170234, guid: a0cc482d2da03784692568b56c77c234, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 435478, guid: a0cc482d2da03784692568b56c77c234, type: 3}
       propertyPath: m_RootOrder
