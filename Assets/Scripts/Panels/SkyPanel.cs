@@ -22,6 +22,9 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private Slider CloudStartSlider;
     [SerializeField] private Slider CloudEndSlider;
 
+    [SerializeField] private Slider WindDirectionSlider;
+    [SerializeField] private Slider WindSpeedSlider;
+
 
 
     private bool autoColor = true;
@@ -30,7 +33,12 @@ public class SkyPanel : MonoBehaviour, IPanel
     // Update is called once per frame
     void Update()
     {
-        
+        if(WindSpeedSlider.value > 0) {
+            float xmovement = WindSpeedSlider.value * Mathf.Sin(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup / 100;
+            float ymovement = WindSpeedSlider.value * Mathf.Cos(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup / 100;
+            SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value + xmovement);
+            SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value + ymovement);            
+        }        
     }
 
     public void InitialisePanel()
@@ -96,8 +104,16 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     public void CloudSliderChange()
     {
-        SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value);
-        SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value);
+        if(WindSpeedSlider.value > 0) {
+            float xmovement = WindSpeedSlider.value * Mathf.Sin(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup;
+            float ymovement = WindSpeedSlider.value * Mathf.Cos(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup;
+            SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value + xmovement);
+            SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value + ymovement);            
+        } else {
+            SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value);
+            SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value);
+        }
+
         SkyMaterial.SetInt("_Iterations", (int)CloudIterationSlider.value);
         SkyMaterial.SetFloat("_Scale", CloudScaleSlider.value);
         SkyMaterial.SetFloat("_CloudStart", CloudStartSlider.value);
