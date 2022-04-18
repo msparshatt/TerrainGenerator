@@ -4997,6 +4997,7 @@ GameObject:
   - component: {fileID: 124960878}
   - component: {fileID: 124960880}
   - component: {fileID: 124960879}
+  - component: {fileID: 124960881}
   m_Layer: 5
   m_Name: WaterHeightSlider
   m_TagString: Untagged
@@ -5105,6 +5106,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &124960881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124960877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 291437289}
+          m_TargetAssemblyTypeName: WaterPanel, Assembly-CSharp
+          m_MethodName: HeightSliderPointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &126322191
 GameObject:
   m_ObjectHideFlags: 0
@@ -12835,6 +12865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ocean: {fileID: 1236204358}
+  terrainShoreMask: {fileID: 2016404709}
 --- !u!114 &291437290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20489,7 +20520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 170234, guid: a0cc482d2da03784692568b56c77c234, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 435478, guid: a0cc482d2da03784692568b56c77c234, type: 3}
       propertyPath: m_RootOrder
@@ -20571,6 +20602,22 @@ PrefabInstance:
       propertyPath: m_sun
       value: 
       objectReference: {fileID: 705507993}
+    - target: {fileID: 11444958, guid: a0cc482d2da03784692568b56c77c234, type: 3}
+      propertyPath: windDir
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11444958, guid: a0cc482d2da03784692568b56c77c234, type: 3}
+      propertyPath: defaultOceanColor.b
+      value: 0.1509434
+      objectReference: {fileID: 0}
+    - target: {fileID: 11444958, guid: a0cc482d2da03784692568b56c77c234, type: 3}
+      propertyPath: defaultOceanColor.g
+      value: 0.009122993
+      objectReference: {fileID: 0}
+    - target: {fileID: 11444958, guid: a0cc482d2da03784692568b56c77c234, type: 3}
+      propertyPath: defaultOceanColor.r
+      value: 0.004983983
+      objectReference: {fileID: 0}
     - target: {fileID: 11475164, guid: a0cc482d2da03784692568b56c77c234, type: 3}
       propertyPath: reflectionMask.m_Bits
       value: 192
@@ -77622,6 +77669,7 @@ GameObject:
   - component: {fileID: 2016404704}
   - component: {fileID: 2016404703}
   - component: {fileID: 2016404708}
+  - component: {fileID: 2016404709}
   m_Layer: 6
   m_Name: MainTerrain
   m_TagString: Untagged
@@ -77728,6 +77776,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brushData: {fileID: 11400000, guid: 1b2ab539caa4f0f81a8e5560f8249ed9, type: 2}
+--- !u!114 &2016404709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016404702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a916e5193edd6640bd918eff18d31c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreQuerys: 0
+  textureFoam: 1
+  heightSpread: 10
+  foamSpread: 2
+  clipOffset: 4
+  resolution: 1024
+  useHeightMask: 1
+  heightAlpha: 0.9
+  useNormalMask: 1
+  normalAlpha: 0.8
+  useEdgeFoam: 1
+  edgeFoamAlpha: 1
+  useFoamMask: 1
+  foamMaskAlpha: 1
+  useClipMask: 1
 --- !u!1 &2018790370
 GameObject:
   m_ObjectHideFlags: 0
