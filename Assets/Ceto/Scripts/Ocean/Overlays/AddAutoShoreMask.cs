@@ -144,7 +144,6 @@ namespace Ceto
 
 		void UpdateOverlay()
 		{
-
 			if (Ocean.Instance != null && (!m_registered || SettingsChanged()))
 			{
 				CreateShoreMasks();
@@ -177,7 +176,7 @@ namespace Ceto
 
 		}
 
-        void CreateShoreMasks()
+        public void CreateShoreMasks()
         {
 
             //float t = Time.realtimeSinceStartup;
