@@ -50,4 +50,39 @@ public class WaterPanel : MonoBehaviour, IPanel
 
         heightChanged = false;
     }
+
+    public void WaveDirectionSliderChange(float value)
+    {
+        ocean.GetComponent<Ceto.Ocean>().windDir = value;
+    }
+
+    public void WaveSpeedSliderChange(float value)
+    {
+        ocean.GetComponent<Ceto.WaveSpectrum>().waveSpeed = value;
+    }
+
+    public void WaveHeightSliderChange(float value)
+    {
+        ocean.GetComponent<Ceto.WaveSpectrum>().windSpeed = value;
+    }
+
+    public void ChoppynessSliderChange(float value)
+    {
+        ocean.GetComponent<Ceto.WaveSpectrum>().choppyness = value;
+    }
+
+    public void FoamAmountSliderChange(float value)
+    {
+        ocean.GetComponent<Ceto.WaveSpectrum>().foamAmount = value;
+    }
+
+    public void ShoreFoamToggleChange(bool isOn)
+    {
+        terrainShoreMask.enabled = isOn;
+    }
+
+    public void ShoreFoamSpreadSliderChange(float value)
+    {
+        terrainShoreMask.foamSpread = value;
+    }
 }
