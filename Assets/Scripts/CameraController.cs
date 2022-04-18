@@ -78,6 +78,8 @@ public class CameraController : MonoBehaviour
         internalData.sliderChanged = false;
         internalData.unsavedChanges = false;
         stampApplied = false;
+
+        mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
     }
 
     //Callback functions for new input system
@@ -293,6 +295,8 @@ public class CameraController : MonoBehaviour
             if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Stamp) {
                 TerrainManager.instance.FindMaximaAndMinima();
                 TerrainManager.instance.ApplyTextures();
+
+                mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
             }
 
         }
