@@ -5,6 +5,9 @@ using UnityEngine;
 public class WaterPanel : MonoBehaviour, IPanel
 {
     [SerializeField] private GameObject ocean;
+    [SerializeField] private Ceto.AddAutoShoreMask terrainShoreMask;
+
+    private bool heightChanged;
 
     // Start is called before the first frame update
     void Start()
@@ -36,5 +39,15 @@ public class WaterPanel : MonoBehaviour, IPanel
     public void HeightSliderChange(float value)
     {
         ocean.GetComponent<Ceto.Ocean>().level = value;
+
+        heightChanged = true;
+    }
+
+    public void HeightSliderPointerUp()
+    {
+        if(heightChanged)
+            terrainShoreMask.CreateShoreMasks();
+
+        heightChanged = false;
     }
 }
