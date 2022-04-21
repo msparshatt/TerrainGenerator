@@ -339,11 +339,11 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         materialIcons.Add(newButton);
     }
 
-    public void UpdateControls(int[] mixTypes, float[] mixFactors)
+    public void LoadPanel()
     {
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
-            mixtypeDropdowns[i].value = mixTypes[i] - 1;
-            mixFactorSliders[i].value = mixFactors[i];
+            mixtypeDropdowns[i].value = internalData.mixTypes[i] - 1;
+            mixFactorSliders[i].value = internalData.mixFactors[i];
         }
 
         aoToggle.isOn = internalData.ambientOcclusion;
