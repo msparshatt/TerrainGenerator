@@ -79,7 +79,7 @@ public class CameraController : MonoBehaviour
         internalData.unsavedChanges = false;
         stampApplied = false;
 
-        mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
+        //mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
     }
 
     //Callback functions for new input system
