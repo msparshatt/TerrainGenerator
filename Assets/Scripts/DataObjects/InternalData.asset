@@ -16,4 +16,43 @@ MonoBehaviour:
   ProcGenOpen: 0
   unsavedChanges: 0
   detectMaximaAndMinima: 0
-  AmbientOcclusion: 0
+  mode: 0
+  customMaterials: []
+  customPaintBrushes: []
+  customSculptBrushes: []
+  customStampBrushes: []
+  customTextures: []
+  ambientOcclusion: 0
+  currentMaterialIndices: 
+  materialScale: 0
+  mixTypes: 0000000000000000000000000000000000000000
+  mixFactors:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  paintScale: 0
+  lightTerrain: 0
+  sunHeight: 0
+  sunDirection: 0
+  automaticColor: 0
+  sunColor: {r: 0, g: 0, b: 0, a: 0}
+  cloudActive: 0
+  cloudXoffset: 0
+  cloudYOffset: 0
+  cloudScale: 0
+  cloudStart: 0
+  cloudEnd: 0
+  windDirection: 0
+  windSpeed: 0
+  clouditerations: 0
+  oceanActive: 0
+  oceanHeight: 0
+  waveDirection: 0
+  waveSpeed: 0
+  waveHeight: 0
+  waveChoppyness: 0
+  foamAmount: 0
+  shoreLineActive: 0
+  shorelineFoamAmount: 0
