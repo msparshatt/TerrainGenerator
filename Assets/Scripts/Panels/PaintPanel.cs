@@ -276,7 +276,7 @@ public class PaintPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0);
     }
 
-    public void UpdateControls()
+    public void LoadPanel()
     {
         paintScaleSlider.value = internalData.paintScale;
     }
