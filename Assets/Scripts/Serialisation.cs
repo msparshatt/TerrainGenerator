@@ -7,6 +7,7 @@ public class Serialisation : MonoBehaviour
 {
     [SerializeField] private Texture2D busyCursor;
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private InternalDataScriptable defaultData;
     [SerializeField] private GameObject oldSavePanel;
 
     [SerializeField] private GameObject materialsPanel;
@@ -62,8 +63,6 @@ public class Serialisation : MonoBehaviour
         int materialPanelIndex = 0;
 
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
-        int[] mixTypes = new int[InternalDataScriptable.NUMBER_MATERIALS];
-        float[] mixFactors = new float[InternalDataScriptable.NUMBER_MATERIALS];
 
         Debug.Log(version4);
         if(version4) {
@@ -88,17 +87,17 @@ public class Serialisation : MonoBehaviour
             materials.SelectMaterialIcon(1, 1);
         }
 
-        mixTypes[1] = data.mixType;
+        internalData.mixTypes[1] = data.mixType;
 
         if(data.mixFactor > 0)
             data.mixFactor = 1 - data.mixFactor;
 
-        mixFactors[1] = data.mixFactor;
+        internalData.mixFactors[1] = data.mixFactor;
 
         for(int index = 2; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-            mixTypes[index] = 1;
+            internalData.mixTypes[index] = 1;
 
-            mixFactors[index] = 0f;
+            internalData.mixFactors[index] = 0f;
         }
         if(data.tiling == 0)
             data.tiling = 1;
@@ -107,7 +106,7 @@ public class Serialisation : MonoBehaviour
         internalData.ambientOcclusion = data.aoActive;
 
         manager.doNotApply = true;
-        materials.UpdateControls(mixTypes, mixFactors);
+        materials.LoadPanel();
         manager.doNotApply = false;
         manager.ApplyTextures();
 
@@ -116,7 +115,7 @@ public class Serialisation : MonoBehaviour
             data.paintTiling = 1;
 
         internalData.paintScale = data.paintTiling;
-        paintPanel.GetComponent<PaintPanel>().UpdateControls();
+        paintPanel.GetComponent<PaintPanel>().LoadPanel();
 
         Texture2D texture = new Texture2D(10,10);
         ImageConversion.LoadImage(texture, data.overlayTexture);
@@ -135,6 +134,7 @@ public class Serialisation : MonoBehaviour
 
         manager.doNotApply = true;
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
+
         int[] mixTypes = new int[InternalDataScriptable.NUMBER_MATERIALS];
         float[] mixFactors = new float[InternalDataScriptable.NUMBER_MATERIALS];
         for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
@@ -146,11 +146,11 @@ public class Serialisation : MonoBehaviour
 
             if(index > 0)
             {
-                mixTypes[index] = data.mixType[index];
-                mixFactors[index] = data.mixFactor[index];
+                internalData.mixTypes[index] = data.mixType[index];
+                internalData.mixFactors[index] = data.mixFactor[index];
             } else {
-                mixTypes[0] = 0;
-                mixFactors[0] = 0f;
+                internalData.mixTypes[0] = 0;
+                internalData.mixFactors[0] = 0f;
             }
         }
 
@@ -160,7 +160,6 @@ public class Serialisation : MonoBehaviour
         internalData.materialScale = data.tiling;
         internalData.ambientOcclusion = data.aoActive;
 
-        materials.UpdateControls(mixTypes, mixFactors);
         manager.doNotApply = false;
 
         manager.ApplyTextures();
@@ -169,13 +168,73 @@ public class Serialisation : MonoBehaviour
             data.paintTiling = 1;
 
         internalData.paintScale = data.paintTiling;
-        paintPanel.GetComponent<PaintPanel>().UpdateControls();
-
 
         Texture2D texture = new Texture2D(10,10);
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
         manager.SetOverlay(texture);
+
+        //check if the save contains sky data
+        if(fileContents.Contains("lightTerrain")) {
+            internalData.lightTerrain = data.lightTerrain;
+            internalData.sunHeight = data.sunHeight;
+            internalData.sunDirection = data.sunDirection;
+            internalData.automaticColor = data.automaticColor;
+            internalData.sunColor = data.sunColor;
+            internalData.cloudActive = data.cloudActive;
+            internalData.cloudXoffset = data.cloudXoffset;
+            internalData.cloudYOffset = data.cloudYOffset;
+            internalData.cloudScale = data.cloudScale;
+            internalData.cloudIterations = data.cloudIterations;
+            internalData.cloudStart = data.cloudStart;
+            internalData.cloudEnd = data.cloudEnd;
+            internalData.windSpeed = data.windSpeed;
+            internalData.windDirection = data.windDirection;
+        } else {
+            internalData.lightTerrain = defaultData.lightTerrain;
+            internalData.sunHeight = defaultData.sunHeight;
+            internalData.sunDirection = defaultData.sunDirection;
+            internalData.automaticColor = defaultData.automaticColor;
+            internalData.sunColor = defaultData.sunColor;
+            internalData.cloudActive = defaultData.cloudActive;
+            internalData.cloudXoffset = defaultData.cloudXoffset;
+            internalData.cloudYOffset = defaultData.cloudYOffset;
+            internalData.cloudScale = defaultData.cloudScale;
+            internalData.cloudIterations = defaultData.cloudIterations;
+            internalData.cloudStart = defaultData.cloudStart;
+            internalData.cloudEnd = defaultData.cloudEnd;
+            internalData.windSpeed = defaultData.windSpeed;
+            internalData.windDirection = defaultData.windDirection;
+        }
+
+        //check if ocean data exists
+        if(fileContents.Contains("oceanActive")) {
+            internalData.oceanActive = data.oceanActive;
+            internalData.oceanHeight = data.oceanHeight;
+            internalData.waveDirection = data.waveDirection;
+            internalData.waveSpeed = data.waveSpeed;
+            internalData.waveHeight = data.waveHeight;
+            internalData.waveChoppyness = data.waveChoppyness;
+            internalData.foamAmount = data.foamAmount;
+            internalData.shoreLineActive = data.shoreLineActive;
+            internalData.shorelineFoamAmount = data.shorelineFoamAmount;
+        } else {
+            internalData.oceanActive = defaultData.oceanActive;
+            internalData.oceanHeight = defaultData.oceanHeight;
+            internalData.waveDirection = defaultData.waveDirection;
+            internalData.waveSpeed = defaultData.waveSpeed;
+            internalData.waveHeight = defaultData.waveHeight;
+            internalData.waveChoppyness = defaultData.waveChoppyness;
+            internalData.foamAmount = defaultData.foamAmount;
+            internalData.shoreLineActive = defaultData.shoreLineActive;
+            internalData.shorelineFoamAmount = defaultData.shorelineFoamAmount;
+        }
+
+        GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
+
+        for(int index = 0; index < panels.Length; index++) {
+            panels[index].GetComponent<IPanel>().LoadPanel();
+        }
     }
 
     public void UpdateOldSaveFile()
@@ -243,8 +302,35 @@ public class Serialisation : MonoBehaviour
             data.overlayTexture = texture.EncodeToPNG();
             data.paintTiling = internalData.paintScale;
 
+            Debug.Log("SAVE: Sky panel data");
+            data.lightTerrain = internalData.lightTerrain;
+            data.sunHeight = internalData.sunHeight;
+            data.sunDirection = internalData.sunDirection;
+            data.automaticColor = internalData.automaticColor;
+            data.sunColor = internalData.sunColor;
+            data.cloudActive = internalData.cloudActive;
+            data.cloudXoffset = internalData.cloudXoffset;
+            data.cloudYOffset = internalData.cloudYOffset;
+            data.cloudScale = internalData.cloudScale;
+            data.cloudIterations = internalData.cloudIterations;
+            data.cloudStart = internalData.cloudStart;
+            data.cloudEnd = internalData.cloudEnd;
+            data.windSpeed = internalData.windSpeed;
+            data.windDirection = internalData.windDirection;
+
+            Debug.Log("SAVE: Water panel data");
+            data.oceanActive = internalData.oceanActive;
+            data.oceanHeight = internalData.oceanHeight;
+            data.waveDirection = internalData.waveDirection;
+            data.waveSpeed = internalData.waveSpeed;
+            data.waveHeight = internalData.waveHeight;
+            data.waveChoppyness = internalData.waveChoppyness;
+            data.foamAmount = internalData.foamAmount;
+            data.shoreLineActive = internalData.shoreLineActive;
+            data.shorelineFoamAmount = internalData.shorelineFoamAmount;
+
             Debug.Log("SAVE: Create json string");
-            string json = JsonUtility.ToJson(data);
+            string json = JsonUtility.ToJson(data);            
 
             Debug.Log("SAVE: Write to file");
             var sr = File.CreateText(filename);
