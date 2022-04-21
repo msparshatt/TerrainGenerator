@@ -20,6 +20,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private PaintBrushDataScriptable paintBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
 
+
     [Header("Panels")]
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject[] panels;
@@ -333,5 +334,10 @@ public class Controller : MonoBehaviour
 
         internalData.unsavedChanges = false;
 
+    }
+
+    public GameObject[] GetPanels()
+    {
+        return panels;
     }
 }
