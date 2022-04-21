@@ -13829,6 +13829,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ocean: {fileID: 1236204358}
   terrainShoreMask: {fileID: 2016404709}
+  internalData: {fileID: 0}
+  defaultData: {fileID: 0}
+  oceanActiveToggle: {fileID: 1332236159}
+  oceanHeightSlider: {fileID: 124960880}
+  waveDirectionSlider: {fileID: 806703997}
+  waveSpeedSlider: {fileID: 1252009878}
+  waveHeightSlider: {fileID: 467971789}
+  choppynessSlider: {fileID: 1897624851}
+  foamAmountSlider: {fileID: 1316258686}
+  shorelineActiveToggle: {fileID: 553459576}
+  shorelineFoamAmountSlider: {fileID: 830486998}
 --- !u!114 &291437290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27421,6 +27432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+  defaultData: {fileID: 0}
   oldSavePanel: {fileID: 1080871917}
   materialsPanel: {fileID: 149128288}
   sculptPanel: {fileID: 1006123578}
@@ -46456,8 +46468,10 @@ MonoBehaviour:
   sunHeightSlider: {fileID: 1557706562}
   sunPositionSlider: {fileID: 996871028}
   sunColorPicker: {fileID: 783389345}
+  autoColorToggle: {fileID: 1497394894}
   SkyMaterial: {fileID: 2100000, guid: 8999e2ada0c3d9dbdb7240a82d68f9c6, type: 2}
   SkyPlane: {fileID: 118917807}
+  CloudActiveToggle: {fileID: 1204924977}
   CloudXOffsetSlider: {fileID: 1109076746}
   CloudYOffsetSlider: {fileID: 381300017}
   CloudIterationSlider: {fileID: 635794981}
@@ -46466,6 +46480,8 @@ MonoBehaviour:
   CloudEndSlider: {fileID: 664969773}
   WindDirectionSlider: {fileID: 233726931}
   WindSpeedSlider: {fileID: 114228210}
+  ocean: {fileID: 1236204358}
+  internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!114 &1085847826
 MonoBehaviour:
   m_ObjectHideFlags: 0
