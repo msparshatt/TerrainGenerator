@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b6664ea369349db88b4f84c544a263, type: 3}
+  m_Name: DefaultData
+  m_EditorClassIdentifier: 
+  sliderChanged: 0
+  ProcGenOpen: 0
+  unsavedChanges: 0
+  detectMaximaAndMinima: 0
+  mode: 0
+  customMaterials: []
+  customPaintBrushes: []
+  customSculptBrushes: []
+  customStampBrushes: []
+  customTextures: []
+  ambientOcclusion: 0
+  currentMaterialIndices: 
+  materialScale: 1
+  mixTypes: 0000000000000000000000000000000000000000
+  mixFactors:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  paintScale: 1
+  lightTerrain: 0
+  sunHeight: 25
+  sunDirection: 0
+  automaticColor: 1
+  sunColor: {r: 1, g: 0.9858491, b: 0.9858491, a: 0}
+  cloudActive: 0
+  cloudXoffset: 0
+  cloudYOffset: 0
+  cloudScale: 5
+  cloudStart: -1
+  cloudEnd: 1
+  windDirection: 0
+  windSpeed: 0
+  cloudIterations: 5
+  oceanActive: 0
+  oceanHeight: 10
+  waveDirection: 0
+  waveSpeed: 1
+  waveHeight: 10
+  waveChoppyness: 0.8
+  foamAmount: 2
+  shoreLineActive: 1
+  shorelineFoamAmount: 5
