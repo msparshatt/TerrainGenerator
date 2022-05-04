@@ -1,4 +1,5 @@
-﻿#pragma kernel CSMain
+﻿#pragma kernel Erode1
+#pragma kernel Erode2
 
 RWStructuredBuffer<float> map;
 StructuredBuffer<int> randomIndices;
@@ -47,8 +48,7 @@ float3 CalculateHeightAndGradient (float posX, float posY) {
     return float3(gradientX,gradientY,height);
 }
 
-[numthreads(1024,1,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void Erosion(uint3 id)
 {
     int index = randomIndices[id.x];
     float posX = float(index)%mapSize;
@@ -125,4 +125,16 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         water *= (1 - evaporateSpeed);
     }
     
+}
+
+[numthreads(1024,1,1)]
+void Erode1 (uint3 id : SV_DispatchThreadID)
+{
+    Erosion(id);
+}
+
+[numthreads(16,1,1)]
+void Erode2 (uint3 id : SV_DispatchThreadID)
+{
+    Erosion(id);
 }

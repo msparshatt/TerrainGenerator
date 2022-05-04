@@ -51,9 +51,9 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     public void InitialisePanel()
     {
-        ResetPanel();
         manager = TerrainManager.instance;
         sunColorPicker.Awake();
+        ResetPanel();
         sunColorPicker.onColorChanged += delegate {ColorPickerChange(); };
         sunColorPicker.color = Color.white;
 
@@ -82,7 +82,6 @@ public class SkyPanel : MonoBehaviour, IPanel
     }
 
     public void LoadPanel()
-
     {
         LightToggle.isOn = internalData.lightTerrain;
         sunHeightSlider.value = internalData.sunHeight;

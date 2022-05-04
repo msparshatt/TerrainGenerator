@@ -461,7 +461,7 @@ public class TerrainManager
     }
      
     //convert a 1D float array to a 2D height array so it can be applied to a terrain
-    private float[,] ConvertTo2DArray(float[] heightData, int borderSize = 0)
+    public float[,] ConvertTo2DArray(float[] heightData, int borderSize = 0)
     {
         int outerResolution = (int)Mathf.Sqrt(heightData.Length);
         int innerResolution = outerResolution - borderSize * 2;
@@ -481,7 +481,7 @@ public class TerrainManager
     }
 
     //convert a 2D float array into a 1D array
-    private float[] ConvertTo1DArray(float[,] nmbs)
+    public float[] ConvertTo1DArray(float[,] nmbs)
     {
         float[] nmbsBytes = new float[nmbs.GetLength(0) * nmbs.GetLength(1) * 2];
         int k = 0;
@@ -495,6 +495,7 @@ public class TerrainManager
         }
         return nmbsBytes;
     }    
+
     public RenderTexture GetHeightmapTexture()
     {
         return currentTerrain.terrainData.heightmapTexture;
