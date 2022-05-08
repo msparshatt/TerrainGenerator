@@ -480,20 +480,19 @@ public class TerrainManager
         return unityHeights;
     }
 
-    //convert a 2D float array into a 1D array
-    public float[] ConvertTo1DArray(float[,] nmbs)
+    public float[] ConvertTo1DFloatArray(float[,] nmbs)
     {
-        float[] nmbsBytes = new float[nmbs.GetLength(0) * nmbs.GetLength(1) * 2];
+        float[] result = new float[nmbs.GetLength(0) * nmbs.GetLength(1)];
         int k = 0;
+
         for (int i = 0; i < nmbs.GetLength(0); i++)
         {
             for (int j = 0; j < nmbs.GetLength(1); j++)
             {
-               float value = nmbs[i, j]; //convert from float to an integer
-               nmbsBytes[k++] = value; // write LSB
+               result[k++] = nmbs[i, j];
             }
         }
-        return nmbsBytes;
+        return result;
     }    
 
     public RenderTexture GetHeightmapTexture()
@@ -589,7 +588,7 @@ public class TerrainManager
         textureShader.SetTexture(kernelHandle, "aotextures", inputAOs);
         textureShader.SetInt("textureCount", InternalDataScriptable.NUMBER_MATERIALS);
 
-        float[] mapArray = ConvertTo1DArray(currentTerrain.terrainData.GetHeights(0, 0, currentTerrain.terrainData.heightmapResolution, currentTerrain.terrainData.heightmapResolution));
+        float[] mapArray = ConvertTo1DFloatArray(currentTerrain.terrainData.GetHeights(0, 0, currentTerrain.terrainData.heightmapResolution, currentTerrain.terrainData.heightmapResolution));
         ComputeBuffer heightMapBuffer = new ComputeBuffer(mapArray.Length, sizeof(float));
         heightMapBuffer.SetData(mapArray);
         textureShader.SetBuffer(kernelHandle, "heightmap", heightMapBuffer);
