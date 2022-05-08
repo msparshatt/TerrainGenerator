@@ -37,7 +37,7 @@ public class TerrainEroder : MonoBehaviour
         //read the current height values
         ModifyRectangle rectangle = new ModifyRectangle(location, brushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
         float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);        
-        float[,] newHeights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);        
+        float[,] newHeights = terrainData.GetHeights(rectangle.topLeft.x - erosionData.erosionBrushRadius, rectangle.topLeft.y - erosionData.erosionBrushRadius, rectangle.size.x + 2 * erosionData.erosionBrushRadius, rectangle.size.y + 2 * erosionData.erosionBrushRadius);        
         float[,] changes = new float[rectangle.size.y, rectangle.size.x];
 
         erosionIterations = rectangle.size.x * rectangle.size.y;
@@ -46,11 +46,7 @@ public class TerrainEroder : MonoBehaviour
             erosionIterations = 16;
 
         //erode the newheight values
-        float[] map = manager.ConvertTo1DArray(newHeights);
-
-        Erosion(map, rectangle.size.x);
-
-        newHeights = manager.ConvertTo2DArray(map);
+        newHeights = Erosion(newHeights, rectangle.size.x);
 
         //modify the heights based on the brush
         for (int x = 0; x < rectangle.size.x; x++)
@@ -59,7 +55,7 @@ public class TerrainEroder : MonoBehaviour
             {                   
                 float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -brushData.brushRotation, brushData.brushStrength);
 
-                changes[y,x] =  (newHeights[y,x] - heights[y,x]) * maskValue * 0.001f;
+                changes[y,x] =  (newHeights[y,x] - heights[y,x]) * maskValue * 0.05f;
                 heights[y, x] += changes[y,x];
             }
         }
@@ -68,8 +64,10 @@ public class TerrainEroder : MonoBehaviour
         sculptOperation.AddSubOperation(new SculptSubOperation(terrain, rectangle.topLeft, rectangle.size, changes));
     }
 
-    public float[] Erosion (float[] map, int mapSize) 
+    public float[,] Erosion (float[,] heightmap, int mapSize) 
     {
+        float[] map = manager.ConvertTo1DFloatArray(heightmap);
+
         float minSedimentCapacity = 0.01f;
 
         int numThreads = erosionIterations / 16;
@@ -98,7 +96,7 @@ public class TerrainEroder : MonoBehaviour
 
         int erodeKernel = erosionShader.FindKernel("Erode2");
         ComputeBuffer brushIndexBuffer = new ComputeBuffer (brushIndexOffsets.Count, sizeof (int));
-        ComputeBuffer brushWeightBuffer = new ComputeBuffer (brushWeights.Count, sizeof (int));
+        ComputeBuffer brushWeightBuffer = new ComputeBuffer (brushWeights.Count, sizeof (float));
         brushIndexBuffer.SetData (brushIndexOffsets);
         brushWeightBuffer.SetData (brushWeights);
         erosionShader.SetBuffer (erodeKernel, "brushIndices", brushIndexBuffer);
@@ -109,7 +107,7 @@ public class TerrainEroder : MonoBehaviour
         for (int i = 0; i < erosionIterations; i++) {
             int randomX = Random.Range (erosionData.erosionBrushRadius, mapSize + erosionData.erosionBrushRadius);
             int randomY = Random.Range (erosionData.erosionBrushRadius, mapSize + erosionData.erosionBrushRadius);
-            randomIndices[i] = randomY * mapSize + randomX;
+            randomIndices[i] = randomY * (mapSize + 2 * erosionData.erosionBrushRadius) + randomX;
         }
 
         // Send random indices to compute shader
@@ -147,6 +145,6 @@ public class TerrainEroder : MonoBehaviour
         brushIndexBuffer.Release ();
         brushWeightBuffer.Release ();
 
-        return map;
+        return manager.ConvertTo2DArray(map, erosionData.erosionBrushRadius);
     }
 }
