@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using SimpleFileBrowser;
 
 
 public class ErosionPanel : MonoBehaviour, IPanel
 {
     [Header("UI elements")]
-    [SerializeField] private GameObject sculptBrushScrollView;
-    [SerializeField] private GameObject sculptBrushPanel;
+    [SerializeField] private GameObject erosionBrushScrollView;
+    [SerializeField] private GameObject erosionBrushPanel;
     [SerializeField] private GameObject sidePanels;
     [SerializeField] private Button brushDeleteButton;
     [SerializeField] private RawImage brushImage;
@@ -44,7 +45,7 @@ public class ErosionPanel : MonoBehaviour, IPanel
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
         
-        //brushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
+        brushIcons = UIHelper.SetupPanel(gameResources.erosionBrushes, erosionBrushScrollView.transform, SelectBrushIcon);   
 
         SelectBrushIcon(0);
     }
@@ -54,13 +55,29 @@ public class ErosionPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0);
     }
 
+    public void BrushButtonClick()
+    {
+        bool active = !erosionBrushPanel.activeSelf;
+
+        sidePanels.GetComponent<PanelController>().CloseAllPanels();
+
+        if(active) {
+            sidePanels.SetActive(true);
+            erosionBrushPanel.SetActive(true);
+            brushImage.color = settingsData.selectedColor;
+        } else {
+            brushImage.color = settingsData.deselectedColor;
+        }
+    }
+
+
     public void SelectBrushIcon(int buttonIndex)
     {
-        brushData.brush = gameResources.brushes[buttonIndex];
+        brushData.brush = gameResources.erosionBrushes[buttonIndex];
         brushImage.texture = brushData.brush;
         brushIndex = buttonIndex;
 
-        /*if(buttonIndex >= (gameResources.brushes.Count - internalData.customSculptBrushes.Count)) {
+        if(buttonIndex >= (gameResources.erosionBrushes.Count - internalData.customErosionBrushes.Count)) {
             brushDeleteButton.interactable = true;
         } else {
             brushDeleteButton.interactable = false;
@@ -73,7 +90,7 @@ public class ErosionPanel : MonoBehaviour, IPanel
             } else {
                 brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
             }
-        }*/
+        }
     }
 
     public void RadiusSliderChange(float value)
@@ -101,5 +118,46 @@ public class ErosionPanel : MonoBehaviour, IPanel
         erosionData.startSpeed = startSpeedSlider.value;
         erosionData.evaporateSpeed = evaporateSpeedSlider.value;
         erosionData.startWater = startWaterSlider.value;
+    }
+
+    public void BrushImportButtonclick()
+    {
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
+        FileBrowser.SetDefaultFilter( ".png" );
+
+        playerInput.enabled = false;
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true;  OnBrushImport(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+    }
+
+    public void OnBrushImport(string filename)
+    {      
+        if(filename != "") {
+            controller.LoadCustomErosionBrush(filename);
+            internalData.customErosionBrushes.Add(filename);
+            SelectBrushIcon(gameResources.erosionBrushes.Count - 1);
+        }
+    }
+
+    public void BrushDeleteButtonClick()
+    {
+        int customBrushIndex = brushIndex + internalData.customErosionBrushes.Count - gameResources.erosionBrushes.Count;
+
+        internalData.customErosionBrushes.RemoveAt(customBrushIndex);
+        gameResources.erosionBrushes.RemoveAt(brushIndex);
+        Destroy(brushIcons[brushIndex]);
+        brushIcons.RemoveAt(brushIndex);
+        
+        SelectBrushIcon(0);
+    }
+
+    public void AddButton(Texture2D texture, int index = 0)
+    {
+        GameObject newButton;
+        int ObjectIndex = brushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(erosionBrushScrollView.transform);
+        brushIcons.Add(newButton);
     }
 }
