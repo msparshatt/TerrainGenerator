@@ -238,8 +238,6 @@ public class CameraController : MonoBehaviour
         //don't allow mouseDownion with the terrain if the mouse is over the UI
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-
-            Debug.Log(internalData.mode);
         
         if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint || internalData.mode == InternalDataScriptable.Modes.Stamp || internalData.mode == InternalDataScriptable.Modes.Erode) {
             projectImage(); 
