@@ -210,7 +210,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
             controller.LoadCustomMaterial(filename);
             internalData.customMaterials.Add(filename);
 
-            Debug.Log(materialPanelIndex);
             SelectMaterialIcon(gameResources.materials.Count - 1);
         }
     }
