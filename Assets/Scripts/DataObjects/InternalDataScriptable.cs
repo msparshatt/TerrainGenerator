@@ -20,6 +20,7 @@ public class InternalDataScriptable : ScriptableObject
     public List<string> customPaintBrushes;
     public List<string> customSculptBrushes;
     public List<string> customStampBrushes;
+    public List<string> customErosionBrushes;
     public List<string> customTextures;
 
 

@@ -28,6 +28,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private GameObject stampPanel;
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private GameObject paintPanel;
+    [SerializeField] private GameObject erosionPanel;
     [SerializeField] private GameObject systemPanel;
 
     [SerializeField] private GameObject sidePanels;
@@ -43,6 +44,7 @@ public class Controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //PlayerPrefs.DeleteAll();
         //cache the instance of the GameResources object
         gameResources = GameResources.instance;
 
@@ -67,6 +69,7 @@ public class Controller : MonoBehaviour
         internalData.customSculptBrushes = new List<string>();
         internalData.customStampBrushes = new List<string>();
         internalData.customPaintBrushes = new List<string>();
+        internalData.customErosionBrushes = new List<string>();
         internalData.customTextures = new List<string>();
         internalData.customMaterials = new List<string>();
 
@@ -122,6 +125,13 @@ public class Controller : MonoBehaviour
             for(int i = 0; i < internalData.customPaintBrushes.Count; i++)                
                 PlayerPrefs.SetString("CustomPaintBrush_" + i, internalData.customPaintBrushes[i]);
         }        
+
+        PlayerPrefs.SetInt("CustomErosionBrushCount", internalData.customErosionBrushes.Count);
+
+        if(internalData.customErosionBrushes.Count > 0) {
+            for(int i = 0; i < internalData.customErosionBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomErosionBrush_" + i, internalData.customErosionBrushes[i]);
+        }        
     }
 
     public void LoadCustomBrushes()
@@ -145,6 +155,17 @@ public class Controller : MonoBehaviour
 
                 LoadCustomPaintBrush(name);
                 internalData.customPaintBrushes.Add(name);
+            }
+        }
+
+        count = PlayerPrefs.GetInt("CustomErosionBrushCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomErosionBrush_" + i);
+
+                LoadCustomErosionBrush(name);
+                internalData.customErosionBrushes.Add(name);
             }
         }
     }
@@ -301,6 +322,22 @@ public class Controller : MonoBehaviour
         paintPanel.GetComponent<IPanel>().AddButton(texture, 0);
     }
     
+    public void LoadCustomErosionBrush(string filename)
+    {
+        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
+        byte[] bytes = File.ReadAllBytes(filename);
+
+        texture.filterMode = FilterMode.Trilinear;
+        texture.LoadImage(bytes);
+
+        gameResources.erosionBrushes.Add(texture);
+
+        //Add the brush to the  brush selection panel          
+        IPanel test = erosionPanel.GetComponent<IPanel>();
+        Debug.Log(test);
+        erosionPanel.GetComponent<IPanel>().AddButton(texture, 0);
+    }
+
     private void CloseAllPanels()
     {
         ClosaAllMainPanels();
