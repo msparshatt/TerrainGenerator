@@ -613,9 +613,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6316,9 +6316,18 @@ MonoBehaviour:
   brushImage: {fileID: 741897377}
   playerInput: {fileID: 963194231}
   gameState: {fileID: 645851194}
+  lifetimeSlider: {fileID: 351302601}
+  sedimentCapacityFactorSlider: {fileID: 446153832}
+  inertiaSlider: {fileID: 2105331598}
+  depositSpeedSlider: {fileID: 1333644812}
+  erodeSpeedSlider: {fileID: 7696283}
+  startSpeedSlider: {fileID: 164526368}
+  evaporateSpeedSlider: {fileID: 483389366}
+  startWaterSlider: {fileID: 1070834193}
   brushData: {fileID: 11400000, guid: c17907ec8aecde497ba9343457c5812c, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+  erosionData: {fileID: 11400000, guid: 94a301369e74b77adb0acbaecc1145e1, type: 2}
 --- !u!1 &128895010
 GameObject:
   m_ObjectHideFlags: 0
@@ -8675,9 +8684,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16922,9 +16931,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -20595,9 +20604,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22941,9 +22950,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -50575,9 +50584,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -61077,9 +61086,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -82914,19 +82923,7 @@ MonoBehaviour:
   m_Value: 40
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1839529920
 GameObject:
   m_ObjectHideFlags: 0
@@ -89994,6 +89991,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brushData: {fileID: 11400000, guid: c17907ec8aecde497ba9343457c5812c, type: 2}
+  erosionData: {fileID: 11400000, guid: 94a301369e74b77adb0acbaecc1145e1, type: 2}
   erosionShader: {fileID: 7200000, guid: 1bbf2af55a1168a6d988d3beaf47401c, type: 3}
 --- !u!1 &2018790370
 GameObject:
@@ -93536,9 +93534,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765543708}
-        m_TargetAssemblyTypeName: ProceduralControlPanel, Assembly-CSharp
-        m_MethodName: UpdateTerrain
+      - m_Target: {fileID: 127502710}
+        m_TargetAssemblyTypeName: ErosionPanel, Assembly-CSharp
+        m_MethodName: ErosionSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
