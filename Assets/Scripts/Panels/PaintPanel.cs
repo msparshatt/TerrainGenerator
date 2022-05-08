@@ -259,8 +259,8 @@ public class PaintPanel : MonoBehaviour, IPanel
     {      
         if(filename != "") {
             controller.LoadCustomPaintBrush(filename);
-            SelectBrushIcon(gameResources.paintBrushes.Count - 1);
             internalData.customPaintBrushes.Add(filename);
+            SelectBrushIcon(gameResources.paintBrushes.Count - 1);
         }
     }
 

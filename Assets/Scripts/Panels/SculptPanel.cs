@@ -121,8 +121,8 @@ public class SculptPanel : MonoBehaviour, IPanel
     {      
         if(filename != "") {
             controller.LoadCustomBrush(filename);
-            SelectBrushIcon(gameResources.brushes.Count - 1);
             internalData.customSculptBrushes.Add(filename);
+            SelectBrushIcon(gameResources.brushes.Count - 1);
         }
     }
 

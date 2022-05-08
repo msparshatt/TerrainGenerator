@@ -129,8 +129,8 @@ public class StampPanel : MonoBehaviour, IPanel
     {      
         if(filename != "") {
             controller.LoadCustomStampBrush(filename);
-            SelectBrushIcon(gameResources.stampBrushes.Count - 1);
             internalData.customStampBrushes.Add(filename);
+            SelectBrushIcon(gameResources.stampBrushes.Count - 1);
         }
     }
 
