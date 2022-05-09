@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SimpleFileBrowser;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PaintPanel : MonoBehaviour, IPanel
 {
@@ -14,6 +15,11 @@ public class PaintPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject paintBrushPanel;
     [SerializeField] private Button paintBrushDeleteButton;
     [SerializeField] private RawImage paintBrushImage;
+
+    [Header("Filter Elements")]
+    [SerializeField] private Toggle filterToggle;
+    [SerializeField] private TMP_Dropdown filterTypeDropdown;
+    [SerializeField] private Slider filterFactorSlider;
 
     [Header("Texture Elements")]
     [SerializeField] private GameObject textureScrollView;
@@ -58,6 +64,10 @@ public class PaintPanel : MonoBehaviour, IPanel
         brushIcons = UIHelper.SetupPanel(gameResources.paintBrushes, paintBrushScrollView.transform, SelectBrushIcon);
         manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
+
+        paintBrushData.filter = filterToggle.isOn;
+        paintBrushData.filterType = (MaterialsPanel.MixTypes)(filterTypeDropdown.value + 1);
+        paintBrushData.filterFactor = filterFactorSlider.value;
 
         colorPicker.Awake();
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
@@ -289,5 +299,20 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void ColorPickerChange()
     {
         paintBrushData.color = colorPicker.color;
+    }
+
+    public void FilterToggleChange(bool isOn)
+    {
+        paintBrushData.filter = isOn;
+    }
+
+    public void FilterTypeChange(int value)
+    {
+        paintBrushData.filterType = (MaterialsPanel.MixTypes)(value + 1);
+    }
+
+    public void FilterFactorSliderChange(float value)
+    {
+        paintBrushData.filterFactor = value;
     }
 }

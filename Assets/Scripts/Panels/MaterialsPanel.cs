@@ -8,7 +8,7 @@ using SimpleFileBrowser;
 
 public class MaterialsPanel : MonoBehaviour, IPanel
 {
-    private enum MixTypes  {Top = 1, Bottom, Steep, Shallow, Peaks, Valleys, Random};
+    public enum MixTypes  {Top = 1, Steep, Bottom, Shallow, Peaks, Valleys, Random};
 
     [Header("UI elements")]
     [SerializeField] private Slider scaleSlider;

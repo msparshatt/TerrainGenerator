@@ -9,6 +9,9 @@ public class TerrainPainter : MonoBehaviour
     public PaintBrushDataScriptable brushData;
 
     private Terrain terrain;
+    private const float FUDGEFACTOR = 0.05f;
+    private const float DIVISOR = 0.1f;
+
     public void Start()
     {
         terrain = gameObject.GetComponent<Terrain>();
@@ -27,6 +30,7 @@ public class TerrainPainter : MonoBehaviour
         //get terrain data
         TerrainData terrainData = terrain.terrainData;
         Vector3 terrainSize = terrainData.size;
+        int heightmapResolution = terrainData.heightmapResolution;
 
         //get texture data
         int textureSizeX = texture.width;
@@ -67,6 +71,10 @@ public class TerrainPainter : MonoBehaviour
             {
                 maskValue = rectangle.GetMaskValue(new Vector2(x, y), -brushData.brushRotation, brushData.brushStrength);
 
+                if(brushData.filter) {
+                    maskValue *= ApplyFilter(rectangle.topLeft.x + x, rectangle.topLeft.y + y, heightmapResolution, terrainSize.y, new Vector2Int(textureSizeX, textureSizeY));
+                }
+
                 if(mode == PaintMode.Erase) {
                     pixels[index].a -= maskValue;
                     
@@ -89,6 +97,41 @@ public class TerrainPainter : MonoBehaviour
         texture.SetPixels(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y, pixels);
         texture.Apply(true);
         operation.AddSubOperation(new PaintSubOperation(terrain, texture, new Vector2Int(rectangle.topLeft.x, rectangle.topLeft.y), new Vector2Int(rectangle.size.x, rectangle.size.y), changes));
+    }
+
+    private float ApplyFilter(int x, int y, float heightmapResolution, float terrainHeight, Vector2Int textureSize)
+    {
+        Vector2Int coords = GetHeightMapCoords(x, y, heightmapResolution, textureSize);
+        float height = gameObject.GetComponent<Terrain>().terrainData.GetHeight(coords.x, coords.y) / terrainHeight;
+
+        float [,] newHeight = new float[,] {{1.0f}};
+        float factor = 1;
+
+        switch(brushData.filterType) {
+            case MaterialsPanel.MixTypes.Top:
+                factor = height;
+                break;
+            case MaterialsPanel.MixTypes.Bottom:
+                factor = 1 - height;
+                break;
+            case MaterialsPanel.MixTypes.Steep:
+                factor = gameObject.GetComponent<Terrain>().terrainData.GetSteepness(coords.x / heightmapResolution, coords.y / heightmapResolution) / 90;
+                break;
+            case MaterialsPanel.MixTypes.Shallow:
+                factor = 1 - gameObject.GetComponent<Terrain>().terrainData.GetSteepness(coords.x / heightmapResolution, coords.y / heightmapResolution) / 90;
+                break;
+        }
+
+        float minFactor = 1 - brushData.filterFactor - FUDGEFACTOR;
+        factor = (factor - minFactor) / DIVISOR;
+        factor = Mathf.Min(Mathf.Max(factor, 0), 1);
+
+        return factor;
+    }
+
+    private Vector2Int GetHeightMapCoords(int x, int y, float heightmapResolution, Vector2Int textureSize)
+    {
+        return new Vector2Int((int)(x * heightmapResolution / textureSize.x), (int)(y * heightmapResolution / textureSize.y));
     }
 
     public void UndoPaint(Texture2D texture, Vector2Int topLeft, Vector2Int size, Color[] changes)

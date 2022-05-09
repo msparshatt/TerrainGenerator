@@ -11,6 +11,10 @@ public class PaintBrushDataScriptable : BrushDataScriptable
 
     public float textureScale;
 
+    //filters
+    public bool filter;
+    public MaterialsPanel.MixTypes filterType;
+    public float filterFactor;
 
     public float[,] getMask(int length, int width)
     {

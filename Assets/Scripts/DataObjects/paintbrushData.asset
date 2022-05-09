@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ec90db932355deb0aaa31eca98c6944, type: 3}
   m_Name: paintbrushData
   m_EditorClassIdentifier: 
-  brushRadius: 0
-  brushStrength: 0
+  brushRadius: 50
+  brushStrength: 0.05
   brushRotation: 0
-  brush: {fileID: 0}
-  useTexture: 0
-  paintTexture: {fileID: 0}
-  color: {r: 0, g: 0, b: 0, a: 0}
-  textureScale: 0
+  brush: {fileID: 2800000, guid: 1fdbdc7cee2ab4e3fa652ed3fb98c294, type: 3}
+  useTexture: 1
+  paintTexture: {fileID: 2800000, guid: 8f3e2b7fcaf8b7149b6931529e3aaa51, type: 3}
+  color: {r: 1, g: 1, b: 1, a: 1}
+  textureScale: 1
+  filter: 1
+  filterType: 2
+  filterFactor: 0.87857145
