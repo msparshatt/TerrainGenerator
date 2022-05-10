@@ -316,7 +316,7 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void FilterFactorSliderChange(float value)
     {
         paintBrushData.filterFactor = value;
-        manager.ApplyTextures();
+        manager.ApplyMask();
     }
 
     public void OnDisable()

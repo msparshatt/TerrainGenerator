@@ -1,6 +1,7 @@
 #include "noiseSimplex.cginc"
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel ApplyTextures
+#pragma kernel ApplyMask
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
@@ -161,5 +162,11 @@ void CalculatePaintMask(uint3 id)
 void ApplyTextures(uint3 id : SV_DispatchThreadID)
 {
     CaculatePixel(id);
+    CalculatePaintMask(id);
+}
+
+[numthreads(8,8,1)]
+void ApplyMask(uint3 id : SV_DispatchThreadID)
+{
     CalculatePaintMask(id);
 }

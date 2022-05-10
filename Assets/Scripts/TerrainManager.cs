@@ -639,6 +639,66 @@ public class TerrainManager
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
     }
 
+    public void ApplyMask()
+    {
+        if(shaderRunning || doNotApply)
+            return;
+
+        Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+        //force the cursor to update
+        Cursor.visible = false;
+        Cursor.visible = true;
+
+        shaderRunning = true;
+
+        //get the handle for the correct shader kernel
+        int kernelHandle = textureShader.FindKernel("ApplyMask");
+
+        int hmResolution = currentTerrain.terrainData.heightmapResolution;
+
+        int width = 2048;
+        int height = 2048;
+        textureShader.SetInt("width", width);
+        textureShader.SetInt("height", height);
+
+        //create textures to hold the result
+        RenderTexture mask = new RenderTexture(width,height,24);
+        mask.enableRandomWrite = true;
+        mask.Create();
+
+        //send textures to compute shader
+        textureShader.SetTexture(kernelHandle, "paintMask", mask);
+
+        //send parameters to the compute shader
+        textureShader.SetInt("heightMapResolution", hmResolution);
+
+        float[] mapArray = ConvertTo1DFloatArray(currentTerrain.terrainData.GetHeights(0, 0, currentTerrain.terrainData.heightmapResolution, currentTerrain.terrainData.heightmapResolution));
+        ComputeBuffer heightMapBuffer = new ComputeBuffer(mapArray.Length, sizeof(float));
+        heightMapBuffer.SetData(mapArray);
+        textureShader.SetBuffer(kernelHandle, "heightmap", heightMapBuffer);
+
+        //send filter settings
+        textureShader.SetInt("paintMaskType", (int)paintBrushData.filterType);
+        textureShader.SetFloat("paintMaskFactor", paintBrushData.filterFactor);
+
+        //run the shader
+        textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
+
+        Texture2D tex2D = new Texture2D(mask.width, mask.height, TextureFormat.ARGB32, true);
+        RenderTexture.active = mask;
+        tex2D.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+        tex2D.Apply();
+        paintBrushData.paintMask = tex2D;
+        terrainMaterial.SetTexture("_PaintMask", tex2D);
+
+        heightMapBuffer.Release();
+
+        shaderRunning = false;
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
+    }
+
     public Color GetPixel(Texture2D texture, int u, int v)
     {
         u = u % texture.width;
@@ -675,7 +735,7 @@ public class TerrainManager
             terrainMaterial.SetInt("_ApplyMask", 0);
         }
     }
-    
+
     //translate texture uv coords into heightmap coords
     private Vector2Int TranslateCoordinates(int u, int v)
     {
