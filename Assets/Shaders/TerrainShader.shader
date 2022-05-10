@@ -18,6 +18,7 @@ Shader "Unlit/TerrainShader"
         _MainLightPosition("MainLightPosition", Vector) = (0,0,0,0)
         _LightColor("LightColor", Color) = (1,1,1,1)
 
+        _ApplyMask("ApplyMask", int) = 0
     }
     SubShader
     {
@@ -70,6 +71,8 @@ Shader "Unlit/TerrainShader"
             uniform float3 _MainLightPosition;
             uniform float4 _LightColor;          
 
+            int _ApplyMask;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -112,7 +115,9 @@ Shader "Unlit/TerrainShader"
             {
                 fixed4 mask = tex2D(_PaintMask, i.uv);
 
-                col = (col * 0.75) + (mask * 0.25);
+                if(_ApplyMask > 0) {
+                    col = (col * 0.75) + (mask * 0.25);
+                }
 
                 return col;
             }

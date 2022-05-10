@@ -667,6 +667,15 @@ public class TerrainManager
         exportHeightmap.Export(fileName);
     }
 
+    public void TogglePaintMask(bool isOn)
+    {
+        if(isOn) {
+            terrainMaterial.SetInt("_ApplyMask", 1);
+        } else {
+            terrainMaterial.SetInt("_ApplyMask", 0);
+        }
+    }
+    
     //translate texture uv coords into heightmap coords
     private Vector2Int TranslateCoordinates(int u, int v)
     {

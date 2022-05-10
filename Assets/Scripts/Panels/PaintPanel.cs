@@ -304,6 +304,7 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void FilterToggleChange(bool isOn)
     {
         paintBrushData.filter = isOn;
+        manager.TogglePaintMask(isOn);
     }
 
     public void FilterTypeChange(int value)
@@ -316,5 +317,16 @@ public class PaintPanel : MonoBehaviour, IPanel
     {
         paintBrushData.filterFactor = value;
         manager.ApplyTextures();
+    }
+
+    public void OnDisable()
+    {
+        manager.TogglePaintMask(false);
+    }
+
+    public void OnEnable()
+    {
+        if(manager != null)
+            manager.TogglePaintMask(filterToggle.isOn);
     }
 }
