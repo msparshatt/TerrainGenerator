@@ -8,6 +8,7 @@ Shader "Unlit/TerrainShader"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _AOTexture ("AmbientOcclusion", 2D) = "white" {}
+        _PaintMask ("Paint Mask", 2D) = "white" {}
         _OverlayTexture("Overlay", 2D) = "RGBA 0,0,0,0" {}
         _CursorLocation("Cursor Location", Vector) = (0, 0, 0.5, 0.5)
         _CursorTexture("Cursor Texture", 2D) = "white" {}
@@ -58,6 +59,7 @@ Shader "Unlit/TerrainShader"
             sampler2D _AOTexture;
             sampler2D _OverlayTexture;
             sampler2D _CursorTexture;
+            sampler2D _PaintMask;
             float _CursorRotation;
 
             float4 _MainTex_ST;
@@ -106,6 +108,15 @@ Shader "Unlit/TerrainShader"
                 return col;
             }
 
+            fixed4 AddMask(fixed4 col, v2f i)
+            {
+                fixed4 mask = tex2D(_PaintMask, i.uv);
+
+                col = (col * 0.75) + (mask * 0.25);
+
+                return col;
+            }
+
             fixed4 AddCursor(fixed4 col, v2f i)
             {
                 float angle = radians(_CursorRotation);
@@ -149,6 +160,7 @@ Shader "Unlit/TerrainShader"
                     col = float4((ambient + diffuse), 1.0);
                 }
 
+                col = AddMask(col, i);
                 col = AddCursor(col, i);
 
                 return col;

@@ -630,6 +630,7 @@ public class TerrainManager
         tex2D.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
         tex2D.Apply();
         paintBrushData.paintMask = tex2D;
+        terrainMaterial.SetTexture("_PaintMask", tex2D);
 
         heightMapBuffer.Release();
 
