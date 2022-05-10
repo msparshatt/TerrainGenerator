@@ -66,9 +66,12 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         MixFactorSliderChange();
         MaterialDropdownSelect();
+        Material[] materials = new Material[] {gameResources.materials[0], gameResources.materials[1], gameResources.materials[2], gameResources.materials[3], gameResources.materials[4]};
+        manager.InitialiseBaseMaterials(materials);
+
         for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++)
         {
-            SelectMaterialIcon(index, index);
+            materialImages[index].texture = gameResources.icons[index];
             colorSelected[index] = false;
         }
 
@@ -86,6 +89,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         colorPicker.color = Color.white;
 
+        materialToggle.isOn = true;
         changeToggle = true;
     }
 

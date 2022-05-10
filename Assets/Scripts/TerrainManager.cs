@@ -178,7 +178,15 @@ public class TerrainManager
         terrainMaterial.SetVector("_MainLightPosition", sunPos);
     }
 
-    //return an array of the names of all the current terrains
+    public void InitialiseBaseMaterials(Material[] materials)
+    {
+        for(int index = 0; index < materials.Length; index++) {
+            baseMaterials[index] = materials[index];
+        }
+
+        ApplyTextures();
+    }
+
     public void SetBaseMaterials(int index, Material material)
     {
         baseMaterials[index] = material;
@@ -577,6 +585,7 @@ public class TerrainManager
 
         for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             if(baseMaterials[i] != null) {
+                Debug.Log("material");
                 Graphics.CopyTexture(baseMaterials[i].mainTexture, 0, 0, inputTextures, i, 0);
                 Graphics.CopyTexture(baseMaterials[i].GetTexture("_OcclusionMap"), 0, 0, inputAOs, i, 0);
 
@@ -585,6 +594,7 @@ public class TerrainManager
                 colorValues[i * 4 + 2] = -1;
                 colorValues[i * 4 + 3] = -1;
             } else {
+                Debug.Log("Color");
                 colorValues[i * 4] = colors[i].r;
                 colorValues[i * 4 + 1] = colors[i].g;
                 colorValues[i * 4 + 2] = colors[i].b;
