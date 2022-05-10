@@ -101,31 +101,7 @@ public class TerrainPainter : MonoBehaviour
 
     private float ApplyFilter(int x, int y, float heightmapResolution, float terrainHeight, Vector2Int textureSize)
     {
-        Vector2Int coords = GetHeightMapCoords(x, y, heightmapResolution, textureSize);
-        float height = gameObject.GetComponent<Terrain>().terrainData.GetHeight(coords.x, coords.y) / terrainHeight;
-
-        float [,] newHeight = new float[,] {{1.0f}};
-        float factor = 1;
-
-        switch(brushData.filterType) {
-            case MaterialsPanel.MixTypes.Top:
-                factor = height;
-                break;
-            case MaterialsPanel.MixTypes.Bottom:
-                factor = 1 - height;
-                break;
-            case MaterialsPanel.MixTypes.Steep:
-                factor = gameObject.GetComponent<Terrain>().terrainData.GetSteepness(coords.x / heightmapResolution, coords.y / heightmapResolution) / 90;
-                break;
-            case MaterialsPanel.MixTypes.Shallow:
-                factor = 1 - gameObject.GetComponent<Terrain>().terrainData.GetSteepness(coords.x / heightmapResolution, coords.y / heightmapResolution) / 90;
-                break;
-        }
-
-        float minFactor = 1 - brushData.filterFactor - FUDGEFACTOR;
-        factor = (factor - minFactor) / DIVISOR;
-        factor = Mathf.Min(Mathf.Max(factor, 0), 1);
-
+        float factor = brushData.paintMask.GetPixel(x, y).r;
         return factor;
     }
 

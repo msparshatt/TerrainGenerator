@@ -15,6 +15,7 @@ public class PaintBrushDataScriptable : BrushDataScriptable
     public bool filter;
     public MaterialsPanel.MixTypes filterType;
     public float filterFactor;
+    public Texture2D paintMask;
 
     public float[,] getMask(int length, int width)
     {

@@ -309,10 +309,12 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void FilterTypeChange(int value)
     {
         paintBrushData.filterType = (MaterialsPanel.MixTypes)(value + 1);
+        manager.ApplyTextures();
     }
 
     public void FilterFactorSliderChange(float value)
     {
         paintBrushData.filterFactor = value;
+        manager.ApplyTextures();
     }
 }

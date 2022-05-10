@@ -6,6 +6,8 @@
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 RWTexture2D<float4> aoResult;
+RWTexture2D<float4> paintMask;
+
 Texture2DArray<float4> textures;
 Texture2DArray<float4> aotextures;
 StructuredBuffer<float> heightmap;
@@ -19,14 +21,87 @@ int width;
 int height;
 int heightMapResolution;
 
+int paintMaskType;
+float paintMaskFactor;
+
 float4 maxima[1000];
 float4 minima[1000];
 
 #define FUDGEFACTOR  0.05f  //
 #define DIVISOR 0.1f
 
-[numthreads(8,8,1)]
-void ApplyTextures(uint3 id : SV_DispatchThreadID)
+float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 heightmapPosition, float height)
+{
+    int heightmapIndex = heightmapPosition.x + heightmapPosition.y * heightMapResolution;
+    float minValue = 1 - mixFactor - FUDGEFACTOR;
+
+    float value = 0.0f;
+
+    if(mixType == 1) {                  //by height (top)
+        value = height;
+    } else if (mixType == 3) {          //by height (bottom)
+        value = 1 - height;
+    } else if (mixType == 2 || mixType == 4) {          //by slope (steep/shallow)
+        float minHeight = 10;
+        float maxHeight = 0;
+
+        for(int i = -1; i <= 1; i++) {
+            for(int j = -1; j <= 1; j++) {
+
+                int newIndex = heightmapIndex + i + j * heightMapResolution;
+                height = heightmap[newIndex];
+
+                minHeight = min(minHeight, height);
+                maxHeight = max(maxHeight, height);
+            }
+        }
+
+        value = ((maxHeight - minHeight) * 50);  //turn height difference into value between 0 & 1
+
+        if(mixType == 4)
+            value = 1 - value;
+    } else if(mixType == 5) {           //peaks
+        float minDistance = 1000;
+        for(int index = 0; index < 1000; index++) {
+            float4 maximum = maxima[index];
+            if(maximum.x == -1) {
+                break;
+            }
+
+            float distance = (heightmapPosition.x - maximum.x) * (heightmapPosition.x - maximum.x) + (heightmapPosition.y - maximum.y) * (heightmapPosition.y - maximum.y);
+            distance = sqrt(distance);
+            minDistance = min(minDistance, distance);
+        }
+
+        value = 1 - minDistance / 100;
+    } else if(mixType == 6) {           //valleys
+        float minDistance = 1000;
+        for(int index = 0; index < 1000; index++) {
+            float4 minimum = minima[index];
+            if(minimum.x == -1) {
+                break;
+            }
+
+            float distance = (heightmapPosition.x - minimum.x) * (heightmapPosition.x - minimum.x) + (heightmapPosition.y - minimum.y) * (heightmapPosition.y - minimum.y);
+            distance = sqrt(distance);
+            minDistance = min(minDistance, distance);
+        }            
+
+        value = 1 - minDistance / 100;
+    }  else if(mixType == 7) {           //random
+        value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
+        value = (value + 1) / 2;
+    }
+
+    float factor = (value - minValue) / DIVISOR;
+
+    factor = min(factor, 1);
+    factor = max(factor, 0);
+
+    return factor;
+}
+
+void CaculatePixel(uint3 id: SV_DispatchThreadID)
 {
     int3 pos = int3((id.x * tiling) % width, (id.y * tiling) % height, 0);
     float4 color;
@@ -39,77 +114,14 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
 
     float4 pixelTexture = float4(color.x, color.y, color.z, 1.0);
     float4 pixelAO = float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0);
-    float f = 0;
+    float factor = 0;
 
     int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height); //convert from texture coords to heightmap coords
     int hmIndex = hmPos.x + hmPos.y * heightMapResolution;
     float height = heightmap[hmIndex];
 
     for(int index = 1; index < textureCount; index ++) {
-        float minValue = 1 - factors[index] - FUDGEFACTOR;
-        float value = 0.0f;
-
-        if(mixTypes[index] == 1) {                  //by height (top)
-            value = height;
-        } else if (mixTypes[index] == 3) {          //by height (bottom)
-            value = 1 - height;
-        } else if (mixTypes[index] == 2 || mixTypes[index] == 4) {          //by slope (steep/shallow)
-            float minHeight = 10;
-            float maxHeight = 0;
-
-            for(int i = -1; i <= 1; i++) {
-                for(int j = -1; j <= 1; j++) {
-
-                    int newIndex = hmIndex + i + j * heightMapResolution;
-                    height = heightmap[newIndex];
-
-                    minHeight = min(minHeight, height);
-                    maxHeight = max(maxHeight, height);
-                }
-            }
-
-            value = ((maxHeight - minHeight) * 50);  //turn height difference into value between 0 & 1
-
-            if(mixTypes[index] == 4)
-                value = 1 - value;
-        } else if(mixTypes[index] == 5) {           //peaks
-            float minDistance = 1000;
-            for(int index = 0; index < 1000; index++) {
-                float4 maximum = maxima[index];
-                if(maximum.x == -1) {
-                    break;
-                }
-
-                float distance = (hmPos.x - maximum.x) * (hmPos.x - maximum.x) + (hmPos.y - maximum.y) * (hmPos.y - maximum.y);
-                distance = sqrt(distance);
-                minDistance = min(minDistance, distance);
-            }
-
-            value = 1 - minDistance / 100;
-        } else if(mixTypes[index] == 6) {           //valleys
-            float minDistance = 1000;
-            for(int index = 0; index < 1000; index++) {
-                float4 minimum = minima[index];
-                if(minimum.x == -1) {
-                    break;
-                }
-
-
-                float distance = (hmPos.x - minimum.x) * (hmPos.x - minimum.x) + (hmPos.y - minimum.y) * (hmPos.y - minimum.y);
-                distance = sqrt(distance);
-                minDistance = min(minDistance, distance);
-            }            
-
-            value = 1 - minDistance / 100;
-        }  else if(mixTypes[index] == 7) {           //random
-            value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
-            value = (value + 1) / 2;
-        }
-
-        f = (value - minValue) / DIVISOR;
-
-        f = min(f, 1);
-        f = max(f, 0);
+        factor = CalculateFactor(index, mixTypes[index], factors[index], id, hmPos, height);
 
         pos[2] = index;
 
@@ -119,10 +131,35 @@ void ApplyTextures(uint3 id : SV_DispatchThreadID)
             color = textures[pos];
         }
 
-        pixelTexture = pixelTexture * (1 - f) + float4(color.x, color.y, color.z, 1.0) * f;
-        pixelAO = pixelAO * (1 - f) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * f;        
+        pixelTexture = pixelTexture * (1 - factor) + float4(color.x, color.y, color.z, 1.0) * factor;
+        pixelAO = pixelAO * (1 - factor) + float4(aotextures[pos].x, aotextures[pos].y, aotextures[pos].z, 1.0) * factor;        
     }
 
     Result[id.xy] = pixelTexture;
     aoResult[id.xy] = pixelAO;
+}
+
+void CalculatePaintMask(uint3 id)
+{
+    int3 pos = int3((id.x * tiling) % width, (id.y * tiling) % height, 0);
+    float4 color;
+
+    float factor = 0;
+
+    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height); //convert from texture coords to heightmap coords
+    int hmIndex = hmPos.x + hmPos.y * heightMapResolution;
+    float height = heightmap[hmIndex];
+
+    factor = CalculateFactor(0, paintMaskType, paintMaskFactor, id, hmPos, height);
+
+    float4 pixelTexture = float4(factor, factor, factor, 1.0);
+
+    paintMask[id.xy] = pixelTexture;
+}
+
+[numthreads(8,8,1)]
+void ApplyTextures(uint3 id : SV_DispatchThreadID)
+{
+    CaculatePixel(id);
+    CalculatePaintMask(id);
 }

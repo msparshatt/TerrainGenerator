@@ -51,7 +51,7 @@ public class Controller : MonoBehaviour
         //cache an instant of the terrain manager
         manager = TerrainManager.instance;
 
-        manager.SetupTerrain(settingsData, internalData, busyCursor, textureShader, materialShader, sun);
+        manager.SetupTerrain(settingsData, internalData, busyCursor, textureShader, materialShader, sun, paintBrushData);
         manager.CreateFlatTerrain();
 
         //set up brush settings
