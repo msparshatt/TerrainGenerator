@@ -122,6 +122,8 @@ Used when using the **Random** option to provide an offset for the perlin noise 
 
 Click on the material picture in order to bring up the list of available materials.
 
+If the color toggle is selected then this layer will be painted with the selected color instead of a material.
+
 New materials can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
 
 \newpage
@@ -159,9 +161,46 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 - **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
 - **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
 
+The stamp controls are
+
+- **Left click** Raise terrain
+- **Shift + Left click** Lower terrain
+
 ## Brush buttons
 
 ![Brush selector image](Screenshots/stampbrush_selector.png)
+
+Click on the brush picture in order to bring up the list of available brushes.
+
+New brushes can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
+
+\newpage
+
+# Erosion Tab
+
+![Erosion controls image](Screenshots/erosionpanel.png)
+
+Erodes the terrain under the brush.
+
+- **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
+- **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
+
+The erosion control is left click to erode the terrain.
+
+## Erosion settings
+
+- Capacity - how much sediment the water can hold
+- Erosion sp - How fast terrain is eroded
+- Deposit sp - How fast terrain is deposited
+- Evaporation - How fast water evaporates
+- Lifetime - How many cycles each particle should last for
+- start speed - How fast each particle is moving (speed affects the amount of sediment water can hold)
+- Start water - The amount of water each particle contains at the start
+- Inertia - How closely does the water particle follow the terrain (lower inertia will follow the terrain more closely while higer inertia will try to maintain a constant velocity)
+
+
+![Erosion brush selector image](Screenshots/erosionbrush_selector.png)
 
 Click on the brush picture in order to bring up the list of available brushes.
 
@@ -207,9 +246,58 @@ Click on the texture picture in order to bring up the list of available textures
 
 New textures can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
 
+## Mask
+
+![Masked painting image](Screenshots/paintmask.png)
+
+It's possible to place a mask so that only certain areas will be painted to. This mask can be set by either the height or steepness of the map. When masking is turned on the paintable areas will appear slightly brighter and the blocked areas slightly darker.
 
 \newpage
 
+# Sky Tab
+
+## Lighting
+
+![Lighting controls image](Screenshots/skypanel_light.png)
+
+- **Light terrain** Should the terrain be lit up
+- **Height** The height of the sun
+- **Position** The horizontal position of the sun
+- **Auto** Automatically set the color of the sun based on its height
+- **Manual** Manually select the sun's color
+- **Color Picker** Used to control the color of the sun when in manual mode
+
+## Clouds
+
+![Cloud controls image](Screenshots/skypanel_clouds.png)
+
+Adds a layer of clouds using simple perlin noise. The color of the clouds is affected by the sun color.
+
+- **Clouds** Turn on the cloud layer
+- **X offset, Y offset** Applies and offset to the noise function
+- **Iterations** The number of times to run the noise function
+- **Scale** The scale of the noise function
+- **Start, End** Control the density of the clouds
+- **Wind direction** The direction the clouds should move in degrees. 0 Will move them 
+- **Wind Speed** The speed of clouds movement
+
+\newpage
+
+# Water Tab
+
+![Water controls image](Screenshots/waterpanel.png)
+
+- **Ocean** Turns on the ocean
+- **Height** Controls the height of the ocean
+- **Direction** The direction the waves move in degrees
+- **Speed** The speed of the waves
+- **Wave height** The height of the waves
+- **Choppiness** How choppy the waves are
+- **Foam amount** How much foam to place
+- **Shoreline foam** Places foam where the terrain intersects with the ocean
+- **Foam Spread** How far the foam should spread out from the shoreline
+
+\newpage
 
 # Procedural Generation
 
@@ -288,6 +376,7 @@ Click on the import button and then select the image file to import.
 
 ## Brushes
 Brushes should be square, greyscale images. Black areas are transparent, white areas are completely opaque.
+Note any stamps which work with Unity's terrain system can be imported.
 
 ## Materials and textures
 These should be square jpg or png images. Images with a resolution of around 2kx2k work best. Importing large materials can slow down paint operations.
