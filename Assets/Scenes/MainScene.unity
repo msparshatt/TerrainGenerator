@@ -63340,7 +63340,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: V 0.7
+  m_text: V 0.8
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -78248,7 +78248,9 @@ MonoBehaviour:
     the CC0 license.\n\nThe following items are included under the MIT license:\nThe
     filebrowser was made by yasirkula  - https://github.com/yasirkula/UnitySimpleFileBrowser\nThe
     stamps are by Roland09  - https://github.com/Roland09/Terrain-Stamps \nThe color
-    picker is by mmaletin - https://github.com/mmaletin/UnityColorPicker"
+    picker is by mmaletin - https://github.com/mmaletin/UnityColorPicker\nThe Ceto
+    Ocean System is by Scrawk - https://github.com/Scrawk/Ceto\nThe hydaulic erosion
+    code is by Sebastian Lague - https://github.com/SebLague/Hydraulic-Erosion"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -86816,7 +86818,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1839742263
 MonoBehaviour:
   m_ObjectHideFlags: 0
