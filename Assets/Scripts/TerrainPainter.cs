@@ -87,6 +87,9 @@ public class TerrainPainter : MonoBehaviour
                     } else {
                         pixels[index] = pixels[index] * (1 - maskValue) + paint[index] * maskValue;
                         pixels[index].a += maskValue;
+
+                        if(pixels[index].a > 1)
+                            pixels[index].a = 1;
                     }
                 }
                 changes[index] = pixels[index] - changes[index];
