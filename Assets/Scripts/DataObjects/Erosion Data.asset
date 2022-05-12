@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc3a9bca4ce492efb3bfbfa05d7f5aa, type: 3}
   m_Name: Erosion Data
   m_EditorClassIdentifier: 
-  erosionBrushRadius: 50
+  erosionBrushRadius: 3
   lifetime: 30
   sedimentCapacityFactor: 9
   minSedimentCapacity: 0.01
