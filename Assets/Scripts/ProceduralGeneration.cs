@@ -212,7 +212,8 @@ public class ProceduralGeneration
 
         // Settings
         erosionShader.SetInt ("borderSize", erosionBrushRadius);
-        erosionShader.SetInt ("mapSize", mapSize + erosionBrushRadius * 2);
+        erosionShader.SetInt ("mapWidth", mapSize + erosionBrushRadius * 2);
+        erosionShader.SetInt ("mapLength", mapSize + erosionBrushRadius * 2);
         erosionShader.SetInt ("brushLength", brushIndexOffsets.Count);
         erosionShader.SetInt ("maxLifetime", lifetime);
         erosionShader.SetFloat ("inertia", inertia);
