@@ -473,7 +473,7 @@ public class TerrainManager
     //convert a 1D float array to a 2D height array so it can be applied to a terrain
     public float[,] ConvertTo2DArray(float[] heightData, int borderSize = 0)
     {
-        int size = (int)Mathf.Sqrt(heightData.Length);
+        int size = (int)Mathf.Sqrt(heightData.Length) - borderSize * 2;
 
         return ConvertTo2DArray(heightData, size, size, borderSize);
     }
