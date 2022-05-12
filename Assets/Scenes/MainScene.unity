@@ -6396,6 +6396,9 @@ MonoBehaviour:
   brushImage: {fileID: 741897377}
   playerInput: {fileID: 963194231}
   gameState: {fileID: 645851194}
+  radiusSlider: {fileID: 1729609091}
+  strengthSlider: {fileID: 1418391569}
+  rotationSlider: {fileID: 368654361}
   lifetimeSlider: {fileID: 351302601}
   sedimentCapacityFactorSlider: {fileID: 446153832}
   inertiaSlider: {fileID: 2105331598}
@@ -6405,6 +6408,7 @@ MonoBehaviour:
   evaporateSpeedSlider: {fileID: 483389366}
   startWaterSlider: {fileID: 1070834193}
   brushData: {fileID: 11400000, guid: c17907ec8aecde497ba9343457c5812c, type: 2}
+  defaultBrushData: {fileID: 11400000, guid: 075f5e8d3bc6354ef8699422f7aa9ea5, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
   erosionData: {fileID: 11400000, guid: 94a301369e74b77adb0acbaecc1145e1, type: 2}
@@ -37049,6 +37053,9 @@ MonoBehaviour:
   paintBrushPanel: {fileID: 2047536146}
   paintBrushDeleteButton: {fileID: 370496396}
   paintBrushImage: {fileID: 1513268157}
+  radiusSlider: {fileID: 659726164}
+  strengthSlider: {fileID: 852496845}
+  rotationSlider: {fileID: 248495176}
   filterToggle: {fileID: 1901785980}
   filterTypeDropdown: {fileID: 2071623221}
   filterFactorSlider: {fileID: 866715403}
@@ -37063,6 +37070,7 @@ MonoBehaviour:
   gameState: {fileID: 645851194}
   sidePanels: {fileID: 1262097358}
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
+  defaultBrushData: {fileID: 11400000, guid: 758acb7ae1e79b992ad86e367d55f734, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!114 &746692204
@@ -49054,7 +49062,11 @@ MonoBehaviour:
   brushImage: {fileID: 264371375}
   playerInput: {fileID: 963194231}
   gameState: {fileID: 645851194}
+  radiusSlider: {fileID: 1998504132}
+  strengthSlider: {fileID: 1052395687}
+  rotationSlider: {fileID: 2138308492}
   brushData: {fileID: 11400000, guid: 783d84cd7cf1027c6b33a1d5e1a87f40, type: 2}
+  defaultBrushData: {fileID: 11400000, guid: de077d5d7c26af5c3a4fd747e139e78f, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!114 &1006123584
@@ -70174,6 +70186,7 @@ MonoBehaviour:
   rotationSlider: {fileID: 159497262}
   heightSlider: {fileID: 1342125547}
   brushData: {fileID: 11400000, guid: 1b2ab539caa4f0f81a8e5560f8249ed9, type: 2}
+  defaultBrushData: {fileID: 11400000, guid: dcf11dd5301824889b615c8f24b090a9, type: 2}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
 --- !u!1 &1488027167
