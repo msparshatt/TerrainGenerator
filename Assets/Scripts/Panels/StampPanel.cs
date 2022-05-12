@@ -24,6 +24,7 @@ public class StampPanel : MonoBehaviour, IPanel
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
+    [SerializeField] private BrushDataScriptable defaultBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
 
@@ -51,17 +52,17 @@ public class StampPanel : MonoBehaviour, IPanel
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
         brushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollView.transform, SelectBrushIcon);
-        SelectBrushIcon(0);
 
-        //initialise the brush data
-        brushData.brushRadius = (int)radiusSlider.value;
-        brushData.brushRotation = rotationSlider.value;
-        brushData.brushStrength = heightSlider.value;
+        ResetPanel();
     }
 
     public void ResetPanel()
     {
         SelectBrushIcon(0);
+
+        radiusSlider.value = defaultBrushData.brushRadius;
+        rotationSlider.value = defaultBrushData.brushRotation;
+        heightSlider.value = defaultBrushData.brushStrength;
     }
     
     public void BrushButtonClick()

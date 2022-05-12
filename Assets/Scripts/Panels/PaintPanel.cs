@@ -15,6 +15,9 @@ public class PaintPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject paintBrushPanel;
     [SerializeField] private Button paintBrushDeleteButton;
     [SerializeField] private RawImage paintBrushImage;
+    [SerializeField] private Slider radiusSlider;
+    [SerializeField] private Slider strengthSlider;
+    [SerializeField] private Slider rotationSlider;
 
     [Header("Filter Elements")]
     [SerializeField] private Toggle filterToggle;
@@ -40,6 +43,8 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     [Header("Data Objects")]
     [SerializeField] private PaintBrushDataScriptable paintBrushData;
+    [SerializeField] private PaintBrushDataScriptable defaultBrushData;
+
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
 
@@ -72,14 +77,18 @@ public class PaintPanel : MonoBehaviour, IPanel
         colorPicker.Awake();
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
         colorPicker.color = Color.white;
-        SelectTextureIcon(1);
-        SelectBrushIcon(0);
+        
+        ResetPanel();
     }
 
     public void ResetPanel()
     {
         SelectBrushIcon(0);
         SelectTextureIcon(1);
+
+        radiusSlider.value = defaultBrushData.brushRadius;
+        rotationSlider.value = defaultBrushData.brushRotation;
+        strengthSlider.value = defaultBrushData.brushStrength;
     }
 
     // Update is called once per frame

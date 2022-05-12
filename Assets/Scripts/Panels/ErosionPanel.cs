@@ -16,6 +16,10 @@ public class ErosionPanel : MonoBehaviour, IPanel
     [SerializeField] private RawImage brushImage;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameObject gameState;
+    [SerializeField] private Slider radiusSlider;
+    [SerializeField] private Slider strengthSlider;
+    [SerializeField] private Slider rotationSlider;
+
 
     [Header("Erosion Settings")]
     [SerializeField] private Slider lifetimeSlider;
@@ -30,6 +34,7 @@ public class ErosionPanel : MonoBehaviour, IPanel
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
+    [SerializeField] private BrushDataScriptable defaultBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private ErosionDataScriptable erosionData;
@@ -47,12 +52,16 @@ public class ErosionPanel : MonoBehaviour, IPanel
         
         brushIcons = UIHelper.SetupPanel(gameResources.erosionBrushes, erosionBrushScrollView.transform, SelectBrushIcon);   
 
-        SelectBrushIcon(0);
+        ResetPanel();
     }
 
     public void ResetPanel()
     {
         SelectBrushIcon(0);
+
+        radiusSlider.value = defaultBrushData.brushRadius;
+        rotationSlider.value = defaultBrushData.brushRotation;
+        strengthSlider.value = defaultBrushData.brushStrength;
     }
 
     public void BrushButtonClick()

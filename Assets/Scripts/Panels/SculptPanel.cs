@@ -17,9 +17,14 @@ public class SculptPanel : MonoBehaviour, IPanel
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameObject gameState;
 
+    [SerializeField] private Slider radiusSlider;
+    [SerializeField] private Slider strengthSlider;
+    [SerializeField] private Slider rotationSlider;
+
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
+    [SerializeField] private BrushDataScriptable defaultBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
 
@@ -42,12 +47,16 @@ public class SculptPanel : MonoBehaviour, IPanel
         
         brushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
 
-        SelectBrushIcon(0);
+        ResetPanel();
     }
 
     public void ResetPanel()
     {
         SelectBrushIcon(0);
+
+        radiusSlider.value = defaultBrushData.brushRadius;
+        rotationSlider.value = defaultBrushData.brushRotation;
+        strengthSlider.value = defaultBrushData.brushStrength;
     }
 
     // Update is called once per frame
