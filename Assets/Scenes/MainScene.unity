@@ -63652,7 +63652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 335145013}
-  text: Brush radius
+  text: Height of stamped terrain
 --- !u!114 &1342125547
 MonoBehaviour:
   m_ObjectHideFlags: 0
