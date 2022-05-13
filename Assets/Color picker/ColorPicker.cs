@@ -26,6 +26,8 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IDragHandler, IPo
     private RectTransform rectTransform;
     private Image image;
 
+    private bool awake = false;
+
     float h, s, v;
 
     public Color color
@@ -41,28 +43,31 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IDragHandler, IPo
 
     public void Awake()
     {
-        rectTransform = transform as RectTransform;
-        image = GetComponent<Image>();
+        if(!awake) {
+            awake = true; //ensure the Awake method is only called once
+            rectTransform = transform as RectTransform;
+            image = GetComponent<Image>();
 
-        h = s = v = 0;
+            h = s = v = 0;
 
-        if (WrongShader())
-        {
-            Debug.LogWarning($"Color picker requires image material with {colorPickerShaderName} shader.");
-
-            if (Application.isPlaying && colorPickerShader != null)
+            if (WrongShader())
             {
-                generatedMaterial = new Material(colorPickerShader);
-                generatedMaterial.hideFlags = HideFlags.HideAndDontSave;
+                Debug.LogWarning($"Color picker requires image material with {colorPickerShaderName} shader.");
+
+                if (Application.isPlaying && colorPickerShader != null)
+                {
+                    generatedMaterial = new Material(colorPickerShader);
+                    generatedMaterial.hideFlags = HideFlags.HideAndDontSave;
+                }
+
+                image.material = generatedMaterial;
+
+                return;
             }
 
-            image.material = generatedMaterial;
-
-            return;
+            color = Color.white;
+            ApplyColor();
         }
-
-        color = Color.white;
-        ApplyColor();
     }
 
     private void Reset()
