@@ -55,11 +55,11 @@ public class SkyPanel : MonoBehaviour, IPanel
         sunColorPicker.Awake();
         ResetPanel();
         sunColorPicker.onColorChanged += delegate {ColorPickerChange(); };
-        sunColorPicker.color = Color.white;
 
+        sunColorPicker.color = Color.white;
         SkyMaterial.SetColor("_CloudColor", new Vector4(0.5f, 0.5f, 0.5f, 1));
 
-        LightSliderChange();
+        MoveSun();
     }
 
     public void ResetPanel()
@@ -86,8 +86,10 @@ public class SkyPanel : MonoBehaviour, IPanel
         LightToggle.isOn = internalData.lightTerrain;
         sunHeightSlider.value = internalData.sunHeight;
         sunPositionSlider.value = internalData.sunDirection;
+
         sunColorPicker.color = internalData.sunColor;
         autoColorToggle.isOn = internalData.automaticColor;
+        Debug.Log(sunColorPicker.color);
 
         CloudActiveToggle.isOn = internalData.cloudActive;
         CloudXOffsetSlider.value = internalData.cloudXoffset;
@@ -106,9 +108,9 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.lightTerrain = isOn;
     }
 
-    public void LightSliderChange()
+    public void LightHeightSliderChange()
     {
-        manager.MoveSun(sunHeightSlider.value, sunPositionSlider.value);
+        internalData.sunHeight = sunHeightSlider.value;
 
         if(autoColor) {
             Color skyColor = Color.white;
@@ -120,16 +122,26 @@ public class SkyPanel : MonoBehaviour, IPanel
 
         CloudSliderChange();
 
-        internalData.sunHeight = sunHeightSlider.value;
+        MoveSun();
+    }
+
+    public void LightDirectionSliderChange()
+    {
         internalData.sunDirection = sunPositionSlider.value;
+
+        MoveSun();
+    }
+    private void MoveSun()
+    {
+        manager.MoveSun(internalData.sunHeight, internalData.sunDirection);
     }
 
     public void AutoColorToggleChange(bool isOn)
     {
         autoColor = isOn;
-
+        internalData.automaticColor = isOn;
         if(autoColor)
-            LightSliderChange();
+            LightHeightSliderChange();
         else
             ColorPickerChange();
     }

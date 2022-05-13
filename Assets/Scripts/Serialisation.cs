@@ -232,6 +232,7 @@ public class Serialisation : MonoBehaviour
 
         GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
+
         for(int index = 0; index < panels.Length; index++) {
             panels[index].GetComponent<IPanel>().LoadPanel();
         }
@@ -306,6 +307,7 @@ public class Serialisation : MonoBehaviour
             data.lightTerrain = internalData.lightTerrain;
             data.sunHeight = internalData.sunHeight;
             data.sunDirection = internalData.sunDirection;
+            Debug.Log(data.sunDirection);
             data.automaticColor = internalData.automaticColor;
             data.sunColor = internalData.sunColor;
             data.cloudActive = internalData.cloudActive;
