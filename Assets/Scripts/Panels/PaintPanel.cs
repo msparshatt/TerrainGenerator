@@ -86,6 +86,10 @@ public class PaintPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0);
         SelectTextureIcon(1);
 
+        paintBrushData.brushRadius = defaultBrushData.brushRadius;
+        paintBrushData.brushRotation = defaultBrushData.brushRotation;
+        paintBrushData.brushStrength = defaultBrushData.brushStrength;
+
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;

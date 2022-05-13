@@ -60,6 +60,10 @@ public class StampPanel : MonoBehaviour, IPanel
     {
         SelectBrushIcon(0);
 
+        brushData.brushRadius = defaultBrushData.brushRadius;
+        brushData.brushRotation = defaultBrushData.brushRotation;
+        brushData.brushStrength = defaultBrushData.brushStrength;
+
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         heightSlider.value = defaultBrushData.brushStrength;

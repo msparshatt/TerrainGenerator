@@ -54,6 +54,10 @@ public class SculptPanel : MonoBehaviour, IPanel
     {
         SelectBrushIcon(0);
 
+        brushData.brushRadius = defaultBrushData.brushRadius;
+        brushData.brushRotation = defaultBrushData.brushRotation;
+        brushData.brushStrength = defaultBrushData.brushStrength;
+
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
