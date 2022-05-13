@@ -42,15 +42,17 @@ public class WaterPanel : MonoBehaviour, IPanel
 
     public void ResetPanel()
     {
-        oceanActiveToggle.isOn = defaultData.oceanActive;
-        oceanHeightSlider.value = defaultData.oceanHeight;
-        waveDirectionSlider.value = defaultData.waveDirection;
-        waveSpeedSlider.value = defaultData.waveSpeed;
-        waveHeightSlider.value = defaultData.waveHeight;
-        choppynessSlider.value = defaultData.waveChoppyness;
-        foamAmountSlider.value = defaultData.foamAmount;
-        shorelineActiveToggle.isOn = defaultData.shoreLineActive;
-        shorelineFoamAmountSlider.value = defaultData.shorelineFoamAmount;
+        internalData.oceanActive = defaultData.oceanActive;
+        internalData.oceanHeight = defaultData.oceanHeight;
+        internalData.waveDirection = defaultData.waveDirection;
+        internalData.waveSpeed = defaultData.waveSpeed;
+        internalData.waveHeight = defaultData.waveHeight;
+        internalData.waveChoppyness = defaultData.waveChoppyness;
+        internalData.foamAmount = defaultData.foamAmount;
+        internalData.shoreLineActive = defaultData.shoreLineActive;
+        internalData.shorelineFoamAmount = defaultData.shorelineFoamAmount;
+
+        LoadPanel();
     }
 
     public async void LoadPanel()
@@ -68,11 +70,13 @@ public class WaterPanel : MonoBehaviour, IPanel
 
     public void OceanToggleChange(bool isOn)
     {
+        internalData.oceanActive = isOn;
         ocean.SetActive(isOn);
     }
 
     public void HeightSliderChange(float value)
     {
+        internalData.oceanHeight = value;
         ocean.GetComponent<Ceto.Ocean>().level = value;
 
         heightChanged = true;
@@ -88,36 +92,43 @@ public class WaterPanel : MonoBehaviour, IPanel
 
     public void WaveDirectionSliderChange(float value)
     {
+        internalData.waveDirection = value;
         ocean.GetComponent<Ceto.Ocean>().windDir = value;
     }
 
     public void WaveSpeedSliderChange(float value)
     {
+        internalData.waveSpeed = value;
         ocean.GetComponent<Ceto.WaveSpectrum>().waveSpeed = value;
     }
 
     public void WaveHeightSliderChange(float value)
     {
+        internalData.waveHeight = value;
         ocean.GetComponent<Ceto.WaveSpectrum>().windSpeed = value;
     }
 
     public void ChoppynessSliderChange(float value)
     {
+        internalData.waveChoppyness = value;
         ocean.GetComponent<Ceto.WaveSpectrum>().choppyness = value;
     }
 
     public void FoamAmountSliderChange(float value)
     {
+        internalData.foamAmount = value;
         ocean.GetComponent<Ceto.WaveSpectrum>().foamAmount = value;
     }
 
     public void ShoreFoamToggleChange(bool isOn)
     {
+        internalData.shoreLineActive = isOn;
         terrainShoreMask.enabled = isOn;
     }
 
     public void ShoreFoamSpreadSliderChange(float value)
     {
+        internalData.shorelineFoamAmount = value;
         terrainShoreMask.foamSpread = value;
     }
 }
