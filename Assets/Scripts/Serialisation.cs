@@ -64,7 +64,6 @@ public class Serialisation : MonoBehaviour
 
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
 
-        Debug.Log(version4);
         if(version4) {
             if(data.baseTexture == -1) {
                 materials.SelectMaterialIcon(0, materials.AddBaseTexture(data.baseTexture_colors));
@@ -307,7 +306,6 @@ public class Serialisation : MonoBehaviour
             data.lightTerrain = internalData.lightTerrain;
             data.sunHeight = internalData.sunHeight;
             data.sunDirection = internalData.sunDirection;
-            Debug.Log(data.sunDirection);
             data.automaticColor = internalData.automaticColor;
             data.sunColor = internalData.sunColor;
             data.cloudActive = internalData.cloudActive;
@@ -359,7 +357,6 @@ public class Serialisation : MonoBehaviour
             result = newIndices[index];
         }
 
-        Debug.Log(index + " : " + result);
         return result;
     }
 }
