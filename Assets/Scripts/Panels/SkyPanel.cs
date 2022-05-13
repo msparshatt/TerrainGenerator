@@ -64,21 +64,22 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     public void ResetPanel()
     {
-        LightToggle.isOn = defaultData.lightTerrain;
-        sunHeightSlider.value = defaultData.sunHeight;
-        sunPositionSlider.value = defaultData.sunDirection;
-        sunColorPicker.color = defaultData.sunColor;
-        autoColorToggle.isOn = defaultData.automaticColor;
+        internalData.lightTerrain = defaultData.lightTerrain;
+        internalData.sunHeight = defaultData.sunHeight;
+        internalData.sunDirection = defaultData.sunDirection;
+        internalData.automaticColor = defaultData.automaticColor;
+        internalData.sunColor = defaultData.sunColor;
+        internalData.cloudActive = defaultData.cloudActive;
+        internalData.cloudXoffset = defaultData.cloudXoffset;
+        internalData.cloudYOffset = defaultData.cloudYOffset;
+        internalData.cloudScale = defaultData.cloudScale;
+        internalData.cloudIterations = defaultData.cloudIterations;
+        internalData.cloudStart = defaultData.cloudStart;
+        internalData.cloudEnd = defaultData.cloudEnd;
+        internalData.windSpeed = defaultData.windSpeed;
+        internalData.windDirection = defaultData.windDirection;
 
-        CloudActiveToggle.isOn = defaultData.cloudActive;
-        CloudXOffsetSlider.value = defaultData.cloudXoffset;
-        CloudYOffsetSlider.value = defaultData.cloudYOffset;
-        CloudIterationSlider.value = defaultData.cloudIterations;
-        CloudScaleSlider.value = defaultData.cloudScale;
-        CloudStartSlider.value = defaultData.cloudStart;
-        CloudEndSlider.value = defaultData.cloudEnd;
-        WindDirectionSlider.value = defaultData.windDirection;
-        WindSpeedSlider.value = defaultData.windSpeed;
+        LoadPanel();
     }
 
     public void LoadPanel()
