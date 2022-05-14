@@ -61,47 +61,48 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         materialIcons = UIHelper.SetupPanel(gameResources.icons, materialScrollView.transform, SelectMaterialIcon);   
 
-        manager.doNotApply = true;
+        colors = new Color[InternalDataScriptable.NUMBER_MATERIALS];
         colorSelected = new bool[InternalDataScriptable.NUMBER_MATERIALS];
-
-        MixFactorSliderChange();
-        MaterialDropdownSelect();
-        Material[] materials = new Material[] {gameResources.materials[0], gameResources.materials[1], gameResources.materials[2], gameResources.materials[3], gameResources.materials[4]};
-        manager.InitialiseBaseMaterials(materials);
-
-        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++)
-        {
-            materialImages[index].texture = gameResources.icons[index];
-            colorSelected[index] = false;
-        }
-
-        manager.doNotApply = false;
-
-        changeToggle = false;
+       
         colorPicker.Awake();
         colorPicker.color = Color.white;
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
-
-        colors = new Color[InternalDataScriptable.NUMBER_MATERIALS];
-        for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++){
-            colors[i] = Color.white;
-        }
 
         colorPicker.color = Color.white;
 
         materialToggle.isOn = true;
         changeToggle = true;
+
+        ResetPanel();
     }
 
     public void ResetPanel()
     {
-        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-            SelectMaterialIcon(index, index);
+        manager.doNotApply = true;
+
+        Material[] materials = new Material[] {gameResources.materials[0], gameResources.materials[1], gameResources.materials[2], gameResources.materials[3], gameResources.materials[4]};
+
+        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++)
+        {
+            materialImages[index].texture = gameResources.icons[index];
+            internalData.currentMaterialIndices[index] = index;
+            colorSelected[index] = false;
         }
+
+        manager.doNotApply = false;
+
+        internalData.materialScale = 1;
 
         for(int index = 1; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
             mixFactorSliders[index].value = 0;
             mixtypeDropdowns[index].value = 0;
+        }
+
+        MixFactorSliderChange();
+        MaterialDropdownSelect();
+
+        for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++){
+            colors[i] = Color.white;
         }
     }
 
@@ -122,7 +123,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     {
         internalData.sliderChanged = true;
         internalData.materialScale = value;
-        manager.ScaleMaterial(value);
+        manager.ApplyTextures();
     }
 
     public void ResetTilingButtonClick()
@@ -144,8 +145,29 @@ public class MaterialsPanel : MonoBehaviour, IPanel
                 internalData.detectMaximaAndMinima = true;
 
             offsetSliders[i].gameObject.SetActive((mixType == (int)MixTypes.Random));
-            manager.SetMixType(i, mixType);
+
+            internalData.mixTypes[i] = mixType;
         }
+
+        if(!oldDetect && internalData.detectMaximaAndMinima)
+            manager.FindMaximaAndMinima();
+            
+        manager.ApplyTextures();
+    }
+
+    public void MaterialDropdownSelect(int index)
+    {
+        bool oldDetect = internalData.detectMaximaAndMinima;
+        internalData.detectMaximaAndMinima = false;
+
+        int mixType = mixtypeDropdowns[index].value + 1;
+
+        if(mixType == (int)MixTypes.Peaks || mixType == (int)MixTypes.Valleys)
+            internalData.detectMaximaAndMinima = true;
+
+        offsetSliders[index].gameObject.SetActive((mixType == (int)MixTypes.Random));
+
+        internalData.mixTypes[index] = mixType;
 
         if(!oldDetect && internalData.detectMaximaAndMinima)
             manager.FindMaximaAndMinima();
@@ -156,8 +178,17 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     public void MixFactorSliderChange()
     {
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
-            manager.SetMixFactor(i, mixFactorSliders[i].value);
+            internalData.mixFactors[i] = mixFactorSliders[i].value;
         }
+
+        internalData.sliderChanged = true;
+    }
+
+    public void MixFactorSliderChange(int index)
+    {
+        float value = mixFactorSliders[index].value;
+
+        internalData.mixFactors[index] = value;
 
         internalData.sliderChanged = true;
     }
@@ -167,9 +198,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         Material mat = gameResources.materials[buttonIndex];
         internalData.currentMaterialIndices[panel] = buttonIndex;
 
-        Vector2 scale = new Vector2(scaleSlider.value, scaleSlider.value);
-        mat.mainTextureScale = scale;
-
         if(buttonIndex >= (gameResources.materials.Count - internalData.customMaterials.Count)) {
             materialDeleteButton.interactable = true;
             materialImages[panel].texture = gameResources.materials[buttonIndex].mainTexture;
@@ -177,7 +205,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
             materialDeleteButton.interactable = false;
             materialImages[panel].texture = gameResources.icons[buttonIndex];
         }        
-
 
         if(materialToggle.isOn) {
             ToggleChange(false);
@@ -232,9 +259,16 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     public void OffsetSliderChange()
     {
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
-            manager.SetOffset(i, offsetSliders[i].value);
+            internalData.mixOffsets[i] = offsetSliders[i].value;
         }
 
+        internalData.sliderChanged = true;
+    }
+
+
+    public void OffsetSliderChange(int index)
+    {
+        internalData.mixOffsets[index] = offsetSliders[index].value;
         internalData.sliderChanged = true;
     }
 
@@ -256,15 +290,11 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         Debug.Log(colors[index]);
 
         if(active) {
-        Debug.Log(colors[index]);
             changeToggle = false;
             materialPanelIndex = index;
             colorPicker.color = colors[materialPanelIndex];
-        Debug.Log(colors[index] + ":" + colorPicker.color);
             sidePanels.SetActive(true);
-        Debug.Log(colors[index] + ":" + colorPicker.color);
             materialPanel.SetActive(true);
-        Debug.Log(colors[index] + ":" + colorPicker.color);
 
             if(colorSelected[materialPanelIndex])
                 colorToggle.isOn = true;

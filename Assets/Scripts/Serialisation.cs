@@ -290,8 +290,9 @@ public class Serialisation : MonoBehaviour
                     data.baseTexture_colors[index] = null;
                 }
 
-                data.mixType[index] = manager.mixTypes[index];
-                data.mixFactor[index] = manager.mixFactors[index];
+                data.mixType[index] = internalData.mixTypes[index];
+                data.mixFactor[index] = internalData.mixFactors[index];
+                data.mixOffset[index] = internalData.mixOffsets[index];
             }
 
             data.tiling = internalData.materialScale;

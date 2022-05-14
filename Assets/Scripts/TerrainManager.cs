@@ -20,16 +20,9 @@ public class TerrainManager
     private ExportHeightmap exportHeightmap;
     private ExportTerrain exportTerrain;
 
-    //how to mix the two base materials
-    public Material[] baseMaterials;
-    public int[] mixTypes;
-    public float[] mixFactors;
-    private float[] offsets;
     public bool doNotApply;
 
     public Color[] colors;
-
-    private Vector2 textureScale;
 
     private static TerrainManager _instance;
 
@@ -75,18 +68,11 @@ public class TerrainManager
 
         painter = currentTerrain.GetComponent<TerrainPainter>();
         sculpter = currentTerrain.GetComponent<TerrainSculpter>();
-
-        baseMaterials = new Material[5];
-        
+      
         originalData = CopyTerrain(currentTerrain.terrainData);
 
         currentTerrain.terrainData = originalData;
         currentTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
-
-        mixFactors = new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f};
-        mixTypes = new int[]{0, 0, 0, 0, 0};
-        offsets = new float[]{0, 0, 0, 0, 0};
-        textureScale = new Vector2(1,1);
 
         maxima = new List<Vector4>();
         minima = new List<Vector4>();
@@ -181,7 +167,7 @@ public class TerrainManager
     public void InitialiseBaseMaterials(Material[] materials)
     {
         for(int index = 0; index < materials.Length; index++) {
-            baseMaterials[index] = materials[index];
+            //baseMaterials[index] = materials[index];
         }
 
         ApplyTextures();
@@ -189,7 +175,7 @@ public class TerrainManager
 
     public void SetBaseMaterials(int index, Material material)
     {
-        baseMaterials[index] = material;
+        //baseMaterials[index] = material;
 
         if(!doNotApply)
             ApplyTextures();
@@ -198,32 +184,10 @@ public class TerrainManager
     public void SetBaseColor(int index, Color color)
     {
         colors[index] = color;
-        baseMaterials[index] = null;
+        //baseMaterials[index] = null;
 
         if(!doNotApply)
             ApplyTextures();
-    }
-
-    public void SetMixType(int materialIndex, int type)
-    {
-        mixTypes[materialIndex] = type;
-    }
-
-    public void SetMixFactor(int materialIndex, float factor)
-    {
-        mixFactors[materialIndex] = factor;
-    }
-
-    public void SetOffset(int materialIndex, float offset)
-    {
-        offsets[materialIndex] = offset;
-    }
-
-    public void ScaleMaterial(float value)
-    {
-        Vector2 scale = new Vector2(value, value);
-        //terrainMaterial.mainTextureScale = scale;
-        textureScale = scale;
     }
 
     public void SetAO(bool isOn)
@@ -558,24 +522,24 @@ public class TerrainManager
         textureShader.SetTexture(kernelHandle, "paintMask", mask);
 
         //send parameters to the compute shader
-        textureShader.SetFloat("tiling", textureScale.x);
+        textureShader.SetFloat("tiling", internalData.materialScale);
         float[] factors =  new float[20];
-        factors[4] = mixFactors[1];
-        factors[8] = mixFactors[2];
-        factors[12] = mixFactors[3];
-        factors[16] = mixFactors[4];
+        factors[4] = internalData.mixFactors[1];
+        factors[8] = internalData.mixFactors[2];
+        factors[12] = internalData.mixFactors[3];
+        factors[16] = internalData.mixFactors[4];
 
         int[] paddedMixTypes = new int[20];
-        paddedMixTypes[4] = mixTypes[1];
-        paddedMixTypes[8] = mixTypes[2];
-        paddedMixTypes[12] = mixTypes[3];
-        paddedMixTypes[16] = mixTypes[4];
+        paddedMixTypes[4] = internalData.mixTypes[1];
+        paddedMixTypes[8] = internalData.mixTypes[2];
+        paddedMixTypes[12] = internalData.mixTypes[3];
+        paddedMixTypes[16] = internalData.mixTypes[4];
 
         float[] paddedOffsets = new float[20];
-        paddedOffsets[4] = offsets[1];
-        paddedOffsets[8] = offsets[2];
-        paddedOffsets[12] = offsets[3];
-        paddedOffsets[16] = offsets[4];
+        paddedOffsets[4] = internalData.mixOffsets[1];
+        paddedOffsets[8] = internalData.mixOffsets[2];
+        paddedOffsets[12] = internalData.mixOffsets[3];
+        paddedOffsets[16] = internalData.mixOffsets[4];
 
         textureShader.SetFloats("factors", factors);
         textureShader.SetFloats("offsets", paddedOffsets);
@@ -584,16 +548,16 @@ public class TerrainManager
 
         Texture2D tempTexture;
 
-        //tempTexture = (Texture2D)(baseMaterials[0].mainTexture);
         Texture2DArray inputTextures = new Texture2DArray(2048, 2048, 5, TextureFormat.DXT5, false);
         Texture2DArray inputAOs = new Texture2DArray(2048, 2048, 5, TextureFormat.DXT1, false);
 
         float[] colorValues = new float[InternalDataScriptable.NUMBER_MATERIALS * 4];
 
         for(int i = 0; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
-            if(baseMaterials[i] != null) {
-                Graphics.CopyTexture(baseMaterials[i].mainTexture, 0, 0, inputTextures, i, 0);
-                Graphics.CopyTexture(baseMaterials[i].GetTexture("_OcclusionMap"), 0, 0, inputAOs, i, 0);
+            if(internalData.currentMaterialIndices[i] >= 0) {
+                Material mat = GameResources.instance.materials[internalData.currentMaterialIndices[i]];
+                Graphics.CopyTexture(mat.mainTexture, 0, 0, inputTextures, i, 0);
+                Graphics.CopyTexture(mat.GetTexture("_OcclusionMap"), 0, 0, inputAOs, i, 0);
 
                 colorValues[i * 4] = -1;
                 colorValues[i * 4 + 1] = -1;

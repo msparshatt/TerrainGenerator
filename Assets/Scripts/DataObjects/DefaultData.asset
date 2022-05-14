@@ -21,12 +21,19 @@ MonoBehaviour:
   customPaintBrushes: []
   customSculptBrushes: []
   customStampBrushes: []
+  customErosionBrushes: []
   customTextures: []
   ambientOcclusion: 0
   currentMaterialIndices: 
   materialScale: 1
   mixTypes: 0000000000000000000000000000000000000000
   mixFactors:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  mixOffsets:
   - 0
   - 0
   - 0

@@ -21,12 +21,19 @@ MonoBehaviour:
   customPaintBrushes: []
   customSculptBrushes: []
   customStampBrushes: []
+  customErosionBrushes: []
   customTextures: []
   ambientOcclusion: 0
   currentMaterialIndices: 
   materialScale: 0
   mixTypes: 0000000000000000000000000000000000000000
   mixFactors:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  mixOffsets:
   - 0
   - 0
   - 0
@@ -46,7 +53,7 @@ MonoBehaviour:
   cloudEnd: 0
   windDirection: 0
   windSpeed: 0
-  clouditerations: 0
+  cloudIterations: 5
   oceanActive: 0
   oceanHeight: 0
   waveDirection: 0

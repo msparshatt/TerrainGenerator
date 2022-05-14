@@ -10,6 +10,7 @@ public struct SaveData_v2
     public byte[][] baseTexture_colors;
     public int[] mixType;
     public float[] mixFactor;
+    public float[] mixOffset;
 
     public float tiling;
     public bool aoActive;

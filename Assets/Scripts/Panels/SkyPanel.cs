@@ -90,7 +90,6 @@ public class SkyPanel : MonoBehaviour, IPanel
 
         sunColorPicker.color = internalData.sunColor;
         autoColorToggle.isOn = internalData.automaticColor;
-        Debug.Log(sunColorPicker.color);
 
         CloudActiveToggle.isOn = internalData.cloudActive;
         CloudXOffsetSlider.value = internalData.cloudXoffset;

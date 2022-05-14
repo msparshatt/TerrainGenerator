@@ -32,6 +32,7 @@ public class InternalDataScriptable : ScriptableObject
 
     public int[] mixTypes;
     public float[] mixFactors;
+    public float[] mixOffsets;
 
     //sculpt panel
 
