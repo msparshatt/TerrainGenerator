@@ -176,16 +176,15 @@ public class Serialisation : MonoBehaviour
 
         manager.SetOverlay(texture);
 
-        //load sky data
-        skyPanel.GetComponent<IPanel>().FromJson(data.skyData);
-
-        //load water data
-        waterPanel.GetComponent<IPanel>().FromJson(data.waterData);
 
         GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
-
         for(int index = 0; index < panels.Length; index++) {
+            if(data.panelData != null)
+                panels[index].GetComponent<IPanel>().FromJson(data.panelData[index]);
+            else
+                panels[index].GetComponent<IPanel>().FromJson(null);
+                
             panels[index].GetComponent<IPanel>().LoadPanel();
         }
     }
@@ -257,8 +256,14 @@ public class Serialisation : MonoBehaviour
             data.overlayTexture = texture.EncodeToPNG();
             data.paintTiling = internalData.paintScale;
 
-            data.skyData = skyPanel.GetComponent<IPanel>().ToJson();
-            data.waterData = waterPanel.GetComponent<IPanel>().ToJson();
+            //data.skyData = skyPanel.GetComponent<IPanel>().ToJson();
+            //data.waterData = waterPanel.GetComponent<IPanel>().ToJson();
+            GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
+
+            data.panelData = new List<string>();
+            for(int index = 0; index < panels.Length; index++) {
+                data.panelData.Add(panels[index].GetComponent<IPanel>().ToJson());
+            }
 
             Debug.Log("SAVE: Create json string");
             string json = JsonUtility.ToJson(data);            

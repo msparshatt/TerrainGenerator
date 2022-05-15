@@ -1,4 +1,7 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
 
 public struct SaveData_v2
 {
@@ -16,8 +19,8 @@ public struct SaveData_v2
     public bool aoActive;
     public byte[] overlayTexture;
     public float paintTiling;
-    public string skyData;
-    public string waterData;
+
+    public List<string> panelData;
 } 
 
 public struct Version

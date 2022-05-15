@@ -96,7 +96,7 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     public void FromJson(string dataString)
     {
-        if(dataString != null) {
+        if(dataString != null && dataString != "") {
 
             SkySaveData_v1 data = JsonUtility.FromJson<SkySaveData_v1>(dataString);
 

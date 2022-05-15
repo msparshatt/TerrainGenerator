@@ -90,7 +90,7 @@ public class WaterPanel : MonoBehaviour, IPanel
 
     public void FromJson(string dataString)
     {
-        if(dataString != null) {
+        if(dataString != null && dataString != "") {
             WaterSaveData_v1 data = JsonUtility.FromJson<WaterSaveData_v1>(dataString);
 
             internalData.oceanActive = data.oceanActive;
