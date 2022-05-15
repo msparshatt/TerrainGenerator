@@ -35,17 +35,20 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     private bool autoColor = true;
     private TerrainManager manager;
+    private float time;
 
     // Update is called once per frame
     void Update()
     {
         if(WindSpeedSlider.value > 0) {
-            float xmovement = WindSpeedSlider.value * Mathf.Sin(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup / 100;
-            float ymovement = WindSpeedSlider.value * Mathf.Cos(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup / 100;
-            SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value + xmovement);
-            SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value + ymovement);       
+            float xmovement = internalData.windSpeed * Mathf.Sin(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
+            float ymovement = internalData.windSpeed * Mathf.Cos(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
+            SkyMaterial.SetFloat("_XOffset", internalData.cloudXoffset + xmovement);
+            SkyMaterial.SetFloat("_YOffset", internalData.cloudYOffset + ymovement);       
 
             Ceto.Ocean.Instance.RenderReflection(ocean);
+
+            time++;
         }        
     }
 
@@ -79,6 +82,8 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.windSpeed = defaultData.windSpeed;
         internalData.windDirection = defaultData.windDirection;
 
+        time = 0;
+
         LoadPanel();
     }
 
@@ -102,6 +107,67 @@ public class SkyPanel : MonoBehaviour, IPanel
         WindSpeedSlider.value = internalData.windSpeed;
     }
 
+    public void FromJson(string dataString)
+    {
+        if(dataString != null) {
+
+            SkySaveData_v1 data = JsonUtility.FromJson<SkySaveData_v1>(dataString);
+
+            internalData.lightTerrain = data.lightTerrain;
+            internalData.sunHeight = data.sunHeight;
+            internalData.sunDirection = data.sunDirection;
+            internalData.automaticColor = data.automaticColor;
+            internalData.sunColor = data.sunColor;
+            internalData.cloudActive = data.cloudActive;
+            internalData.cloudXoffset = data.cloudXoffset;
+            internalData.cloudYOffset = data.cloudYOffset;
+            internalData.cloudScale = data.cloudScale;
+            internalData.cloudIterations = data.cloudIterations;
+            internalData.cloudStart = data.cloudStart;
+            internalData.cloudEnd = data.cloudEnd;
+            internalData.windSpeed = data.windSpeed;
+            internalData.windDirection = data.windDirection;
+        } else {
+            internalData.lightTerrain = defaultData.lightTerrain;
+            internalData.sunHeight = defaultData.sunHeight;
+            internalData.sunDirection = defaultData.sunDirection;
+            internalData.automaticColor = defaultData.automaticColor;
+            internalData.sunColor = defaultData.sunColor;
+            internalData.cloudActive = defaultData.cloudActive;
+            internalData.cloudXoffset = defaultData.cloudXoffset;
+            internalData.cloudYOffset = defaultData.cloudYOffset;
+            internalData.cloudScale = defaultData.cloudScale;
+            internalData.cloudIterations = defaultData.cloudIterations;
+            internalData.cloudStart = defaultData.cloudStart;
+            internalData.cloudEnd = defaultData.cloudEnd;
+            internalData.windSpeed = defaultData.windSpeed;
+            internalData.windDirection = defaultData.windDirection;
+        }
+    }
+
+    public string ToJson()
+    {
+        Debug.Log("SAVE: Sky panel data");
+
+        SkySaveData_v1 data = new SkySaveData_v1();
+
+        data.lightTerrain = internalData.lightTerrain;
+        data.sunHeight = internalData.sunHeight;
+        data.sunDirection = internalData.sunDirection;
+        data.automaticColor = internalData.automaticColor;
+        data.sunColor = internalData.sunColor;
+        data.cloudActive = internalData.cloudActive;
+        data.cloudXoffset = internalData.cloudXoffset;
+        data.cloudYOffset = internalData.cloudYOffset;
+        data.cloudScale = internalData.cloudScale;
+        data.cloudIterations = internalData.cloudIterations;
+        data.cloudStart = internalData.cloudStart;
+        data.cloudEnd = internalData.cloudEnd;
+        data.windSpeed = internalData.windSpeed;
+        data.windDirection = internalData.windDirection;
+
+        return JsonUtility.ToJson(data);
+    }
     public void LightToggleChange(bool isOn)
     {
         manager.ApplyLighting(isOn);
@@ -120,7 +186,7 @@ public class SkyPanel : MonoBehaviour, IPanel
             SetSunColor(skyColor);
         }
 
-        CloudSliderChange();
+        //CloudSliderChange();
 
         MoveSun();
     }
@@ -169,30 +235,53 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.cloudActive = isOn;
     }
 
-    public void CloudSliderChange()
+    public void XOffsetSliderChange(float value)
     {
-        if(WindSpeedSlider.value > 0) {
-            float xmovement = WindSpeedSlider.value * Mathf.Sin(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup;
-            float ymovement = WindSpeedSlider.value * Mathf.Cos(WindDirectionSlider.value * Mathf.Deg2Rad) * Time.realtimeSinceStartup;
-            SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value + xmovement);
-            SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value + ymovement);            
-        } else {
-            SkyMaterial.SetFloat("_XOffset", CloudXOffsetSlider.value);
-            SkyMaterial.SetFloat("_YOffset", CloudYOffsetSlider.value);
-        }
+        SkyMaterial.SetFloat("_XOffset", value);
+        internalData.cloudXoffset = value;
 
-        SkyMaterial.SetInt("_Iterations", (int)CloudIterationSlider.value);
-        SkyMaterial.SetFloat("_Scale", CloudScaleSlider.value);
-        SkyMaterial.SetFloat("_CloudStart", CloudStartSlider.value);
-        SkyMaterial.SetFloat("_CloudEnd", CloudEndSlider.value);
-
-        internalData.cloudXoffset = CloudXOffsetSlider.value;
-        internalData.cloudYOffset = CloudYOffsetSlider.value;
-        internalData.cloudIterations = CloudIterationSlider.value;
-        internalData.cloudScale = CloudScaleSlider.value;
-        internalData.cloudStart = CloudStartSlider.value;
-        internalData.cloudEnd = CloudEndSlider.value;
-        internalData.windDirection = WindDirectionSlider.value;
-        internalData.windSpeed = WindSpeedSlider.value;
+        time = 0;
     }
+    public void YOffsetSliderChange(float value)
+    {
+        SkyMaterial.SetFloat("_YOffset", value);
+        internalData.cloudYOffset = value;
+
+        time = 0;      
+    }
+
+    public void ScaleSliderChange(float value)
+    {
+        SkyMaterial.SetFloat("_Scale", value);
+        internalData.cloudScale = value;
+    }
+
+    public void IterationsSliderChange(float value)
+    {
+        SkyMaterial.SetInt("_Iterations", (int)value);
+        internalData.cloudIterations = value;
+    }
+
+    public void WindDirectionSliderChange(float value)
+    {
+        internalData.windDirection = value;
+   }
+
+    public void WindSpeedSliderChange(float value)
+    {
+        internalData.windSpeed = value;
+    }
+
+    public void CloudStartSliderChange(float value)
+    {
+        SkyMaterial.SetFloat("_CloudStart", CloudStartSlider.value);
+        internalData.cloudStart = CloudStartSlider.value;
+    }
+
+    public void CloudEndSliderChange(float value)
+    {
+        SkyMaterial.SetFloat("_CloudEnd", CloudEndSlider.value);
+        internalData.cloudEnd = CloudEndSlider.value;
+    }
+
 }

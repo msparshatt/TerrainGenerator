@@ -37,6 +37,8 @@ public class WaterPanel : MonoBehaviour, IPanel
 
     public void InitialisePanel()
     {
+        ocean.SetActive(true);
+        ocean.SetActive(false);
         ResetPanel();
     }
 
@@ -68,6 +70,50 @@ public class WaterPanel : MonoBehaviour, IPanel
         shorelineFoamAmountSlider.value = internalData.shorelineFoamAmount;
     }
 
+    public string ToJson()
+    {
+        WaterSaveData_v1 data = new WaterSaveData_v1();
+
+        Debug.Log("SAVE: Water panel data");
+        data.oceanActive = internalData.oceanActive;
+        data.oceanHeight = internalData.oceanHeight;
+        data.waveDirection = internalData.waveDirection;
+        data.waveSpeed = internalData.waveSpeed;
+        data.waveHeight = internalData.waveHeight;
+        data.waveChoppyness = internalData.waveChoppyness;
+        data.foamAmount = internalData.foamAmount;
+        data.shoreLineActive = internalData.shoreLineActive;
+        data.shorelineFoamAmount = internalData.shorelineFoamAmount;
+
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string dataString)
+    {
+        if(dataString != null) {
+            WaterSaveData_v1 data = JsonUtility.FromJson<WaterSaveData_v1>(dataString);
+
+            internalData.oceanActive = data.oceanActive;
+            internalData.oceanHeight = data.oceanHeight;
+            internalData.waveDirection = data.waveDirection;
+            internalData.waveSpeed = data.waveSpeed;
+            internalData.waveHeight = data.waveHeight;
+            internalData.waveChoppyness = data.waveChoppyness;
+            internalData.foamAmount = data.foamAmount;
+            internalData.shoreLineActive = data.shoreLineActive;
+            internalData.shorelineFoamAmount = data.shorelineFoamAmount;
+        } else {
+            internalData.oceanActive = defaultData.oceanActive;
+            internalData.oceanHeight = defaultData.oceanHeight;
+            internalData.waveDirection = defaultData.waveDirection;
+            internalData.waveSpeed = defaultData.waveSpeed;
+            internalData.waveHeight = defaultData.waveHeight;
+            internalData.waveChoppyness = defaultData.waveChoppyness;
+            internalData.foamAmount = defaultData.foamAmount;
+            internalData.shoreLineActive = defaultData.shoreLineActive;
+            internalData.shorelineFoamAmount = defaultData.shorelineFoamAmount;
+        }
+    }
     public void OceanToggleChange(bool isOn)
     {
         internalData.oceanActive = isOn;
