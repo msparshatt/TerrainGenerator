@@ -39,6 +39,7 @@ public class ErosionPanel : MonoBehaviour, IPanel
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private ErosionDataScriptable erosionData;
+    [SerializeField] private ErosionDataScriptable defaultErosionData;
 
     private List<GameObject> brushIcons;
     private int brushIndex;
@@ -63,6 +64,15 @@ public class ErosionPanel : MonoBehaviour, IPanel
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
+
+        lifetimeSlider.value = defaultErosionData.lifetime;
+        sedimentCapacityFactorSlider.value = defaultErosionData.sedimentCapacityFactor ;
+        inertiaSlider.value = defaultErosionData.inertia;
+        depositSpeedSlider.value = defaultErosionData.depositSpeed;
+        erodeSpeedSlider.value = defaultErosionData.erodeSpeed;
+        startSpeedSlider.value = defaultErosionData.startSpeed;
+        evaporateSpeedSlider.value = defaultErosionData.evaporateSpeed;
+        startWaterSlider.value = defaultErosionData.startWater;
     }
 
     public string ToJson()
@@ -100,7 +110,7 @@ public class ErosionPanel : MonoBehaviour, IPanel
             evaporateSpeedSlider.value = data.evaporateSpeed;
             startWaterSlider.value = data.startWater;
         } else {
-
+            ResetPanel();
         }
     }
     public void BrushButtonClick()
