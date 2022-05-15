@@ -91,6 +91,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         manager.doNotApply = false;
 
+        scaleSlider.value = 1;
         internalData.materialScale = 1;
 
         for(int index = 1; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
