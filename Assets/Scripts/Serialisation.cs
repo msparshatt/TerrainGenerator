@@ -180,11 +180,11 @@ public class Serialisation : MonoBehaviour
         GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
         for(int index = 0; index < panels.Length; index++) {
-            if(data.panelData != null)
+            if(data.panelData != null && data.panelData.Count > index)
                 panels[index].GetComponent<IPanel>().FromJson(data.panelData[index]);
             else
                 panels[index].GetComponent<IPanel>().FromJson(null);
-                
+
             panels[index].GetComponent<IPanel>().LoadPanel();
         }
     }
