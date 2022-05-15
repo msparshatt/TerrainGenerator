@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct WaterSaveData
+public struct WaterSaveData_v1
 {
     public bool oceanActive;
     public float oceanHeight;
