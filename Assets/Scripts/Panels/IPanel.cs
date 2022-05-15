@@ -19,4 +19,14 @@ public interface IPanel
     void LoadPanel()
     {
     }
+
+    string SaveData()
+    {
+        return "";
+    }
+
+    void LoadData(string data)
+    {
+
+    }
 }
