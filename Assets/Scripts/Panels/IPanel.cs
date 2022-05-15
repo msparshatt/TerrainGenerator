@@ -20,12 +20,12 @@ public interface IPanel
     {
     }
 
-    string SaveData()
+    string ToJson()
     {
         return "";
     }
 
-    void LoadData(string data)
+    void FromJson(string data)
     {
 
     }
