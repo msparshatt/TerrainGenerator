@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using SimpleFileBrowser;
 
 
+
 public class ErosionPanel : MonoBehaviour, IPanel
 {
     [Header("UI elements")]
@@ -64,6 +65,44 @@ public class ErosionPanel : MonoBehaviour, IPanel
         strengthSlider.value = defaultBrushData.brushStrength;
     }
 
+    public string ToJson()
+    {
+        Debug.Log("SAVE: Sky panel data");
+
+        ErosionSaveData_v1 data = new ErosionSaveData_v1();
+
+        data.erosionBrushRadius =  erosionData.erosionBrushRadius;
+        data.lifetime = erosionData.lifetime;
+        data.sedimentCapacityFactor =  erosionData.sedimentCapacityFactor;
+        data.minSedimentCapacity =  erosionData.minSedimentCapacity;
+        data.inertia =  erosionData.inertia;
+        data.depositSpeed = erosionData.depositSpeed;
+        data.erodeSpeed =  erosionData.erodeSpeed;
+        data.startSpeed = erosionData.startSpeed;
+        data.evaporateSpeed = erosionData.evaporateSpeed;
+        data.startWater = erosionData.startWater;
+        data.gravity = erosionData.gravity;        
+
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string dataString)
+    {
+        if(dataString != null && dataString != "") {
+            ErosionSaveData_v1 data = JsonUtility.FromJson<ErosionSaveData_v1>(dataString);
+
+            lifetimeSlider.value = data.lifetime;
+            sedimentCapacityFactorSlider.value = data.sedimentCapacityFactor ;
+            inertiaSlider.value = data.inertia;
+            depositSpeedSlider.value = data.depositSpeed;
+            erodeSpeedSlider.value = data.erodeSpeed;
+            startSpeedSlider.value = data.startSpeed;
+            evaporateSpeedSlider.value = data.evaporateSpeed;
+            startWaterSlider.value = data.startWater;
+        } else {
+
+        }
+    }
     public void BrushButtonClick()
     {
         bool active = !erosionBrushPanel.activeSelf;
