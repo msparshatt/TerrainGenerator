@@ -58,31 +58,31 @@ Material:
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
-    - _CloudEnd: 1
-    - _CloudStart: -1
+    - _CloudEnd: 1.9401485
+    - _CloudStart: -1.6463492
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Iterations: 5
+    - _Iterations: 6
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Rotation: 0
-    - _Scale: 5
+    - _Scale: 7.1047535
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _XOffset: 0
-    - _YOffset: 0
+    - _XOffset: 1.938873
+    - _YOffset: -0.101612
     - _ZWrite: 1
     m_Colors:
     - _CloudColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SunColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SunColor: {r: 1, g: 0.6666666, b: 0.6666666, a: 1}
   m_BuildTextureStacks: []

@@ -35,21 +35,10 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     private bool autoColor = true;
     private TerrainManager manager;
-    private float time;
 
     // Update is called once per frame
     void Update()
     {
-        if(WindSpeedSlider.value > 0) {
-            float xmovement = internalData.windSpeed * Mathf.Sin(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
-            float ymovement = internalData.windSpeed * Mathf.Cos(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
-            SkyMaterial.SetFloat("_XOffset", internalData.cloudXoffset + xmovement);
-            SkyMaterial.SetFloat("_YOffset", internalData.cloudYOffset + ymovement);       
-
-            Ceto.Ocean.Instance.RenderReflection(ocean);
-
-            time++;
-        }        
     }
 
     public void InitialisePanel()
@@ -81,8 +70,6 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.cloudEnd = defaultData.cloudEnd;
         internalData.windSpeed = defaultData.windSpeed;
         internalData.windDirection = defaultData.windDirection;
-
-        time = 0;
 
         LoadPanel();
     }
@@ -239,15 +226,11 @@ public class SkyPanel : MonoBehaviour, IPanel
     {
         SkyMaterial.SetFloat("_XOffset", value);
         internalData.cloudXoffset = value;
-
-        time = 0;
     }
     public void YOffsetSliderChange(float value)
     {
         SkyMaterial.SetFloat("_YOffset", value);
         internalData.cloudYOffset = value;
-
-        time = 0;      
     }
 
     public void ScaleSliderChange(float value)

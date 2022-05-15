@@ -4929,8 +4929,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: WindSpeedSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5010,8 +5010,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: ScaleSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11230,8 +11230,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: WindDirectionSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -18682,8 +18682,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: YOffsetSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -30395,8 +30395,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: IterationsSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -31234,6 +31234,8 @@ MonoBehaviour:
   materialsPanel: {fileID: 149128288}
   sculptPanel: {fileID: 1006123578}
   paintPanel: {fileID: 746692198}
+  waterPanel: {fileID: 291437287}
+  skyPanel: {fileID: 1085847824}
 --- !u!114 &645851198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31273,6 +31275,8 @@ MonoBehaviour:
   systemPanel: {fileID: 1819768948}
   sidePanels: {fileID: 1262097358}
   sun: {fileID: 705507994}
+  skyMaterial: {fileID: 2100000, guid: 8999e2ada0c3d9dbdb7240a82d68f9c6, type: 2}
+  ocean: {fileID: 1236204358}
   customTextures: []
 --- !u!1 &649106135
 GameObject:
@@ -32471,8 +32475,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: CloudEndSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -47101,8 +47105,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: CloudStartSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -53394,8 +53398,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1085847825}
         m_TargetAssemblyTypeName: SkyPanel, Assembly-CSharp
-        m_MethodName: CloudSliderChange
-        m_Mode: 1
+        m_MethodName: XOffsetSliderChange
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

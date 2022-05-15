@@ -35,12 +35,17 @@ public class Controller : MonoBehaviour
 
     [Header("Lighting")]
     [SerializeField] private Light sun;
+    [SerializeField] private Material skyMaterial;
+
+    [Header("Water")]
+    [SerializeField] private GameObject ocean;
 
     public List<string> customTextures;
 
     private GameResources gameResources;
     private TerrainManager manager;
 
+    private float time;
     // Start is called before the first frame update
     void Start()
     {
@@ -65,6 +70,8 @@ public class Controller : MonoBehaviour
         paintBrushData.textureScale = 1.0f;
         paintBrushData.useTexture = true;
         paintBrushData.color = Color.white;
+
+        time = 0;
 
         internalData.customSculptBrushes = new List<string>();
         internalData.customStampBrushes = new List<string>();
@@ -95,6 +102,17 @@ public class Controller : MonoBehaviour
     void Update()
     {
         //manager.UpdateLighting();
+        if(internalData.windSpeed > 0) {
+            float xmovement = internalData.windSpeed * Mathf.Sin(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
+            float ymovement = internalData.windSpeed * Mathf.Cos(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
+            skyMaterial.SetFloat("_XOffset", internalData.cloudXoffset + xmovement);
+            skyMaterial.SetFloat("_YOffset", internalData.cloudYOffset + ymovement);       
+
+            if(ocean.activeSelf)
+                Ceto.Ocean.Instance.RenderReflection(ocean);
+
+            time++;
+        }        
     }
 
     public void DoExit()
