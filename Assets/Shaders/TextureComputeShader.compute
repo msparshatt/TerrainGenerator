@@ -31,6 +31,15 @@ float4 minima[1000];
 #define FUDGEFACTOR  0.05f  //
 #define DIVISOR 0.1f
 
+//Material mix types
+#define MIXTYPE_TOP 1
+#define MIXTYPE_STEEP 2
+#define MIXTYPE_BOTTOM 3
+#define MIXTYPE_SHALLOW 4
+#define MIXTYPE_PEAKS 5
+#define MIXTYPE_VALLEYS 6
+#define MIXTYPE_RANDOM 7
+
 float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 heightmapPosition, float height)
 {
     int heightmapIndex = heightmapPosition.x + heightmapPosition.y * heightMapResolution;
@@ -38,11 +47,11 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
 
     float value = 0.0f;
 
-    if(mixType == 1) {                  //by height (top)
+    if(mixType == MIXTYPE_TOP) {                  //by height (top)
         value = height;
-    } else if (mixType == 3) {          //by height (bottom)
+    } else if (mixType == MIXTYPE_BOTTOM) {          //by height (bottom)
         value = 1 - height;
-    } else if (mixType == 2 || mixType == 4) {          //by slope (steep/shallow)
+    } else if (mixType == MIXTYPE_STEEP || mixType == MIXTYPE_SHALLOW) {          //by slope (steep/shallow)
         float minHeight = 10;
         float maxHeight = 0;
 
@@ -59,9 +68,9 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
 
         value = ((maxHeight - minHeight) * 50);  //turn height difference into value between 0 & 1
 
-        if(mixType == 4)
+        if(mixType == MIXTYPE_SHALLOW)
             value = 1 - value;
-    } else if(mixType == 5) {           //peaks
+    } else if(mixType == MIXTYPE_PEAKS) {           //peaks
         float minDistance = 1000;
         for(int index = 0; index < 1000; index++) {
             float4 maximum = maxima[index];
@@ -75,7 +84,7 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
         }
 
         value = 1 - minDistance / 100;
-    } else if(mixType == 6) {           //valleys
+    } else if(mixType == MIXTYPE_VALLEYS) {           //valleys
         float minDistance = 1000;
         for(int index = 0; index < 1000; index++) {
             float4 minimum = minima[index];
@@ -89,7 +98,7 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
         }            
 
         value = 1 - minDistance / 100;
-    }  else if(mixType == 7) {           //random
+    }  else if(mixType == MIXTYPE_RANDOM) {           //random
         value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
         value = (value + 1) / 2;
     }
