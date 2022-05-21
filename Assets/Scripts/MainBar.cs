@@ -42,12 +42,6 @@ public class MainBar : MonoBehaviour
     private void HideAllPanels()
     {
         for(int i = 0; i < panels.Length; i++) {
-            ButtonController panelButtons = panels[i].GetComponent<ButtonController>();
-
-            if(panelButtons != null) {
-                panelButtons.DeselectButtons();
-            }
-
             panels[i].SetActive(false);
             buttons[i].GetComponent<Image>().color = unselectedColor;
         }
