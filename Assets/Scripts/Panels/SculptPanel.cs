@@ -69,6 +69,11 @@ public class SculptPanel : MonoBehaviour, IPanel
         
     }
 
+    public void OnDisable()
+    {
+            brushImage.color = settingsData.deselectedColor;
+    }
+    
     public void BrushButtonClick()
     {
         bool active = !sculptBrushPanel.activeSelf;

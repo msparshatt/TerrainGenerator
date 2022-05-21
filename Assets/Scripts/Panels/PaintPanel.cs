@@ -335,6 +335,8 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void OnDisable()
     {
         manager.TogglePaintMask(false);
+        textureImage.color = settingsData.deselectedColor;
+        paintBrushImage.color = settingsData.deselectedColor;
     }
 
     public void OnEnable()

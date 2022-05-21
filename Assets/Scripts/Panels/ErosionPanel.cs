@@ -113,6 +113,12 @@ public class ErosionPanel : MonoBehaviour, IPanel
             ResetPanel();
         }
     }
+
+    public void OnDisable()
+    {
+        brushImage.color = settingsData.deselectedColor;
+    }
+
     public void BrushButtonClick()
     {
         bool active = !erosionBrushPanel.activeSelf;
