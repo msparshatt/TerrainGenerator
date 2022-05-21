@@ -11,4 +11,5 @@ public class SettingsDataScriptable : ScriptableObject
     public int resolutionMultiplier = 1;
     public Color selectedColor;
     public Color deselectedColor;
+    public Color deselectedColor2;
 }
