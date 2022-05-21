@@ -107,9 +107,7 @@ public class Serialisation : MonoBehaviour
         internalData.materialScale = data.tiling;
         internalData.ambientOcclusion = data.aoActive;
 
-        manager.doNotApply = true;
         materials.LoadPanel();
-        manager.doNotApply = false;
         manager.ApplyTextures();
 
 
@@ -134,12 +132,12 @@ public class Serialisation : MonoBehaviour
 
         int materialPanelIndex = 0;
 
-        manager.doNotApply = true;
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
 
-        int[] mixTypes = new int[InternalDataScriptable.NUMBER_MATERIALS];
-        float[] mixFactors = new float[InternalDataScriptable.NUMBER_MATERIALS];
         for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
+            internalData.useTexture[index] = data.useTexture[index];
+
+            internalData.colors[index] = data.colors[index];
             if(data.baseTexture[index] == -1) {
                 materials.SelectMaterialIcon(index, materials.AddBaseTexture(data.baseTexture_colors[index]));
             } else {
@@ -162,8 +160,6 @@ public class Serialisation : MonoBehaviour
         internalData.materialScale = data.tiling;
         internalData.ambientOcclusion = data.aoActive;
 
-        manager.doNotApply = false;
-
         manager.ApplyTextures();
 
         if(data.paintTiling == 0)
@@ -175,7 +171,6 @@ public class Serialisation : MonoBehaviour
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
         manager.SetOverlay(texture);
-
 
         GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
@@ -232,6 +227,8 @@ public class Serialisation : MonoBehaviour
             data.mixFactor = new float[InternalDataScriptable.NUMBER_MATERIALS];
             data.mixType = new int[InternalDataScriptable.NUMBER_MATERIALS];
             data.mixOffset = new float[InternalDataScriptable.NUMBER_MATERIALS];
+            data.colors = new Color[InternalDataScriptable.NUMBER_MATERIALS];
+            data.useTexture = new bool[InternalDataScriptable.NUMBER_MATERIALS];
             
             for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
                 if(internalData.currentMaterialIndices[index] >= (gameResources.materials.Count - internalData.customMaterials.Count)) {
@@ -246,6 +243,8 @@ public class Serialisation : MonoBehaviour
                 data.mixType[index] = internalData.mixTypes[index];
                 data.mixFactor[index] = internalData.mixFactors[index];
                 data.mixOffset[index] = internalData.mixOffsets[index];
+                data.useTexture[index] = internalData.useTexture[index];
+                data.colors[index] = internalData.colors[index];
             }
 
             data.tiling = internalData.materialScale;

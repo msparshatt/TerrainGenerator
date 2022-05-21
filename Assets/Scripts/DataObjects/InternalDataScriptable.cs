@@ -29,10 +29,11 @@ public class InternalDataScriptable : ScriptableObject
     public bool ambientOcclusion;
     public int[] currentMaterialIndices;
     public float materialScale;
-
+    public bool[] useTexture;
     public int[] mixTypes;
     public float[] mixFactors;
     public float[] mixOffsets;
+    public Color[] colors;
 
     //sculpt panel
 
