@@ -51,6 +51,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider erosionRotationSlider;
     [SerializeField] private Slider erosionStrengthSlider;
 
+    [Header("Other")]
+    [SerializeField] private Texture2D busyCursor;
+
     //store the operation which is currently being performed
     private Operation operation;
 
@@ -192,14 +195,32 @@ public class CameraController : MonoBehaviour
 
     public void OnUndo(InputValue input)
     {
-        if(modifier2)
+        if(modifier2) {
+            Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+            //force the cursor to update
+            Cursor.visible = false;
+            Cursor.visible = true;
+
             gameObject.GetComponent<OperationList>().UndoCommand();
+
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
+        }
     }
 
     public void OnRedo(InputValue input)
     {
-        if(modifier2)
+        if(modifier2) {
+            Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
+
+            //force the cursor to update
+            Cursor.visible = false;
+            Cursor.visible = true;
+
             gameObject.GetComponent<OperationList>().RedoCommand();
+        
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
+        }
     }
 
 

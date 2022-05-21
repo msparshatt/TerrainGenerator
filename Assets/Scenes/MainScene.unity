@@ -47553,6 +47553,7 @@ MonoBehaviour:
   erosionRadiusSlider: {fileID: 1729609091}
   erosionRotationSlider: {fileID: 368654361}
   erosionStrengthSlider: {fileID: 1418391569}
+  busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
