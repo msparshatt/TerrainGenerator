@@ -1,5 +1,5 @@
 ---
-title: "Terrain Generator Manual"
+title: "Terrain Generator Manual V0.8"
 geometry: "top=1cm"
 ---
 
@@ -66,7 +66,7 @@ Controls for creating a new terrain
 Loading and saving old terrain files
 
 ## Export
-Export the terrain
+Export the terrain. Note this will only export the terrain and won't export any light, cloud or water settings.
 
 - **Object** export the terrain as a wavefront obj file. This will create 3 files. *filename*.obj *filename*.mtl and *filename*.png
 - **Scale** Increase the size of the exported mesh
@@ -264,7 +264,6 @@ It's possible to place a mask so that only certain areas will be painted to. Thi
 - **Height** The height of the sun
 - **Position** The horizontal position of the sun
 - **Auto** Automatically set the color of the sun based on its height
-- **Manual** Manually select the sun's color
 - **Color Picker** Used to control the color of the sun when in manual mode
 
 ## Clouds
