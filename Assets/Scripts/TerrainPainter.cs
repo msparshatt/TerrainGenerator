@@ -9,12 +9,14 @@ public class TerrainPainter : MonoBehaviour
     public PaintBrushDataScriptable brushData;
 
     private Terrain terrain;
+    private TerrainManager manager;
     private const float FUDGEFACTOR = 0.05f;
     private const float DIVISOR = 0.1f;
 
     public void Start()
     {
         terrain = gameObject.GetComponent<Terrain>();
+        manager = TerrainManager.instance;
     }
 
     public Vector2 RotateVector(float oldX, float oldY, float degrees)
@@ -121,6 +123,7 @@ public class TerrainPainter : MonoBehaviour
         }
         texture.SetPixels(topLeft.x, topLeft.y, size.x, size.y, pixels);
         texture.Apply(true);        
+        manager.ApplyMask();
     }
 
     public void RedoPaint(Texture2D texture, Vector2Int topLeft, Vector2Int size, Color[] changes)
@@ -131,6 +134,7 @@ public class TerrainPainter : MonoBehaviour
         }
         texture.SetPixels(topLeft.x, topLeft.y, size.x, size.y, pixels);
         texture.Apply(true);        
+        manager.ApplyMask();
     }
 
     public void ClearTexture(Texture2D texture)
@@ -149,5 +153,8 @@ public class TerrainPainter : MonoBehaviour
 
         texture.SetPixels(0,0, sizeX, sizeY, data);
         texture.Apply(true);
+
+        if(manager != null)
+            manager.ApplyMask();
     }
 }

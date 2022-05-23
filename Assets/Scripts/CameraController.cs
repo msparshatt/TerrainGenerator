@@ -332,6 +332,8 @@ public class CameraController : MonoBehaviour
 
                 if(internalData.oceanActive)
                     mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
+            } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
+                TerrainManager.instance.ApplyMask();
             }
 
         }
