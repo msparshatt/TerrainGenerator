@@ -44,6 +44,8 @@ public class TerrainManager
 
     //amount that a point in the heightmap needs to be higher/lower that the surrounding points to count as a maxima/minima
     private const float MARGIN = 0.075f;  
+
+    private int[] paintMaskConverter = new int[] {0, 1, 2, 3, 4, 101, 102};
     
     public static TerrainManager instance {
         get {
@@ -552,8 +554,9 @@ public class TerrainManager
         textureShader.SetVectorArray("minima", minima.ToArray());
 
         //send filter settings
-        textureShader.SetInt("paintMaskType", (int)paintBrushData.filterType);
+        textureShader.SetInt("paintMaskType", paintMaskConverter[(int)paintBrushData.filterType]);
         textureShader.SetFloat("paintMaskFactor", paintBrushData.filterFactor);
+        textureShader.SetTexture(kernelHandle, "overlayTexture", terrainMaterial.GetTexture("_OverlayTexture"));
 
         //run the shader
         textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
@@ -623,8 +626,9 @@ public class TerrainManager
         textureShader.SetBuffer(kernelHandle, "heightmap", heightMapBuffer);
 
         //send filter settings
-        textureShader.SetInt("paintMaskType", (int)paintBrushData.filterType);
+        textureShader.SetInt("paintMaskType", paintMaskConverter[(int)paintBrushData.filterType]);
         textureShader.SetFloat("paintMaskFactor", paintBrushData.filterFactor);
+        textureShader.SetTexture(kernelHandle, "overlayTexture", terrainMaterial.GetTexture("_OverlayTexture"));
 
         //run the shader
         textureShader.Dispatch(kernelHandle, width/8, height/8, 1);

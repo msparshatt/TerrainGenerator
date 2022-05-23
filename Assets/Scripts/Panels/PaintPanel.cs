@@ -71,7 +71,7 @@ public class PaintPanel : MonoBehaviour, IPanel
         controller = gameState.GetComponent<Controller>();
 
         paintBrushData.filter = filterToggle.isOn;
-        paintBrushData.filterType = (MaterialsPanel.MixTypes)(filterTypeDropdown.value + 1);
+        paintBrushData.filterType = (PaintBrushDataScriptable.MixTypes)(filterTypeDropdown.value + 1);
         paintBrushData.filterFactor = filterFactorSlider.value;
 
         colorPicker.Awake();
@@ -322,7 +322,7 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void FilterTypeChange(int value)
     {
-        paintBrushData.filterType = (MaterialsPanel.MixTypes)(value + 1);
+        paintBrushData.filterType = (PaintBrushDataScriptable.MixTypes)(value + 1);
         manager.ApplyTextures();
     }
 

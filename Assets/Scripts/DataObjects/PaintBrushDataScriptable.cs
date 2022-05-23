@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "paintbrushData", menuName = "paint brush data", order = 1)]
 public class PaintBrushDataScriptable : BrushDataScriptable
 {
+    public enum MixTypes  {Top = 1, Steep, Bottom, Shallow, Painted, Unpainted};
+
     public bool useTexture;
     public Texture2D paintTexture;
     public Color color;
@@ -13,7 +15,7 @@ public class PaintBrushDataScriptable : BrushDataScriptable
 
     //filters
     public bool filter;
-    public MaterialsPanel.MixTypes filterType;
+    public MixTypes filterType;
     public float filterFactor;
     public Texture2D paintMask;
 

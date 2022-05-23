@@ -11,6 +11,7 @@ RWTexture2D<float4> paintMask;
 
 Texture2DArray<float4> textures;
 Texture2DArray<float4> aotextures;
+Texture2D<float4> overlayTexture;
 StructuredBuffer<float> heightmap;
 float4 colors[10];
 int textureCount;
@@ -39,6 +40,8 @@ float4 minima[1000];
 #define MIXTYPE_PEAKS 5
 #define MIXTYPE_VALLEYS 6
 #define MIXTYPE_RANDOM 7
+#define MIXTYPE_PAINTED 101
+#define MIXTYPE_UNPAINTED 102
 
 float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 heightmapPosition, float height)
 {
@@ -101,6 +104,10 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
     }  else if(mixType == MIXTYPE_RANDOM) {           //random
         value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
         value = (value + 1) / 2;
+    } else if(mixType == MIXTYPE_PAINTED) {
+        value = overlayTexture[id.xy].a;
+    } else if(mixType == MIXTYPE_UNPAINTED) {
+        value = 1 - overlayTexture[id.xy].a;
     }
 
     float factor = (value - minValue) / DIVISOR;
