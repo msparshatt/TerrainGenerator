@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TMPro;
 
 public class SettingsPanel : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private Slider sensitivitySlider;
     [SerializeField] private SettingsDataScriptable dataScriptable;
     [SerializeField] private Dropdown ResolutionDropdown;
+    [SerializeField] private TMP_InputField undoCountInputField;
     [SerializeField] private GameObject aboutPanel;
 
     [SerializeField] private PlayerInput playerInput;
@@ -43,7 +45,12 @@ public class SettingsPanel : MonoBehaviour
             dataScriptable.defaultTerrainResolution = 513;
 
         ResolutionDropdown.value = PlayerPrefs.GetInt("ScreenshotResolution");
-        //ResolutionDropDownChange(PlayerPrefs.GetInt("ScreenshotResolution"));
+
+        int undoCount = PlayerPrefs.GetInt("UndoCount");
+        if(undoCount == 0)
+            undoCount = 50;
+
+        undoCountInputField.text = undoCount.ToString();
     }
 
     public void ResolutionDropDownChange(int index)
@@ -57,6 +64,7 @@ public class SettingsPanel : MonoBehaviour
         PlayerPrefs.SetFloat("cameraSensitivity", sensitivitySlider.value);
         PlayerPrefs.SetInt("DefaultTerrainResolution", dataScriptable.defaultTerrainResolution);
         PlayerPrefs.SetInt("ScreenshotResolution", ResolutionDropdown.value);
+        PlayerPrefs.SetInt("UndoCount", dataScriptable.undoCount);
     }
 
     public void AboutButtonClick()
@@ -80,5 +88,19 @@ public class SettingsPanel : MonoBehaviour
             playerInput.SwitchCurrentActionMap("QWERTY");
         else
             playerInput.SwitchCurrentActionMap("AZERTY");
+    }
+
+    public void UndoBufferCountChange(string value)
+    {
+        int number = 50;
+        undoCountInputField.GetComponent<Image>().color = Color.white;
+
+        try {
+            number = int.Parse(value);
+        } catch {
+            undoCountInputField.GetComponent<Image>().color = new Color(1, 0.2f, 0.2f, 1);
+        }
+
+        dataScriptable.undoCount = number;
     }
 }
