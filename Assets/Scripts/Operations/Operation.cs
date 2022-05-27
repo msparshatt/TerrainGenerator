@@ -21,25 +21,29 @@ public class Operation
 
     public virtual void Do()
     {
-        foreach(SubOperation subOperation in subOperations) {
-            subOperation.Do();
-        }
+        if(subOperations.Count > 0) {
+            foreach(SubOperation subOperation in subOperations) {
+                subOperation.Do();
+            }
 
-        if(subOperations[0] is SculptSubOperation) {
-            TerrainManager.instance.FindMaximaAndMinima();
-            TerrainManager.instance.ApplyTextures();
+            if(subOperations[0] is SculptSubOperation) {
+                TerrainManager.instance.FindMaximaAndMinima();
+                TerrainManager.instance.ApplyTextures();
+            }
         }
     }
 
 
     public virtual void Undo()
     {
-        foreach(SubOperation subOperation in subOperations) {
-            subOperation.Undo();
-        }
-        if(subOperations[0] is SculptSubOperation) {
-            TerrainManager.instance.FindMaximaAndMinima();
-            TerrainManager.instance.ApplyTextures();
+        if(subOperations.Count > 0) {
+            foreach(SubOperation subOperation in subOperations) {
+                subOperation.Undo();
+            }
+            if(subOperations[0] is SculptSubOperation) {
+                TerrainManager.instance.FindMaximaAndMinima();
+                TerrainManager.instance.ApplyTextures();
+            }
         }
     }
 

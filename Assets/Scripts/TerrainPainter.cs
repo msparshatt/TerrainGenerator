@@ -67,6 +67,7 @@ public class TerrainPainter : MonoBehaviour
 
         int index = 0;
         float maskValue = 0;
+        bool textureChanged = false;
         for (int y = 0; y < rectangle.size.y; y++)
         {
             for (int x = 0; x < rectangle.size.x; x++)
@@ -94,6 +95,9 @@ public class TerrainPainter : MonoBehaviour
                             pixels[index].a = 1;
                     }
                 }
+                if(changes[index] != pixels[index]) {
+                    textureChanged = true;
+                }
                 changes[index] = pixels[index] - changes[index];
                 index++;
             }
@@ -101,7 +105,9 @@ public class TerrainPainter : MonoBehaviour
 
         texture.SetPixels(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y, pixels);
         texture.Apply(true);
-        operation.AddSubOperation(new PaintSubOperation(terrain, texture, new Vector2Int(rectangle.topLeft.x, rectangle.topLeft.y), new Vector2Int(rectangle.size.x, rectangle.size.y), changes));
+
+        if(textureChanged)
+            operation.AddSubOperation(new PaintSubOperation(terrain, texture, new Vector2Int(rectangle.topLeft.x, rectangle.topLeft.y), new Vector2Int(rectangle.size.x, rectangle.size.y), changes));
     }
 
     private float ApplyFilter(int x, int y, float heightmapResolution, float terrainHeight, Vector2Int textureSize)
