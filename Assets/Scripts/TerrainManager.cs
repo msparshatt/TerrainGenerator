@@ -46,6 +46,15 @@ public class TerrainManager
     private const float MARGIN = 0.075f;  
 
     private int[] paintMaskConverter = new int[] {0, 1, 2, 3, 4, 101, 102};
+
+    //storage for data used by the TextureComputeShader
+    Texture2DArray inputTextures;
+    Texture2DArray inputAOs;
+    RenderTexture resultRenderTexture;
+    RenderTexture aoRenderTexture;
+    RenderTexture mask;
+    Texture2D resultTexture;
+    Texture2D maskTexture;
     
     public static TerrainManager instance {
         get {
@@ -74,6 +83,25 @@ public class TerrainManager
 
         maxima = new List<Vector4>();
         minima = new List<Vector4>();
+
+        int size = 2048;
+        inputTextures = new Texture2DArray(size, size, 5, TextureFormat.DXT5, false);
+        inputAOs = new Texture2DArray(size, size, 5, TextureFormat.DXT1, false);
+
+        resultRenderTexture = new RenderTexture(size, size, 24);
+        resultRenderTexture.enableRandomWrite = true;
+        resultRenderTexture.Create();
+
+        aoRenderTexture = new RenderTexture(size, size, 24);
+        aoRenderTexture.enableRandomWrite = true;
+        aoRenderTexture.Create();
+
+        mask = new RenderTexture(size, size, 24);
+        mask.enableRandomWrite = true;
+        mask.Create();
+
+        resultTexture = new Texture2D(size, size, TextureFormat.ARGB32, true);
+        maskTexture = new Texture2D(size, size, TextureFormat.ARGB32, true);
 
         ClearMaximaAndMinima();
         maxima.Add(new Vector4(-1, -1, -1, -1));
@@ -471,21 +499,9 @@ public class TerrainManager
         textureShader.SetInt("width", width);
         textureShader.SetInt("height", height);
 
-        //create textures to hold the results
-        RenderTexture tex = new RenderTexture(width,height,24);
-        tex.enableRandomWrite = true;
-        tex.Create();
-        RenderTexture aotex = new RenderTexture(width,height,24);
-        aotex.enableRandomWrite = true;
-        aotex.Create();
-
-        RenderTexture mask = new RenderTexture(width,height,24);
-        mask.enableRandomWrite = true;
-        mask.Create();
-
         //send textures to compute shader
-        textureShader.SetTexture(kernelHandle, "Result", tex);
-        textureShader.SetTexture(kernelHandle, "aoResult", aotex);
+        textureShader.SetTexture(kernelHandle, "Result", resultRenderTexture);
+        textureShader.SetTexture(kernelHandle, "aoResult", aoRenderTexture);
         textureShader.SetTexture(kernelHandle, "paintMask", mask);
 
         //send parameters to the compute shader
@@ -512,11 +528,6 @@ public class TerrainManager
         textureShader.SetFloats("offsets", paddedOffsets);
         textureShader.SetInts("mixTypes", paddedMixTypes);
         textureShader.SetInt("heightMapResolution", hmResolution);
-
-        Texture2D tempTexture;
-
-        Texture2DArray inputTextures = new Texture2DArray(2048, 2048, 5, TextureFormat.DXT5, false);
-        Texture2DArray inputAOs = new Texture2DArray(2048, 2048, 5, TextureFormat.DXT1, false);
 
         float[] colorValues = new float[InternalDataScriptable.NUMBER_MATERIALS * 4];
 
@@ -561,23 +572,22 @@ public class TerrainManager
         //run the shader
         textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
-        Texture2D tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, true);
-        RenderTexture.active = tex;
-        tex2D.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
-        tex2D.Apply();
-        terrainMaterial.mainTexture = tex2D;
+        //Texture2D tex2D = new Texture2D(resultRenderTexture.width, resultRenderTexture.height, TextureFormat.ARGB32, true);
+        RenderTexture.active = resultRenderTexture;
+        resultTexture.ReadPixels(new Rect(0, 0, resultRenderTexture.width, resultRenderTexture.height), 0, 0);
+        resultTexture.Apply();
+        terrainMaterial.mainTexture = resultTexture;
 
-        RenderTexture.active = aotex;
-        aoTexture.ReadPixels(new Rect(0, 0, aotex.width, aotex.height), 0, 0);
+        RenderTexture.active = aoRenderTexture;
+        aoTexture.ReadPixels(new Rect(0, 0, aoRenderTexture.width, aoRenderTexture.height), 0, 0);
         aoTexture.Apply();
 
 
-        tex2D = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, true);
         RenderTexture.active = mask;
-        tex2D.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
-        tex2D.Apply();
-        paintBrushData.paintMask = tex2D;
-        terrainMaterial.SetTexture("_PaintMask", tex2D);
+        maskTexture.ReadPixels(new Rect(0, 0, resultRenderTexture.width, resultRenderTexture.height), 0, 0);
+        maskTexture.Apply();
+        paintBrushData.paintMask = maskTexture;
+        terrainMaterial.SetTexture("_PaintMask", maskTexture);
 
         heightMapBuffer.Release();
 
@@ -609,11 +619,6 @@ public class TerrainManager
         textureShader.SetInt("width", width);
         textureShader.SetInt("height", height);
 
-        //create textures to hold the result
-        RenderTexture mask = new RenderTexture(width,height,24);
-        mask.enableRandomWrite = true;
-        mask.Create();
-
         //send textures to compute shader
         textureShader.SetTexture(kernelHandle, "paintMask", mask);
 
@@ -633,12 +638,11 @@ public class TerrainManager
         //run the shader
         textureShader.Dispatch(kernelHandle, width/8, height/8, 1);
 
-        Texture2D tex2D = new Texture2D(mask.width, mask.height, TextureFormat.ARGB32, true);
         RenderTexture.active = mask;
-        tex2D.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
-        tex2D.Apply();
-        paintBrushData.paintMask = tex2D;
-        terrainMaterial.SetTexture("_PaintMask", tex2D);
+        maskTexture.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+        maskTexture.Apply();
+        paintBrushData.paintMask = maskTexture;
+        terrainMaterial.SetTexture("_PaintMask", maskTexture);
 
         heightMapBuffer.Release();
 
