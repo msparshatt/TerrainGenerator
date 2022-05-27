@@ -7,6 +7,7 @@ public class OperationList : MonoBehaviour
     private List<Operation> operationList;
     private int executionIndex;
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private SettingsDataScriptable settingsData;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +29,10 @@ public class OperationList : MonoBehaviour
             operationList.Add(operation);
             executionIndex++;
 
+            if(operationList.Count > settingsData.undoCount) {
+                operationList.RemoveAt(0);
+                executionIndex--;
+            }
             internalData.unsavedChanges = true;
         }
     }
