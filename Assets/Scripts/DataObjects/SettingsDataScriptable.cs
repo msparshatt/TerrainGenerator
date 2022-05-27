@@ -12,4 +12,5 @@ public class SettingsDataScriptable : ScriptableObject
     public Color selectedColor;
     public Color deselectedColor;
     public Color deselectedColor2;
+    public int undoCount;
 }

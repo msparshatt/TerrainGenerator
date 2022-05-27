@@ -19,3 +19,4 @@ MonoBehaviour:
   selectedColor: {r: 0.5294118, g: 0.9607843, b: 0.78207254, a: 1}
   deselectedColor: {r: 0.98247015, g: 0.9672036, b: 0.990566, a: 1}
   deselectedColor2: {r: 0, g: 0, b: 0, a: 0}
+  undoCount: 50
