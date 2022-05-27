@@ -1,21 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using Unity.Profiling;
 
 public class DebugPanel : MonoBehaviour
 {
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private TMP_Text totalMemory;
+    [SerializeField] private TMP_Text gcMemory;
+    [SerializeField] private TMP_Text textureMemory;
+    [SerializeField] private TMP_Text meshMemory;
+
+    private bool profiling;
+
+    ProfilerRecorder _totalReservedMemoryRecorder;
+    ProfilerRecorder _gcReservedMemoryRecorder;
+    ProfilerRecorder _textureMemoryRecorder;
+    ProfilerRecorder _meshMemoryRecorder;    
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        profiling = false;   
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(profiling) {
+            totalMemory.text = "Total Memory: " + ( _totalReservedMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
+            gcMemory.text = "GC Memory: " + (_gcReservedMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
+            textureMemory.text = "Texture Memory: " + (_textureMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
+            meshMemory.text = "Mesh Memory: " + (_meshMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
+        }
     }
 
     public void DeleteAllButtonClick()
@@ -87,5 +106,29 @@ public class DebugPanel : MonoBehaviour
         internalData.customMaterials.Clear();
 
         PlayerPrefs.Save();
+    }
+
+    public void StartButtonClick()
+    {
+        if(!profiling) {
+            _totalReservedMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "Total Used Memory");
+            _gcReservedMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Reserved Memory");
+            _textureMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "Texture Memory");
+            _meshMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "Mesh Memory");
+
+            profiling = true;
+        }
+    }
+
+    public void StopButtonClick()
+    {
+        if(profiling) {
+            _totalReservedMemoryRecorder.Dispose();
+            _gcReservedMemoryRecorder.Dispose();
+            _textureMemoryRecorder.Dispose();
+            _meshMemoryRecorder.Dispose();
+    
+            profiling = false;
+        }
     }
 }
