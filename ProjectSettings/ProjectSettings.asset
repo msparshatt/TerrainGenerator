@@ -606,20 +606,21 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    Android: CT_FB
-    CloudRendering: CT_FB
-    GameCoreXboxOne: CT_FB
-    Lumin: CT_FB
-    Nintendo Switch: CT_FB
-    PS4: CT_FB
-    PS5: CT_FB
-    Stadia: CT_FB
-    Standalone: CT_FB
-    WebGL: CT_FB
-    Windows Store Apps: CT_FB
-    XboxOne: CT_FB
+    Android: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    CloudRendering: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2
+    GameCoreXboxOne: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    Lumin: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    Nintendo Switch: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    PS4: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    PS5: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    Stadia: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    Standalone: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    WebGL: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    Windows Store Apps: CT_FB;UNITY_POST_PROCESSING_STACK_V2
+    XboxOne: CT_FB;UNITY_POST_PROCESSING_STACK_V2
     iPhone: CT_FB
-    tvOS: CT_FB
+    tvOS: CT_FB;UNITY_POST_PROCESSING_STACK_V2
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
