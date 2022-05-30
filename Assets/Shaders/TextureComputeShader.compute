@@ -26,8 +26,8 @@ int heightMapResolution;
 int paintMaskType;
 float paintMaskFactor;
 
-float4 maxima[1000];
-float4 minima[1000];
+StructuredBuffer<float4> maxima;
+StructuredBuffer<float4> minima;
 
 #define FUDGEFACTOR  0.05f  //
 #define DIVISOR 0.1f
@@ -74,8 +74,12 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
         if(mixType == MIXTYPE_SHALLOW)
             value = 1 - value;
     } else if(mixType == MIXTYPE_PEAKS) {           //peaks
+        uint units;
+        uint stride;
+        maxima.GetDimensions(units, stride);
+
         float minDistance = 1000;
-        for(int index = 0; index < 1000; index++) {
+        for(int index = 0; index < units; index++) {
             float4 maximum = maxima[index];
             if(maximum.x == -1) {
                 break;
@@ -88,8 +92,12 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
 
         value = 1 - minDistance / 100;
     } else if(mixType == MIXTYPE_VALLEYS) {           //valleys
+        uint units;
+        uint stride;
+        minima.GetDimensions(units, stride);
+
         float minDistance = 1000;
-        for(int index = 0; index < 1000; index++) {
+        for(int index = 0; index < units; index++) {
             float4 minimum = minima[index];
             if(minimum.x == -1) {
                 break;

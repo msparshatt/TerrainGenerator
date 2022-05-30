@@ -561,8 +561,13 @@ public class TerrainManager
         textureShader.SetBuffer(kernelHandle, "heightmap", heightMapBuffer);
 
         //send maxima and minima
-        textureShader.SetVectorArray("maxima", maxima.ToArray());
-        textureShader.SetVectorArray("minima", minima.ToArray());
+        ComputeBuffer maximaBuffer = new ComputeBuffer(maxima.Count, sizeof(float) * 4);
+        maximaBuffer.SetData(maxima);
+        textureShader.SetBuffer(kernelHandle, "maxima", maximaBuffer);
+
+        ComputeBuffer minimaBuffer = new ComputeBuffer(minima.Count, sizeof(float) * 4);
+        minimaBuffer.SetData(minima);
+        textureShader.SetBuffer(kernelHandle, "minima", minimaBuffer);
 
         //send filter settings
         textureShader.SetInt("paintMaskType", paintMaskConverter[(int)paintBrushData.filterType]);
@@ -590,6 +595,9 @@ public class TerrainManager
         terrainMaterial.SetTexture("_PaintMask", maskTexture);
 
         heightMapBuffer.Release();
+
+        maximaBuffer.Release();
+        minimaBuffer.Release();
 
         shaderRunning = false;
 
