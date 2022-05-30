@@ -8,7 +8,7 @@ using SimpleFileBrowser;
 
 public class MaterialsPanel : MonoBehaviour, IPanel
 {
-    public enum MixTypes  {Top = 1, Steep, Bottom, Shallow, Peaks, Valleys, Random};
+    public enum MixTypes  {Top = 1, Steep, Bottom, Shallow, Random};
 
     [Header("UI elements")]
     [SerializeField] private Slider scaleSlider;
@@ -139,17 +139,12 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             int mixType = mixtypeDropdowns[i].value + 1;
 
-            if(mixType == (int)MixTypes.Peaks || mixType == (int)MixTypes.Valleys)
-                internalData.detectMaximaAndMinima = true;
-
             offsetSliders[i].gameObject.SetActive((mixType == (int)MixTypes.Random));
 
             internalData.mixTypes[i] = mixType;
         }
 
-        if(!oldDetect && internalData.detectMaximaAndMinima)
-            manager.FindMaximaAndMinima();
-            
+           
         manager.ApplyTextures();
     }
 
@@ -160,16 +155,10 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         int mixType = mixtypeDropdowns[index].value + 1;
 
-        if(mixType == (int)MixTypes.Peaks || mixType == (int)MixTypes.Valleys)
-            internalData.detectMaximaAndMinima = true;
-
         offsetSliders[index].gameObject.SetActive((mixType == (int)MixTypes.Random));
 
         internalData.mixTypes[index] = mixType;
-
-        if(!oldDetect && internalData.detectMaximaAndMinima)
-            manager.FindMaximaAndMinima();
-            
+           
         manager.ApplyTextures();
     }
 

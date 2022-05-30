@@ -26,9 +26,6 @@ int heightMapResolution;
 int paintMaskType;
 float paintMaskFactor;
 
-StructuredBuffer<float4> maxima;
-StructuredBuffer<float4> minima;
-
 #define FUDGEFACTOR  0.05f  //
 #define DIVISOR 0.1f
 
@@ -37,9 +34,7 @@ StructuredBuffer<float4> minima;
 #define MIXTYPE_STEEP 2
 #define MIXTYPE_BOTTOM 3
 #define MIXTYPE_SHALLOW 4
-#define MIXTYPE_PEAKS 5
-#define MIXTYPE_VALLEYS 6
-#define MIXTYPE_RANDOM 7
+#define MIXTYPE_RANDOM 5
 #define MIXTYPE_PAINTED 101
 #define MIXTYPE_UNPAINTED 102
 
@@ -73,42 +68,6 @@ float CalculateFactor(int index, int mixType, float mixFactor, uint3 id, int2 he
 
         if(mixType == MIXTYPE_SHALLOW)
             value = 1 - value;
-    } else if(mixType == MIXTYPE_PEAKS) {           //peaks
-        uint units;
-        uint stride;
-        maxima.GetDimensions(units, stride);
-
-        float minDistance = 1000;
-        for(int index = 0; index < units; index++) {
-            float4 maximum = maxima[index];
-            if(maximum.x == -1) {
-                break;
-            }
-
-            float distance = (heightmapPosition.x - maximum.x) * (heightmapPosition.x - maximum.x) + (heightmapPosition.y - maximum.y) * (heightmapPosition.y - maximum.y);
-            distance = sqrt(distance);
-            minDistance = min(minDistance, distance);
-        }
-
-        value = 1 - minDistance / 100;
-    } else if(mixType == MIXTYPE_VALLEYS) {           //valleys
-        uint units;
-        uint stride;
-        minima.GetDimensions(units, stride);
-
-        float minDistance = 1000;
-        for(int index = 0; index < units; index++) {
-            float4 minimum = minima[index];
-            if(minimum.x == -1) {
-                break;
-            }
-
-            float distance = (heightmapPosition.x - minimum.x) * (heightmapPosition.x - minimum.x) + (heightmapPosition.y - minimum.y) * (heightmapPosition.y - minimum.y);
-            distance = sqrt(distance);
-            minDistance = min(minDistance, distance);
-        }            
-
-        value = 1 - minDistance / 100;
     }  else if(mixType == MIXTYPE_RANDOM) {           //random
         value = snoise(float2((id.x + offsets[index]) * 0.005f, (id.y + offsets[index]) * 0.005f));
         value = (value + 1) / 2;

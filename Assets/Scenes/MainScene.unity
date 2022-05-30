@@ -35416,10 +35416,6 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Shallow
       m_Image: {fileID: 0}
-    - m_Text: Peaks (WIP)
-      m_Image: {fileID: 0}
-    - m_Text: Valleys (WIP)
-      m_Image: {fileID: 0}
     - m_Text: Random
       m_Image: {fileID: 0}
   m_OnValueChanged:
@@ -54441,10 +54437,6 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Shallow
       m_Image: {fileID: 0}
-    - m_Text: Peaks (WIP)
-      m_Image: {fileID: 0}
-    - m_Text: Valleys (WIP)
-      m_Image: {fileID: 0}
     - m_Text: Random
       m_Image: {fileID: 0}
   m_OnValueChanged:
@@ -59594,10 +59586,6 @@ MonoBehaviour:
     - m_Text: Bottom
       m_Image: {fileID: 0}
     - m_Text: Shallow
-      m_Image: {fileID: 0}
-    - m_Text: Peaks (WIP)
-      m_Image: {fileID: 0}
-    - m_Text: Valleys (WIP)
       m_Image: {fileID: 0}
     - m_Text: Random
       m_Image: {fileID: 0}
@@ -79472,10 +79460,6 @@ MonoBehaviour:
     - m_Text: Bottom
       m_Image: {fileID: 0}
     - m_Text: Shallow
-      m_Image: {fileID: 0}
-    - m_Text: Peaks (WIP)
-      m_Image: {fileID: 0}
-    - m_Text: Valleys (WIP)
       m_Image: {fileID: 0}
     - m_Text: Random
       m_Image: {fileID: 0}

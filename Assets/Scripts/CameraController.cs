@@ -327,7 +327,6 @@ public class CameraController : MonoBehaviour
             stampApplied = false;
 
             if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Stamp || internalData.mode == InternalDataScriptable.Modes.Erode) {
-                TerrainManager.instance.FindMaximaAndMinima();
                 TerrainManager.instance.ApplyTextures();
 
                 if(internalData.oceanActive)
