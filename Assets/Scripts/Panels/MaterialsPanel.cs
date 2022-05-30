@@ -51,8 +51,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void InitialisePanel()
     {
-        Debug.Log("InitialisePanel");
-
         changeToggle = false;
         manager = TerrainManager.instance;
         gameResources = GameResources.instance;
@@ -75,8 +73,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void ResetPanel()
     {
-        Debug.Log("ResetPanel");
-
         Material[] materials = new Material[] {gameResources.materials[0], gameResources.materials[1], gameResources.materials[2], gameResources.materials[3], gameResources.materials[4]};
 
         for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++)
@@ -117,16 +113,12 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     //settings panel
     public void AOToggleChange(bool isOn)
     {
-        Debug.Log("AOToggleChange");
-
         internalData.ambientOcclusion = isOn;
         manager.SetAO(isOn);
     }
 
     public void ScaleSliderChange(float value)
     {
-        Debug.Log("ScalesliderChange");
-
         internalData.sliderChanged = true;
         internalData.materialScale = value;
         manager.ApplyTextures();
@@ -134,8 +126,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void ResetTilingButtonClick()
     {
-        Debug.Log("ResetTilingButtonClick");
-
         scaleSlider.value = 1.0f;
         //Camera.main.GetComponent<CameraController>().sliderChanged = true;
 
@@ -144,8 +134,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void MaterialDropdownSelect()
     {
-        Debug.Log("MaterialDropDownSelect");
-
         bool oldDetect = internalData.detectMaximaAndMinima;
         internalData.detectMaximaAndMinima = false;
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
@@ -167,8 +155,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void MaterialDropdownSelect(int index)
     {
-        Debug.Log("MaterialDropdownSelect-int");
-
         bool oldDetect = internalData.detectMaximaAndMinima;
         internalData.detectMaximaAndMinima = false;
 
@@ -189,8 +175,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void MixFactorSliderChange()
     {
-        Debug.Log("MixFactorSliderChange");
-
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             internalData.mixFactors[i] = mixFactorSliders[i].value;
         }
@@ -200,8 +184,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void MixFactorSliderChange(int index)
     {
-        Debug.Log("MixFactorSliderChange-int");
-
         float value = mixFactorSliders[index].value;
 
         internalData.mixFactors[index] = value;
@@ -211,8 +193,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void SelectMaterialIcon(int panel, int buttonIndex)
     {
-        Debug.Log("SelectMaterialIcon-int-int");
-
         Material mat = gameResources.materials[buttonIndex];
         internalData.currentMaterialIndices[panel] = buttonIndex;
 
@@ -234,15 +214,11 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     }
     public void SelectMaterialIcon(int buttonIndex)
     {        
-        Debug.Log("SelectMaterialIcon-int");
-
         SelectMaterialIcon(materialPanelIndex, buttonIndex);
     }
 
     public void MaterialImportButtonClick()
     {
-        Debug.Log("MaterialImportButtonClick");
-
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Image files", new string[] {".png", ".jpg", ".jpeg"}));
         FileBrowser.SetDefaultFilter( ".png" );
 
@@ -252,8 +228,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void OnMaterialImport(string filename)
     {
-        Debug.Log("OnMaterialImport");
-
         if(filename != "") {
             controller.LoadCustomMaterial(filename);
             internalData.customMaterials.Add(filename);
@@ -264,8 +238,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void MaterialDeleteButtonClick()
     {
-        Debug.Log("MaterialDeleteButtonClick");
-
         int customMaterialIndex = internalData.currentMaterialIndices[materialPanelIndex] + internalData.customMaterials.Count - gameResources.materials.Count;
 
         internalData.customMaterials.RemoveAt(customMaterialIndex);
@@ -277,8 +249,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     }
     public void OffsetSliderChange()
     {
-        Debug.Log("OffsetSliderChange");
-
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             internalData.mixOffsets[i] = offsetSliders[i].value;
         }
@@ -289,16 +259,12 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void OffsetSliderChange(int index)
     {
-        Debug.Log("OffsetSliderChange-int");
-
         internalData.mixOffsets[index] = offsetSliders[index].value;
         internalData.sliderChanged = true;
     }
 
     public void MaterialButtonClick(int index)
     {
-        Debug.Log("MaterialButtonClick");
-
         bool active = !materialPanel.activeSelf;
         if(index != materialPanelIndex)
             active = true;
@@ -339,8 +305,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public int AddBaseTexture(byte[] pixels)
     {
-        Debug.Log("AddBaseTexture");
-
         Texture2D colorTexture = new Texture2D(10,10);
         ImageConversion.LoadImage(colorTexture, pixels);
 
@@ -386,8 +350,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void AddButton(Texture2D texture, int index = 0)
     {
-        Debug.Log("AddButton");
-
         GameObject newButton;
         int ObjectIndex = materialIcons.Count;
         Vector2 scale = new Vector2(1.0f, 1.0f);
@@ -399,8 +361,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void LoadPanel()
     {
-        Debug.Log("LoadPanel");
-
         for(int i = 1; i < InternalDataScriptable.NUMBER_MATERIALS; i++) {
             mixtypeDropdowns[i].value = internalData.mixTypes[i] - 1;
             mixFactorSliders[i].value = internalData.mixFactors[i];
@@ -428,8 +388,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void ToggleChange(bool isOn)
     {
-        Debug.Log("ToggleChange");
-
         internalData.useTexture[materialPanelIndex] = !isOn;
 
         if(isOn) {
@@ -450,7 +408,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void ColorPickerChange()
     {
-        Debug.Log("ColorPickerChange");
         internalData.colors[materialPanelIndex] = colorPicker.color;
 
         if(changeToggle) {
