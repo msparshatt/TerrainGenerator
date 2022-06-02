@@ -77,10 +77,15 @@ public class ErosionPanel : MonoBehaviour, IPanel
 
     public string ToJson()
     {
-        Debug.Log("SAVE: Sky panel data");
-
         ErosionSaveData_v1 data = new ErosionSaveData_v1();
 
+        //brush settings
+        data.brushIndex = brushIndex;
+        data.brushRadius = brushData.brushRadius;
+        data.brushRotation = brushData.brushRotation;
+        data.brushStrength = brushData.brushStrength;
+
+        //erosion settings
         data.erosionBrushRadius =  erosionData.erosionBrushRadius;
         data.lifetime = erosionData.lifetime;
         data.sedimentCapacityFactor =  erosionData.sedimentCapacityFactor;
@@ -100,6 +105,9 @@ public class ErosionPanel : MonoBehaviour, IPanel
     {
         if(dataString != null && dataString != "") {
             ErosionSaveData_v1 data = JsonUtility.FromJson<ErosionSaveData_v1>(dataString);
+            radiusSlider.value = data.brushRadius;
+            rotationSlider.value = data.brushRotation;
+            strengthSlider.value = data.brushStrength;
 
             lifetimeSlider.value = data.lifetime;
             sedimentCapacityFactorSlider.value = data.sedimentCapacityFactor ;
@@ -109,6 +117,8 @@ public class ErosionPanel : MonoBehaviour, IPanel
             startSpeedSlider.value = data.startSpeed;
             evaporateSpeedSlider.value = data.evaporateSpeed;
             startWaterSlider.value = data.startWater;
+
+            SelectBrushIcon(data.brushIndex);
         } else {
             ResetPanel();
         }
