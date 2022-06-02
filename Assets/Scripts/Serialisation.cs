@@ -8,6 +8,8 @@ public class Serialisation : MonoBehaviour
     [SerializeField] private Texture2D busyCursor;
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private InternalDataScriptable defaultData;
+    [SerializeField] private MaterialSettings materialSettings;
+    [SerializeField] private MaterialSettings defaultMaterialSettings;
     [SerializeField] private GameObject oldSavePanel;
 
     [SerializeField] private GameObject materialsPanel;
@@ -17,13 +19,19 @@ public class Serialisation : MonoBehaviour
     [SerializeField] private GameObject waterPanel;
     [SerializeField] private GameObject skyPanel;
 
+
     private string savefileName;
-    private TerrainManager manager;
     private GameResources gameResources;
+    private TerrainManager manager;
+    private HeightmapController heightmapController;
+    private MaterialController materialController;
     // Start is called before the first frame update
     void Start()
     {
-        manager = TerrainManager.instance;
+        manager = TerrainManager.Instance();
+        heightmapController = manager.HeightmapController;
+        materialController = manager.MaterialController;
+
         gameResources = GameResources.instance;
     }
     public void Load(string filename)
@@ -49,8 +57,10 @@ public class Serialisation : MonoBehaviour
                 bool version4 = fileContents.Contains("baseTexture2");
 
                 Version1Load(fileContents, version4);
-            } else {
+            } else if(data.version == 2) {
                 Version2Load(fileContents);
+            } else if (data.version == 3) {
+                Version3Load(fileContents);
             }
 
             //reset the cursor
@@ -61,9 +71,7 @@ public class Serialisation : MonoBehaviour
     public void Version1Load(string fileContents, bool version4)
     {
         SaveData_v1 data = JsonUtility.FromJson<SaveData_v1>(fileContents);
-        manager.CreateTerrainFromHeightmap(data.heightmap);
-
-        int materialPanelIndex = 0;
+        heightmapController.CreateTerrainFromHeightmap(data.heightmap);
 
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
 
@@ -89,26 +97,26 @@ public class Serialisation : MonoBehaviour
             materials.SelectMaterialIcon(1, 1);
         }
 
-        internalData.mixTypes[1] = data.mixType;
+        materialSettings.mixTypes[1] = data.mixType;
 
         if(data.mixFactor > 0)
             data.mixFactor = 1 - data.mixFactor;
 
-        internalData.mixFactors[1] = data.mixFactor;
+        materialSettings.mixFactors[1] = data.mixFactor;
 
-        for(int index = 2; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-            internalData.mixTypes[index] = 1;
+        for(int index = 2; index < MaterialSettings.NUMBER_MATERIALS; index++) {
+            materialSettings.mixTypes[index] = 1;
 
-            internalData.mixFactors[index] = 0f;
+            materialSettings.mixFactors[index] = 0f;
         }
         if(data.tiling == 0)
             data.tiling = 1;
 
-        internalData.materialScale = data.tiling;
-        internalData.ambientOcclusion = data.aoActive;
+        materialSettings.materialScale = data.tiling;
+        materialSettings.ambientOcclusion = data.aoActive;
 
         materials.LoadPanel();
-        manager.ApplyTextures();
+        materialController.ApplyTextures();
 
 
         if(data.paintTiling == 0)
@@ -120,7 +128,7 @@ public class Serialisation : MonoBehaviour
         Texture2D texture = new Texture2D(10,10);
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
-        manager.SetOverlay(texture);
+        materialController.SetOverlay(texture);
 
         oldSavePanel.SetActive(true);
     }
@@ -128,16 +136,14 @@ public class Serialisation : MonoBehaviour
     public void Version2Load(string fileContents)
     {
         SaveData_v2 data = JsonUtility.FromJson<SaveData_v2>(fileContents);
-        manager.CreateTerrainFromHeightmap(data.heightmap);
-
-        int materialPanelIndex = 0;
+        heightmapController.CreateTerrainFromHeightmap(data.heightmap);
 
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
 
-        for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-            internalData.useTexture[index] = data.useTexture[index];
+        for(int index = 0; index < MaterialSettings.NUMBER_MATERIALS; index++) {
+            materialSettings.useTexture[index] = data.useTexture[index];
 
-            internalData.colors[index] = data.colors[index];
+            materialSettings.colors[index] = data.colors[index];
             if(data.baseTexture[index] == -1) {
                 materials.SelectMaterialIcon(index, materials.AddBaseTexture(data.baseTexture_colors[index]));
             } else {
@@ -146,21 +152,21 @@ public class Serialisation : MonoBehaviour
 
             if(index > 0)
             {
-                internalData.mixTypes[index] = data.mixType[index];
-                internalData.mixFactors[index] = data.mixFactor[index];
+                materialSettings.mixTypes[index] = data.mixType[index];
+                materialSettings.mixFactors[index] = data.mixFactor[index];
             } else {
-                internalData.mixTypes[0] = 0;
-                internalData.mixFactors[0] = 0f;
+                materialSettings.mixTypes[0] = 0;
+                materialSettings.mixFactors[0] = 0f;
             }
         }
 
         if(data.tiling == 0)
             data.tiling = 1;
 
-        internalData.materialScale = data.tiling;
-        internalData.ambientOcclusion = data.aoActive;
+        materialSettings.materialScale = data.tiling;
+        materialSettings.ambientOcclusion = data.aoActive;
 
-        manager.ApplyTextures();
+        materialController.ApplyTextures();
 
         if(data.paintTiling == 0)
             data.paintTiling = 1;
@@ -170,7 +176,7 @@ public class Serialisation : MonoBehaviour
         Texture2D texture = new Texture2D(10,10);
         ImageConversion.LoadImage(texture, data.overlayTexture);
 
-        manager.SetOverlay(texture);
+        materialController.SetOverlay(texture);
 
         GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
@@ -182,6 +188,33 @@ public class Serialisation : MonoBehaviour
 
             panels[index].GetComponent<IPanel>().LoadPanel();
         }
+    }
+
+    public void Version3Load(string fileContents)
+    {
+        Debug.Log("Version 3");
+        SaveData_v3 data = JsonUtility.FromJson<SaveData_v3>(fileContents);
+        heightmapController.CreateTerrainFromHeightmap(data.heightmap);
+
+        MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
+
+        Texture2D texture = new Texture2D(10,10);
+        ImageConversion.LoadImage(texture, data.overlayTexture);
+
+        materialController.SetOverlay(texture);
+
+        GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
+
+        for(int index = 0; index < panels.Length; index++) {
+            if(data.panelData != null && data.panelData.Count > index)
+                panels[index].GetComponent<IPanel>().FromJson(data.panelData[index]);
+            else
+                panels[index].GetComponent<IPanel>().FromJson(null);
+
+            panels[index].GetComponent<IPanel>().LoadPanel();
+        }
+
+        materialController.ApplyTextures();
     }
 
     public void UpdateOldSaveFile()
@@ -212,51 +245,19 @@ public class Serialisation : MonoBehaviour
             Cursor.visible = true;
 
             Debug.Log("SAVE: Creating SaveData object");
-            SaveData_v2 data = new SaveData_v2();
+            SaveData_v3 data = new SaveData_v3();
             Texture2D texture;
 
-            data.version = 2;
+            data.version = 3;
             Debug.Log("SAVE: Store heightmap");
             //save the heightmap
-            data.heightmap = manager.GetHeightmapAsBytes();
-            Debug.Log("SAVE: Store base textures");
-
-            //save the selected materials
-            data.baseTexture = new int[InternalDataScriptable.NUMBER_MATERIALS];
-            data.baseTexture_colors = new byte[InternalDataScriptable.NUMBER_MATERIALS][];
-            data.mixFactor = new float[InternalDataScriptable.NUMBER_MATERIALS];
-            data.mixType = new int[InternalDataScriptable.NUMBER_MATERIALS];
-            data.mixOffset = new float[InternalDataScriptable.NUMBER_MATERIALS];
-            data.colors = new Color[InternalDataScriptable.NUMBER_MATERIALS];
-            data.useTexture = new bool[InternalDataScriptable.NUMBER_MATERIALS];
-            
-            for(int index = 0; index < InternalDataScriptable.NUMBER_MATERIALS; index++) {
-                if(internalData.currentMaterialIndices[index] >= (gameResources.materials.Count - internalData.customMaterials.Count)) {
-                    data.baseTexture[index] = -1;
-                    texture = (Texture2D)gameResources.materials[internalData.currentMaterialIndices[index]].mainTexture;
-                    data.baseTexture_colors[index] = texture.EncodeToPNG();
-                } else {
-                    data.baseTexture[index] = internalData.currentMaterialIndices[index];
-                    data.baseTexture_colors[index] = null;
-                }
-
-                data.mixType[index] = internalData.mixTypes[index];
-                data.mixFactor[index] = internalData.mixFactors[index];
-                data.mixOffset[index] = internalData.mixOffsets[index];
-                data.useTexture[index] = internalData.useTexture[index];
-                data.colors[index] = internalData.colors[index];
-            }
-
-            data.tiling = internalData.materialScale;
-            data.aoActive = internalData.ambientOcclusion;
+            data.terrainResolution = heightmapController.HeightmapResolution();
+            data.heightmap = heightmapController.GetHeightmapAsBytes();
 
             Debug.Log("SAVE: Store overlay texture");
-            texture = manager.GetOverlay();
+            texture = materialController.GetOverlay();
             data.overlayTexture = texture.EncodeToPNG();
-            data.paintTiling = internalData.paintScale;
 
-            //data.skyData = skyPanel.GetComponent<IPanel>().ToJson();
-            //data.waterData = waterPanel.GetComponent<IPanel>().ToJson();
             GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
             data.panelData = new List<string>();
