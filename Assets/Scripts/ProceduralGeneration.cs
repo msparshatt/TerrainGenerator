@@ -56,13 +56,10 @@ public class ProceduralGeneration
     public float evaporateSpeed;
 
     private int defaultTerrainResolution;
-    private int noCells;
 
     private float perlinTime;
     private float voronoiTime;
     private float totalTime;
-
-    private int counter = 0;
 
     private bool shaderRunning;
 
@@ -82,7 +79,6 @@ public class ProceduralGeneration
         scale = 1;
         perlinOffset = new Vector2(1,1);
 
-        noCells = 100;
         shaderRunning = false;
     }
 
