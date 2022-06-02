@@ -27,7 +27,7 @@ public class Operation
             }
 
             if(subOperations[0] is SculptSubOperation) {
-                TerrainManager.instance.ApplyTextures();
+                TerrainManager.Instance().MaterialController.ApplyTextures();
             }
         }
     }
@@ -40,7 +40,7 @@ public class Operation
                 subOperation.Undo();
             }
             if(subOperations[0] is SculptSubOperation) {
-                TerrainManager.instance.ApplyTextures();
+                TerrainManager.Instance().MaterialController.ApplyTextures();
             }
         }
     }

@@ -79,7 +79,8 @@ public class ProceduralControlPanel : MonoBehaviour
     ProceduralGeneration procGen;
     bool erosion;
 
-    private TerrainManager manager;
+    //private TerrainManager manager;
+    private HeightmapController heightmapController;
 
     private GeneratorMode mode;
 
@@ -87,11 +88,10 @@ public class ProceduralControlPanel : MonoBehaviour
     void Start()
     {
         Debug.Log("start");
-        //resolution = currentTerrain.terrainData.heightmapResolution;
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
         procGen.proceduralGenerationShader = proceduralGenerationShader;
         erosion = false;
-        manager = TerrainManager.instance;
+        heightmapController = currentTerrain.GetComponent<HeightmapController>();
 
         gameObject.SetActive(false);
     }
@@ -100,12 +100,11 @@ public class ProceduralControlPanel : MonoBehaviour
     {
         TabButtonClick(0);
 
-        if(manager != null) {
-            manager.SetupChanges();
+        if(heightmapController != null)
+            heightmapController.SetupChanges();
 
-            if(procGen != null)
-                UpdateTerrain();
-        }
+        if(procGen != null)
+            UpdateTerrain();
     }
 
     public void TabButtonClick(int index)
@@ -174,14 +173,14 @@ public class ProceduralControlPanel : MonoBehaviour
             }
         }
 
-        manager.CreateProceduralTerrain(procGen, erosion);
+        heightmapController.CreateProceduralTerrain(procGen, erosion);
 
-        heightmapImage.GetComponent<RawImage>().texture = manager.GetHeightmapTexture();
+        heightmapImage.GetComponent<RawImage>().texture = heightmapController.GetHeightmapTexture();
     }
 
     public void CancelButtonClick()
     {
-        manager.RevertChanges();
+        heightmapController.RevertChanges();
         internalData.ProcGenOpen = false;
         gameObject.SetActive(false);
     }
@@ -194,7 +193,7 @@ public class ProceduralControlPanel : MonoBehaviour
         Cursor.visible = false;
         Cursor.visible = true;
 
-        manager.ApplyChanges(procGen, erosion);
+        heightmapController.ApplyChanges(procGen, erosion);
 
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
 

@@ -7975,6 +7975,7 @@ MonoBehaviour:
   colorPicker: {fileID: 915139101}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+  materialSettings: {fileID: 11400000, guid: 8499bcee9fb79afdba8973338acf82b9, type: 2}
 --- !u!1 &152854462
 GameObject:
   m_ObjectHideFlags: 0
@@ -33723,6 +33724,8 @@ MonoBehaviour:
   busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
   defaultData: {fileID: 0}
+  materialSettings: {fileID: 11400000, guid: 8499bcee9fb79afdba8973338acf82b9, type: 2}
+  defaultMaterialSettings: {fileID: 11400000, guid: be66b183966026514a7fe81c98bb9c0e, type: 2}
   oldSavePanel: {fileID: 1080871917}
   materialsPanel: {fileID: 149128288}
   sculptPanel: {fileID: 1006123578}
@@ -33771,6 +33774,7 @@ MonoBehaviour:
   sun: {fileID: 705507994}
   skyMaterial: {fileID: 2100000, guid: 8999e2ada0c3d9dbdb7240a82d68f9c6, type: 2}
   ocean: {fileID: 1236204358}
+  currentTerrain: {fileID: 2016404702}
   customTextures: []
 --- !u!1 &649106135
 GameObject:
@@ -50896,7 +50900,6 @@ MonoBehaviour:
   paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
   erosionBrushData: {fileID: 11400000, guid: c17907ec8aecde497ba9343457c5812c, type: 2}
   stampBrushData: {fileID: 11400000, guid: 1b2ab539caa4f0f81a8e5560f8249ed9, type: 2}
-  mainTerrain: {fileID: 2016404706}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
   userInterface: {fileID: 1404742422}
@@ -56777,6 +56780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae118a0c5f93fd067895dc7cf0c523b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sun: {fileID: 705507994}
   LightToggle: {fileID: 1513429969}
   sunHeightSlider: {fileID: 1557706562}
   sunPositionSlider: {fileID: 996871028}
@@ -92329,6 +92333,7 @@ MonoBehaviour:
   busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
   settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+  materialSettings: {fileID: 11400000, guid: 8499bcee9fb79afdba8973338acf82b9, type: 2}
   gameState: {fileID: 645851194}
 --- !u!1 &1823428556
 GameObject:
@@ -100448,12 +100453,14 @@ GameObject:
   - component: {fileID: 2016404708}
   - component: {fileID: 2016404709}
   - component: {fileID: 2016404710}
+  - component: {fileID: 2016404712}
+  - component: {fileID: 2016404711}
   m_Layer: 6
   m_Name: MainTerrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!114 &2016404703
 MonoBehaviour:
@@ -100596,6 +100603,40 @@ MonoBehaviour:
   brushData: {fileID: 11400000, guid: c17907ec8aecde497ba9343457c5812c, type: 2}
   erosionData: {fileID: 11400000, guid: 94a301369e74b77adb0acbaecc1145e1, type: 2}
   erosionShader: {fileID: 7200000, guid: 1bbf2af55a1168a6d988d3beaf47401c, type: 3}
+--- !u!114 &2016404711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016404702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf52c2c914cde7cf18312c57fac7db06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
+  textureShader: {fileID: 7200000, guid: e2020fe579422d1be8d75a651a827a2d, type: 3}
+  sun: {fileID: 705507994}
+  materialShader: {fileID: 4800000, guid: 8f14a12481d6ce016a68d060228d42af, type: 3}
+  settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
+  materialSettings: {fileID: 11400000, guid: 8499bcee9fb79afdba8973338acf82b9, type: 2}
+  paintBrushData: {fileID: 11400000, guid: df3756f28abbe3920a9a82863afbfe9a, type: 2}
+--- !u!114 &2016404712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016404702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa6fbdbe635b97d71bb28351d34349c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settingsData: {fileID: 11400000, guid: 2b50ce9f05ea90b77b99ed483ded41f5, type: 2}
+  internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
+  busyCursor: {fileID: 2800000, guid: 09a6dc7c5b7fe46bf8f8b49d5470bd37, type: 3}
 --- !u!1 &2018790370
 GameObject:
   m_ObjectHideFlags: 0

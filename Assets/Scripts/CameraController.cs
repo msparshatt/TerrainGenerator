@@ -14,16 +14,18 @@ public class CameraController : MonoBehaviour
     [SerializeField] private PaintBrushDataScriptable paintBrushData;
     [SerializeField] private BrushDataScriptable erosionBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
-    [SerializeField] private Terrain mainTerrain;
 
     [Header("Settings")]
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
 
+
     //private terrain settings
-    private TerrainData mainTerrainData;
-    private Vector3 mainTerrainSize;
-    private int mainTerrainMapSize;
+    private TerrainManager manager;
+    private Terrain currentTerrain;
+    private TerrainData currentTerrainData;
+    private Vector3 currentTerrainSize;
+    private int currentTerrainMapSize;
 
     [Header("UI References")]
     [SerializeField] private GameObject userInterface;
@@ -69,11 +71,16 @@ public class CameraController : MonoBehaviour
 
     //true after applying a stamp to avoid applying the stamp multiple times on a single mouse click
     private bool stampApplied;
+    MaterialController materialController;
+
     void Start()
     {
-        mainTerrainData = mainTerrain.terrainData;
-        mainTerrainSize = mainTerrainData.size;
-        mainTerrainMapSize = mainTerrainData.heightmapResolution;
+        manager = TerrainManager.Instance();
+        currentTerrain = manager.Terrain;
+        materialController = manager.MaterialController;
+        currentTerrainData = manager.TerrainData;
+        currentTerrainSize = currentTerrainData.size;
+        currentTerrainMapSize = currentTerrainData.heightmapResolution;
 
         operation = null;
 
@@ -88,7 +95,7 @@ public class CameraController : MonoBehaviour
         internalData.unsavedChanges = false;
         stampApplied = false;
 
-        //mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
+        //currentTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
     }
 
     //Callback functions for new input system
@@ -188,7 +195,7 @@ public class CameraController : MonoBehaviour
         mouseDown = input.isPressed;
 
         if(!mouseDown && internalData.sliderChanged) {
-            TerrainManager.instance.ApplyTextures();
+            materialController.ApplyTextures();
             internalData.sliderChanged = false;
         }
     }
@@ -263,7 +270,7 @@ public class CameraController : MonoBehaviour
         if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint || internalData.mode == InternalDataScriptable.Modes.Stamp || internalData.mode == InternalDataScriptable.Modes.Erode) {
             projectImage(); 
         } else {
-            mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
+            currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         }
 
         //sculpt/paint on left mouse button       
@@ -275,7 +282,7 @@ public class CameraController : MonoBehaviour
             if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
                 //access the hit object
                 GameObject targetObject = raycastTarget.collider.gameObject;
-                if (targetObject != mainTerrain.gameObject)
+                if (targetObject != currentTerrain.gameObject)
                 {
                     return;
                 }
@@ -292,18 +299,18 @@ public class CameraController : MonoBehaviour
                         mode = TerrainSculpter.SculptMode.Flatten;
                     }
 
-                    mainTerrain.GetComponent<TerrainSculpter>().SculptTerrain(mode, raycastTarget.point, operation);
+                    manager.TerrainSculpter.SculptTerrain(mode, raycastTarget.point, operation);
                 } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
-                    TerrainPainter painter = mainTerrain.GetComponent<TerrainPainter>();
+                    TerrainPainter painter = manager.TerrainPainter;
                     TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;
                     if(modifier1) {
                         mode = TerrainPainter.PaintMode.Erase;
                     }
-                    Texture2D overlayTexture = (Texture2D)mainTerrain.materialTemplate.GetTexture("_OverlayTexture");
+                    Texture2D overlayTexture = (Texture2D)currentTerrain.materialTemplate.GetTexture("_OverlayTexture");
 
                     painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
                 } else if(internalData.mode == InternalDataScriptable.Modes.Stamp && !stampApplied) {
-                    TerrainStamper stamper = mainTerrain.GetComponent<TerrainStamper>();
+                    TerrainStamper stamper = manager.TerrainStamper;
                     TerrainStamper.StampMode mode = TerrainStamper.StampMode.Raise;
 
                     if(modifier1) {
@@ -312,7 +319,7 @@ public class CameraController : MonoBehaviour
                     stamper.ModifyTerrain(mode, raycastTarget.point, operation);
                     stampApplied = true;
                 } else if(internalData.mode == InternalDataScriptable.Modes.Erode){
-                    TerrainEroder eroder = mainTerrain.GetComponent<TerrainEroder>();
+                    TerrainEroder eroder = manager.TerrainEroder;
 
                     eroder.ErodeTerrain(raycastTarget.point, operation);
                 }
@@ -321,18 +328,17 @@ public class CameraController : MonoBehaviour
 
         //store undo information to the undo list on mouse up
         if(!mouseDown && operation != null) {
-            //TerrainManager.instance.
             gameObject.GetComponent<OperationList>().AddOperation(operation);
             operation = null;
             stampApplied = false;
 
             if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Stamp || internalData.mode == InternalDataScriptable.Modes.Erode) {
-                TerrainManager.instance.ApplyTextures();
+                materialController.ApplyTextures();
 
                 if(internalData.oceanActive)
-                    mainTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
+                    currentTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
             } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
-                TerrainManager.instance.ApplyMask();
+                materialController.ApplyMask();
             }
 
         }
@@ -344,8 +350,8 @@ public class CameraController : MonoBehaviour
         RaycastHit raycastTarget;
 
         if(SendRaycastFromCameraToMousePointer(out raycastTarget)) {
-            if(raycastTarget.collider.gameObject != mainTerrain.gameObject) {
-                mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
+            if(raycastTarget.collider.gameObject != currentTerrain.gameObject) {
+                currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
                 return;
             }
 
@@ -353,39 +359,39 @@ public class CameraController : MonoBehaviour
             float rotation = 0;
             Texture2D shape = null;
             if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
-                radius = sculptBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                radius = sculptBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                 rotation = sculptBrushData.brushRotation;
                 shape = sculptBrushData.brush;
             } else if (internalData.mode == InternalDataScriptable.Modes.Paint) {
-                radius = paintBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                radius = paintBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                 rotation = paintBrushData.brushRotation;
                 shape = paintBrushData.brush;
             } else if (internalData.mode == InternalDataScriptable.Modes.Stamp) {
-                radius = stampBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                radius = stampBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                 rotation = stampBrushData.brushRotation;
                 shape = stampBrushData.brush;
             } else if (internalData.mode == InternalDataScriptable.Modes.Erode) {
-                radius = erosionBrushData.brushRadius / (mainTerrain.terrainData.size.x);
+                radius = erosionBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                 rotation = erosionBrushData.brushRotation;
                 shape = erosionBrushData.brush;
             }
 
             Vector3 location = raycastTarget.point;
-            float posX = ((location.x - mainTerrain.transform.position.x) / mainTerrain.terrainData.size.x);
-            float posZ = ((location.z - mainTerrain.transform.position.z) / mainTerrain.terrainData.size.z);
+            float posX = ((location.x - currentTerrain.transform.position.x) / currentTerrain.terrainData.size.x);
+            float posZ = ((location.z - currentTerrain.transform.position.z) / currentTerrain.terrainData.size.z);
 
-//            float cusorHeight = mainTerrain.terrainData.GetHeight((int)(posX * mainTerrainMapSize), (int)(posZ * mainTerrainMapSize));
+//            float cusorHeight = currentTerrain.terrainData.GetHeight((int)(posX * currentTerrainMapSize), (int)(posZ * currentTerrainMapSize));
 //            Debug.Log(posX + ":" + posZ + ":" + cusorHeight);
 
             posX -=  (radius / 2);
             posZ -=  (radius / 2);
 
             //Debug.Log(posX + ":" + posZ);
-            mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(posX, posZ, radius, radius));
-            mainTerrain.materialTemplate.SetTexture("_CursorTexture", shape);
-            mainTerrain.materialTemplate.SetFloat("_CursorRotation", -rotation);
+            currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(posX, posZ, radius, radius));
+            currentTerrain.materialTemplate.SetTexture("_CursorTexture", shape);
+            currentTerrain.materialTemplate.SetFloat("_CursorRotation", -rotation);
         } else {
-            mainTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
+            currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         }
     }
 

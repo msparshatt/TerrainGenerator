@@ -29,14 +29,17 @@ public class SystemPanel : MonoBehaviour, IPanel
     [Header("Data objects")]
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private MaterialSettings materialSettings;
 
     [SerializeField] private GameObject gameState;
 
-    private TerrainManager manager;
     private string savefileName;
     Serialisation serialiser;
     Controller controller;
-    
+
+    private TerrainManager manager;
+    private HeightmapController heightmapController;    
+    private MaterialController materialController;
 
     // Start is called before the first frame update
     void Start()
@@ -45,7 +48,10 @@ public class SystemPanel : MonoBehaviour, IPanel
 
     public void InitialisePanel()
     {
-        manager = TerrainManager.instance;
+        manager = TerrainManager.Instance();
+        heightmapController = manager.HeightmapController;
+        materialController = manager.MaterialController;
+
         serialiser = gameState.GetComponent<Serialisation>();
         controller = gameState.GetComponent<Controller>();
     }
@@ -59,8 +65,8 @@ public class SystemPanel : MonoBehaviour, IPanel
     public void FlatButtonClick()
     {
         proceduralPanel.SetActive(false);
-        manager.CreateFlatTerrain();
-        manager.ApplyTextures();
+        heightmapController.CreateFlatTerrain();
+        materialController.ApplyTextures();
     }
 
     public void HeightmapButtonClick()
@@ -70,7 +76,7 @@ public class SystemPanel : MonoBehaviour, IPanel
         FileBrowser.SetDefaultFilter( ".raw" );
 
         playerInput.enabled = false;
-        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; manager.CreateTerrainFromHeightmap(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
+        FileBrowser.ShowLoadDialog((filenames) => {playerInput.enabled = true; heightmapController.CreateTerrainFromHeightmap(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled Load");}, FileBrowser.PickMode.Files);
     }
 
     public void ProceduralButtonClick()
@@ -110,7 +116,7 @@ public class SystemPanel : MonoBehaviour, IPanel
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Obj files", ".obj"));
 
         playerInput.enabled = false;
-        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  manager.ExportTerrainAsObj(filenames[0], internalData.ambientOcclusion, scalefactor);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  heightmapController.ExportTerrainAsObj(filenames[0], materialSettings.ambientOcclusion, scalefactor);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);
 
         //exportTerrain.Export(aoToggle.isOn, scaleSlider.value);
     }
@@ -120,7 +126,7 @@ public class SystemPanel : MonoBehaviour, IPanel
 		FileBrowser.SetFilters( false, new FileBrowser.Filter( "Raw heightmap", ".raw"));
 
         playerInput.enabled = false;
-        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  manager.ExportTerrainAsRaw(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
+        FileBrowser.ShowSaveDialog((filenames) => {playerInput.enabled = true;  heightmapController.ExportTerrainAsRaw(filenames[0]);}, () => {playerInput.enabled = true; Debug.Log("Canceled save");}, FileBrowser.PickMode.Files);        
     }
 
 

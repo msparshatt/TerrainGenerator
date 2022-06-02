@@ -40,24 +40,36 @@ public class Controller : MonoBehaviour
     [Header("Water")]
     [SerializeField] private GameObject ocean;
 
+    [Header("Terrain")]
+    [SerializeField] private GameObject currentTerrain;
+
     public List<string> customTextures;
 
     private GameResources gameResources;
     private TerrainManager manager;
+    private HeightmapController heightmapController;
+    private MaterialController materialController;
 
     private float time;
     // Start is called before the first frame update
+
+    //ensure the TerrainManager is set up before anything else tries to access it
+    void Awake()
+    {
+        manager = TerrainManager.Instance();
+        manager.TerrainObject = currentTerrain;
+    }
+
     void Start()
     {
+        heightmapController = manager.HeightmapController;
+        materialController = manager.MaterialController;
+
         //PlayerPrefs.DeleteAll();
         //cache the instance of the GameResources object
         gameResources = GameResources.instance;
 
-        //cache an instant of the terrain manager
-        manager = TerrainManager.instance;
-
-        manager.SetupTerrain(settingsData, internalData, busyCursor, textureShader, materialShader, sun, paintBrushData);
-        manager.CreateFlatTerrain();
+        heightmapController.CreateFlatTerrain();
 
         //set up brush settings
         sculptBrushData.brushRadius = 50;
@@ -88,8 +100,6 @@ public class Controller : MonoBehaviour
         LoadCustomStamps();
 
         InitialiseFlags();
-
-        manager.ApplyTextures();
     }
 
     private void InitialiseFlags()
@@ -101,7 +111,6 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //manager.UpdateLighting();
         if(internalData.windSpeed > 0) {
             float xmovement = internalData.windSpeed * Mathf.Sin(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
             float ymovement = internalData.windSpeed * Mathf.Cos(internalData.windDirection * Mathf.Deg2Rad) * time / 50000;
@@ -380,8 +389,8 @@ public class Controller : MonoBehaviour
     }
 
     public void Reset() {
-        manager.CreateFlatTerrain();
-        manager.ClearOverlay();
+        heightmapController.CreateFlatTerrain();
+        materialController.ClearOverlay();
 
         for(int index = 0; index < panels.Length; index++) {
             panels[index].GetComponent<IPanel>().ResetPanel();

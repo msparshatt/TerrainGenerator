@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ExportHeightmap 
 {
-    public Terrain terrainObject;
     private static ExportHeightmap _instance;
     public static ExportHeightmap instance {
         get {
@@ -25,10 +24,7 @@ public class ExportHeightmap
 
     public byte[] GetHeightmap()
     {
-        //access the terrain data
-        Terrain terrain = terrainObject.GetComponent<Terrain>();
-        TerrainData data = terrain.terrainData;
- 
+        TerrainData data = TerrainManager.Instance().TerrainData;
         //get the terrain resolution
         int h = data.heightmapResolution;
         int w = data.heightmapResolution;
