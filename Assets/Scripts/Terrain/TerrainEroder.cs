@@ -21,16 +21,14 @@ public class TerrainEroder : MonoBehaviour
     private float gravity = 10f;*/
 
     private Terrain terrain;
-    private TerrainManager manager;
 
     // Start is called before the first frame update
     void Start()
     {
         terrain = gameObject.GetComponent<Terrain>();        
-        manager = TerrainManager.instance;
     }
   
-    public async void ErodeTerrain(Vector3 location, Operation sculptOperation)
+    public void ErodeTerrain(Vector3 location, Operation sculptOperation)
     {
         TerrainData terrainData = terrain.terrainData;
 
@@ -107,9 +105,7 @@ public class TerrainEroder : MonoBehaviour
 
     public float[,] Erosion (float[,] heightmap, int mapWidth, int mapLength) 
     {
-        float[] map = manager.ConvertTo1DFloatArray(heightmap);
-
-        float minSedimentCapacity = 0.01f;
+        float[] map = ArrayHelper.ConvertTo1DFloatArray(heightmap);
 
         int numThreads = erosionIterations / 16;
 
@@ -187,6 +183,6 @@ public class TerrainEroder : MonoBehaviour
         brushIndexBuffer.Release ();
         brushWeightBuffer.Release ();
 
-        return manager.ConvertTo2DArray(map, mapWidth, mapLength, erosionData.erosionBrushRadius);
+        return ArrayHelper.ConvertTo2DArray(map, mapWidth, mapLength, erosionData.erosionBrushRadius);
     }
 }
