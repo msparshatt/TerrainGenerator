@@ -34,12 +34,6 @@ public class SculptPanel : MonoBehaviour, IPanel
     private GameResources gameResources;
     private Controller controller;
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
     public void InitialisePanel()
     {
         gameResources = GameResources.instance;
@@ -78,11 +72,6 @@ public class SculptPanel : MonoBehaviour, IPanel
         rotationSlider.value = data.brushRotation;
         strengthSlider.value = data.brushStrength;
         SelectBrushIcon(data.brushIndex);
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void OnDisable()
