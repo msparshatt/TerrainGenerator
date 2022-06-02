@@ -57,7 +57,7 @@ public class WaterPanel : MonoBehaviour, IPanel
         LoadPanel();
     }
 
-    public async void LoadPanel()
+    public void LoadPanel()
     {
         oceanActiveToggle.isOn = internalData.oceanActive;
         oceanHeightSlider.value = internalData.oceanHeight;
