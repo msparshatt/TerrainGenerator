@@ -52,9 +52,9 @@ public class PaintPanel : MonoBehaviour, IPanel
     private List<GameObject> textureIcons;
     private List<GameObject> brushIcons;
     private int textureIndex;
-    private TerrainManager manager;
     private Controller controller;
-
+    private TerrainManager manager;
+    private MaterialController materialController;
     private int brushIndex;
 
     // Start is called before the first frame update
@@ -64,10 +64,11 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void InitialisePanel()
     {
+        manager = TerrainManager.Instance();
+        materialController = manager.MaterialController;
         gameResources = GameResources.instance;
         textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
         brushIcons = UIHelper.SetupPanel(gameResources.paintBrushes, paintBrushScrollView.transform, SelectBrushIcon);
-        manager = TerrainManager.instance;
         controller = gameState.GetComponent<Controller>();
 
         paintBrushData.filter = filterToggle.isOn;
@@ -93,6 +94,18 @@ public class PaintPanel : MonoBehaviour, IPanel
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
+    }
+
+    public void FromJson(string json)
+    {
+        paintScaleSlider.value = JsonUtility.FromJson<PaintSaveData_v1>(json).paintScale;
+    }
+
+    public string ToJson()
+    {
+        PaintSaveData_v1 data = new PaintSaveData_v1();
+        data.paintScale = internalData.paintScale;
+        return JsonUtility.ToJson(data);
     }
 
     // Update is called once per frame
@@ -171,7 +184,7 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void ClearButtonClick()
     {
-        manager.ClearOverlay();
+        materialController.ClearOverlay();
     }
 
     public void PaintScaleSliderChange(float value)
@@ -317,31 +330,30 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void FilterToggleChange(bool isOn)
     {
         paintBrushData.filter = isOn;
-        manager.TogglePaintMask(isOn);
+        materialController.TogglePaintMask(isOn);
     }
 
     public void FilterTypeChange(int value)
     {
         paintBrushData.filterType = (PaintBrushDataScriptable.MixTypes)(value + 1);
-        manager.ApplyMask();
+        materialController.ApplyMask();
     }
 
     public void FilterFactorSliderChange(float value)
     {
         paintBrushData.filterFactor = value;
-        manager.ApplyMask();
+        materialController.ApplyMask();
     }
 
     public void OnDisable()
     {
-        manager.TogglePaintMask(false);
+        materialController.TogglePaintMask(false);
         textureImage.color = settingsData.deselectedColor;
         paintBrushImage.color = settingsData.deselectedColor;
     }
 
     public void OnEnable()
     {
-        if(manager != null)
-            manager.TogglePaintMask(filterToggle.isOn);
+        materialController.TogglePaintMask(filterToggle.isOn);
     }
 }
