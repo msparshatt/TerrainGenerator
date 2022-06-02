@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct SculptSaveData_v1
+public struct BrushSaveData_v1
 {
     public float brushRadius;
     public float brushRotation;

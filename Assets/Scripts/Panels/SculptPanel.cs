@@ -55,7 +55,7 @@ public class SculptPanel : MonoBehaviour, IPanel
 
     public string ToJson()
     {
-        SculptSaveData_v1 data = new SculptSaveData_v1();
+        BrushSaveData_v1 data = new BrushSaveData_v1();
         data.brushRadius = brushData.brushRadius;
         data.brushRotation = brushData.brushRotation;
         data.brushStrength = brushData.brushStrength;
@@ -66,7 +66,7 @@ public class SculptPanel : MonoBehaviour, IPanel
 
     public void FromJson(string json)
     {
-        SculptSaveData_v1 data = JsonUtility.FromJson<SculptSaveData_v1>(json);
+        BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
 
         radiusSlider.value = data.brushRadius;
         rotationSlider.value = data.brushRotation;
