@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SkyPanel : MonoBehaviour, IPanel
 {
     [Header("Sun elements")]
+    [SerializeField] private Light sun;
     [SerializeField] private Toggle LightToggle;
 
     [SerializeField] private Slider sunHeightSlider;
@@ -32,9 +33,9 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private InternalDataScriptable defaultData;
 
-
     private bool autoColor = true;
     private TerrainManager manager;
+    private MaterialController materialController;
 
     // Update is called once per frame
     void Update()
@@ -43,7 +44,8 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     public void InitialisePanel()
     {
-        manager = TerrainManager.instance;
+        manager = TerrainManager.Instance();
+        materialController = manager.MaterialController;
         sunColorPicker.Awake();
         ResetPanel();
         sunColorPicker.onColorChanged += delegate {ColorPickerChange(); };
@@ -157,7 +159,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     }
     public void LightToggleChange(bool isOn)
     {
-        manager.ApplyLighting(isOn);
+        materialController.ApplyLighting(isOn);
         internalData.lightTerrain = isOn;
     }
 
@@ -186,7 +188,9 @@ public class SkyPanel : MonoBehaviour, IPanel
     }
     private void MoveSun()
     {
-        manager.MoveSun(internalData.sunHeight, internalData.sunDirection);
+        sun.transform.localRotation = Quaternion.Euler(internalData.sunHeight, internalData.sunDirection, 0);
+
+        materialController.UpdateLighting();
     }
 
     public void AutoColorToggleChange(bool isOn)
@@ -210,9 +214,9 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     private void SetSunColor(Color sunColor)
     {
-        manager.SetSunColor(sunColor);
+        sun.color = sunColor;
 
-        SkyMaterial.SetColor("_SunColor", sunColor);
+        materialController.UpdateLighting();
     }
 
     public void CloudToggleChange(bool isOn)
