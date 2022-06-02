@@ -47,6 +47,28 @@ public class StampPanel : MonoBehaviour, IPanel
         
     }
 
+    public string ToJson()
+    {
+        BrushSaveData_v1 data = new BrushSaveData_v1();
+        data.brushIndex = brushIndex;
+        data.brushRadius = brushData.brushRadius;
+        data.brushRotation = brushData.brushRotation;
+        data.brushStrength = brushData.brushStrength;
+
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string json) 
+    {
+        BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
+
+        radiusSlider.value = data.brushRadius;
+        rotationSlider.value = data.brushRotation;
+        heightSlider.value = data.brushStrength;
+
+        SelectBrushIcon(data.brushIndex);
+    }
+
     public void InitialisePanel()
     {
         gameResources = GameResources.instance;
