@@ -54,15 +54,31 @@ public class SculptPanel : MonoBehaviour, IPanel
     {
         SelectBrushIcon(0);
 
-        brushData.brushRadius = defaultBrushData.brushRadius;
-        brushData.brushRotation = defaultBrushData.brushRotation;
-        brushData.brushStrength = defaultBrushData.brushStrength;
-
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
     }
 
+    public string ToJson()
+    {
+        SculptSaveData_v1 data = new SculptSaveData_v1();
+        data.brushRadius = brushData.brushRadius;
+        data.brushRotation = brushData.brushRotation;
+        data.brushStrength = brushData.brushStrength;
+        data.brushIndex = brushIndex;
+
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string json)
+    {
+        SculptSaveData_v1 data = JsonUtility.FromJson<SculptSaveData_v1>(json);
+
+        radiusSlider.value = data.brushRadius;
+        rotationSlider.value = data.brushRotation;
+        strengthSlider.value = data.brushStrength;
+        SelectBrushIcon(data.brushIndex);
+    }
     // Update is called once per frame
     void Update()
     {
