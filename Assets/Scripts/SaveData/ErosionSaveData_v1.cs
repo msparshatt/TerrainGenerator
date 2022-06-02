@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct ErosionSaveData_v1
+public class ErosionSaveData_v1: BrushSaveData_v1
 {
     public int erosionBrushRadius;
     public int lifetime;
