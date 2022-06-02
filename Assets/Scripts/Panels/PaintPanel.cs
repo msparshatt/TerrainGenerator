@@ -98,13 +98,25 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void FromJson(string json)
     {
-        paintScaleSlider.value = JsonUtility.FromJson<PaintSaveData_v1>(json).paintScale;
+        PaintSaveData_v1 data = JsonUtility.FromJson<PaintSaveData_v1>(json);
+        radiusSlider.value = data.brushRadius;
+        rotationSlider.value = data.brushRotation;
+        strengthSlider.value = data.brushStrength;
+
+        paintScaleSlider.value = data.paintScale;
+
+        SelectBrushIcon(data.brushIndex);
     }
 
     public string ToJson()
     {
         PaintSaveData_v1 data = new PaintSaveData_v1();
         data.paintScale = internalData.paintScale;
+        data.brushIndex = brushIndex;
+        data.brushRadius = paintBrushData.brushRadius;
+        data.brushRotation = paintBrushData.brushRotation;
+        data.brushStrength = paintBrushData.brushStrength;
+        
         return JsonUtility.ToJson(data);
     }
 
