@@ -28,7 +28,6 @@ class ExportTerrain
     SaveResolution saveResolution = SaveResolution.Half;
  
     public Terrain terrainObject;
-    public Dropdown scaleDropDown;
  
     public Texture2D busyCursor;
 
@@ -59,8 +58,6 @@ class ExportTerrain
             terrain = terrainObject.terrainData;
             terrainPos = terrainObject.transform.position;
         }
-
-        //float scalefactor = 0.02f; // * Mathf.Pow(2, scaleDropDown.value); //reduce the size so it isn't too large for FlowScape
 
         Cursor.SetCursor(busyCursor, Vector2.zero, CursorMode.Auto); 
 
