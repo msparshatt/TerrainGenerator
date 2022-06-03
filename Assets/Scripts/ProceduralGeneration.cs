@@ -28,6 +28,7 @@ public class ProceduralGeneration
     public float noiseAmplitude;
     public Vector2 voronoiOffset;
     public float voronoiValleys;
+    public int voronoiType;
 
     public float factor;
     public bool clampEdges;
@@ -117,6 +118,7 @@ public class ProceduralGeneration
         proceduralGenerationShader.SetFloat("VoronoiYOffset", voronoiOffset.y);
         proceduralGenerationShader.SetFloat("CellSize", cellSize);
         proceduralGenerationShader.SetFloat("VoronoiValleys", voronoiValleys);
+        proceduralGenerationShader.SetInt("VoronoiType", voronoiType);
 
         proceduralGenerationShader.SetFloat("Factor", factor);
 

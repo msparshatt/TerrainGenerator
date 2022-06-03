@@ -16,6 +16,7 @@ float VoronoiXOffset;
 float VoronoiYOffset;
 float CellSize;
 float VoronoiValleys;
+int VoronoiType;
 
 //factor for mixing perlin and voronoi noise
 float Factor;
@@ -100,8 +101,16 @@ float VoronoiNoise(float xPos, float yPos)
         }
     }
 
+    float result = 0;
 
-    float result = minDistance2 - minDistance;
+    if(VoronoiType == 0) {          //F1
+        result = minDistance;
+    } else if(VoronoiType == 1) {   //F2
+        result = minDistance2;
+    } else if(VoronoiType == 2) {   //F2 - F1
+        result = minDistance2 - minDistance;
+    }
+
     result = max(result - VoronoiValleys, 0) / (1 - VoronoiValleys);
 
     return result;

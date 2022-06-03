@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public enum GeneratorMode {perlin, ds_perlin, ds_random, maxVal};
 public class ProceduralControlPanel : MonoBehaviour
@@ -29,6 +30,7 @@ public class ProceduralControlPanel : MonoBehaviour
     public Slider voronoiYOffsetSlider;
     public Slider voronoiCellSizeSlider;
     public Slider voronoiValleySlider;
+    public TMP_Dropdown voronoiTypeDropdown;
 
     [Header("Factor")]
     public Slider factorSlider;
@@ -137,6 +139,7 @@ public class ProceduralControlPanel : MonoBehaviour
         procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiYOffsetSlider.value);
         procGen.cellSize = voronoiCellSizeSlider.value; // * 100;
         procGen.voronoiValleys = voronoiValleySlider.value;
+        procGen.voronoiType = voronoiTypeDropdown.value;
 
         procGen.factor = factorSlider.value;
 
