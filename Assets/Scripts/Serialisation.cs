@@ -18,6 +18,7 @@ public class Serialisation : MonoBehaviour
 
     [SerializeField] private GameObject waterPanel;
     [SerializeField] private GameObject skyPanel;
+    [SerializeField] private CameraController cameraController;
 
 
     private string savefileName;
@@ -203,6 +204,8 @@ public class Serialisation : MonoBehaviour
 
         materialController.SetOverlay(texture);
 
+        cameraController.FromJson(data.cameraData);
+        
         GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
 
         for(int index = 0; index < panels.Length; index++) {
@@ -258,12 +261,15 @@ public class Serialisation : MonoBehaviour
             texture = materialController.GetOverlay();
             data.overlayTexture = texture.EncodeToPNG();
 
+            Debug.Log("SAVE: Store panel settings");
             GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
-
             data.panelData = new List<string>();
             for(int index = 0; index < panels.Length; index++) {
                 data.panelData.Add(panels[index].GetComponent<IPanel>().ToJson());
             }
+
+            Debug.Log("SAVE: Store camera positions");
+            data.cameraData = cameraController.ToJson();
 
             Debug.Log("SAVE: Create json string");
             string json = JsonUtility.ToJson(data);            

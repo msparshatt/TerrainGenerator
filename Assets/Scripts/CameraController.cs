@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
@@ -36,6 +37,7 @@ public class CameraController : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private GameObject userInterface;
     [SerializeField] private GameObject[] panels;
+    [SerializeField] private MainBar mainBar;
     private bool uiVisible = true;
 
     //sliders which can be controlled using the scroll wheel
@@ -438,5 +440,32 @@ public class CameraController : MonoBehaviour
         cameraNumber = camera;
         transform.position = cameras[camera].position;
         transform.rotation = cameras[camera].rotation;
+    }
+
+    public string ToJson()
+    {
+        CameraSaveData_v1 data = new CameraSaveData_v1();
+        data.cameraPositions = new List<string>();
+        for(int index = 0; index < NUMBER_OF_CAMERAS; index++) {
+            string posString = JsonUtility.ToJson(new PositionAndRotationSaveData(cameras[index].position, cameras[index].rotation));
+            data.cameraPositions.Add(posString);
+        }
+
+        data.cameraIndex = cameraNumber;
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string json)
+    {
+        CameraSaveData_v1 data = JsonUtility.FromJson<CameraSaveData_v1>(json);
+
+        for(int index = 0; index < data.cameraPositions.Count; index++) {
+            PositionAndRotationSaveData posData = JsonUtility.FromJson<PositionAndRotationSaveData>(data.cameraPositions[index]);
+
+            cameras[index].position = posData.position;
+            cameras[index].rotation = posData.rotation;
+        }
+
+        mainBar.SwitchCamera(data.cameraIndex);
     }
 }

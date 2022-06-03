@@ -3166,6 +3166,7 @@ GameObject:
   - component: {fileID: 54901247}
   - component: {fileID: 54901246}
   - component: {fileID: 54901245}
+  - component: {fileID: 54901248}
   m_Layer: 5
   m_Name: Camera1Button
   m_TagString: Untagged
@@ -3288,6 +3289,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 54901243}
   m_CullTransparentMesh: 1
+--- !u!114 &54901248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54901243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Switch to Camera 1
 --- !u!1 &55313133
 GameObject:
   m_ObjectHideFlags: 0
@@ -10580,6 +10595,7 @@ GameObject:
   - component: {fileID: 192262463}
   - component: {fileID: 192262462}
   - component: {fileID: 192262461}
+  - component: {fileID: 192262464}
   m_Layer: 5
   m_Name: Camera3Button
   m_TagString: Untagged
@@ -10702,6 +10718,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192262459}
   m_CullTransparentMesh: 1
+--- !u!114 &192262464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192262459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Switch to Camera 3
 --- !u!1 &193064192
 GameObject:
   m_ObjectHideFlags: 0
@@ -34270,6 +34300,7 @@ MonoBehaviour:
   paintPanel: {fileID: 746692198}
   waterPanel: {fileID: 291437287}
   skyPanel: {fileID: 1085847824}
+  cameraController: {fileID: 963194229}
 --- !u!114 &645851198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37920,6 +37951,7 @@ GameObject:
   - component: {fileID: 710898447}
   - component: {fileID: 710898446}
   - component: {fileID: 710898445}
+  - component: {fileID: 710898448}
   m_Layer: 5
   m_Name: Camera2Button
   m_TagString: Untagged
@@ -38042,6 +38074,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 710898443}
   m_CullTransparentMesh: 1
+--- !u!114 &710898448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710898443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Switch to Camera 2
 --- !u!1 &711816511
 GameObject:
   m_ObjectHideFlags: 0
@@ -53603,6 +53649,11 @@ MonoBehaviour:
   - {fileID: 161782883}
   - {fileID: 1334728222}
   - {fileID: 995173277}
+  cameraButtons:
+  - {fileID: 54901245}
+  - {fileID: 710898445}
+  - {fileID: 192262461}
+  - {fileID: 1429214207}
   panels:
   - {fileID: 1819768948}
   - {fileID: 149128288}
@@ -53615,7 +53666,7 @@ MonoBehaviour:
   - {fileID: 1824575218}
   sidePanels: {fileID: 1262097358}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 963194229}
 --- !u!1 &1010839451
 GameObject:
   m_ObjectHideFlags: 0
@@ -73581,6 +73632,7 @@ GameObject:
   - component: {fileID: 1429214209}
   - component: {fileID: 1429214208}
   - component: {fileID: 1429214207}
+  - component: {fileID: 1429214210}
   m_Layer: 5
   m_Name: Camera4Button
   m_TagString: Untagged
@@ -73703,6 +73755,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1429214205}
   m_CullTransparentMesh: 1
+--- !u!114 &1429214210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1429214205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ca9327d78e6d596814924931b593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPanel: {fileID: 335145013}
+  text: Switch to Camera 4
 --- !u!1 &1429282558
 GameObject:
   m_ObjectHideFlags: 0
