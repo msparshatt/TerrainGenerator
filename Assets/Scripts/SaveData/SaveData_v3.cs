@@ -11,5 +11,6 @@ public struct SaveData_v3
 
     public byte[] overlayTexture;
 
+    public string cameraData;
     public List<string> panelData;
 } 
