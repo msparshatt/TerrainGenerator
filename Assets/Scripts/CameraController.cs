@@ -7,6 +7,12 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
 using SimpleFileBrowser;
 
+public class PositionAndRotation
+{
+    public Vector3 position;
+    public Quaternion rotation;
+}
+
 public class CameraController : MonoBehaviour
 {
     [Header("Terrain settings")]
@@ -73,6 +79,12 @@ public class CameraController : MonoBehaviour
     private bool stampApplied;
     MaterialController materialController;
 
+    //store the position of each camera
+    const int NUMBER_OF_CAMERAS = 4;
+    private PositionAndRotation[] cameras;
+    private int cameraNumber;
+
+
     void Start()
     {
         manager = TerrainManager.Instance();
@@ -95,6 +107,13 @@ public class CameraController : MonoBehaviour
         internalData.unsavedChanges = false;
         stampApplied = false;
 
+        cameraNumber = 0;
+        cameras = new PositionAndRotation[NUMBER_OF_CAMERAS];
+        for(int index = 0; index < NUMBER_OF_CAMERAS; index++) {
+            cameras[index] = new PositionAndRotation();
+            cameras[index].position = transform.position;
+            cameras[index].rotation = transform.rotation;
+        }
         //currentTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
     }
 
@@ -254,6 +273,10 @@ public class CameraController : MonoBehaviour
 
         transform.position += transform.TransformDirection(movement);
 
+        //save the new position
+        cameras[cameraNumber].position = transform.position;
+        cameras[cameraNumber].rotation = transform.rotation;
+
         if(internalData.ProcGenOpen) {
             for(int i = 0; i < panels.Length; i++) {
                 panels[i].SetActive(false);
@@ -408,5 +431,12 @@ public class CameraController : MonoBehaviour
     {
         Debug.Log(mouseDown);
         return mouseDown;
+    }
+
+    public void SwitchCamera(int camera)
+    {
+        cameraNumber = camera;
+        transform.position = cameras[camera].position;
+        transform.rotation = cameras[camera].rotation;
     }
 }

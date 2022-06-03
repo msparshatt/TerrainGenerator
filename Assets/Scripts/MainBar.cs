@@ -6,9 +6,11 @@ using UnityEngine.UI;
 public class MainBar : MonoBehaviour
 {
     [SerializeField] private Button[] buttons;
+    [SerializeField] private Button[] cameraButtons;
     [SerializeField] private GameObject[] panels;
     [SerializeField] private GameObject sidePanels;
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private CameraController cameraController;
 
     private Color unselectedColor = Color.white;
     private Color selectedColor = Color.grey;
@@ -19,6 +21,7 @@ public class MainBar : MonoBehaviour
         HideAllPanels();
         ShowPanel(0);
         internalData.mode = (InternalDataScriptable.Modes)0;
+        SwitchCamera(0);
     }
 
     public void ButtonClick(int index)
@@ -33,6 +36,15 @@ public class MainBar : MonoBehaviour
         }
     }
 
+    public void SwitchCamera(int camera)
+    {
+        for(int i = 0; i < cameraButtons.Length; i++) {
+            cameraButtons[i].GetComponent<Image>().color = unselectedColor;
+        }
+
+        cameraButtons[camera].GetComponent<Image>().color = selectedColor;
+        cameraController.SwitchCamera(camera);   
+    }
     private void ShowPanel(int index)
     {
         panels[index].SetActive(true);
