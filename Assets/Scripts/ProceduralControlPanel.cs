@@ -12,6 +12,9 @@ public class ProceduralControlPanel : MonoBehaviour
     public Sprite unselectedTab;
     public Sprite selectedTab;
 
+    [Header("Base Panels")]
+    public GameObject[] basePanels;
+
 
     [Header("Perlin")]
     public Slider xOffsetSlider;
@@ -84,8 +87,10 @@ public class ProceduralControlPanel : MonoBehaviour
 
     private GeneratorMode mode;
 
+    private float[] basePanelHeights;
+
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         Debug.Log("start");
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
