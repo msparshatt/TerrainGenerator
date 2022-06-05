@@ -30,7 +30,7 @@ public class ModifyRectangle
 
         //translate from the center of the sculpt brush to the top left
         int startX = (int)(locationInTerrain.x - (midPoint / terrainSize.x * resolution.x)); 
-        int startY = (int)(locationInTerrain.y - (midPoint / terrainSize.y * resolution.y));
+        int startY = (int)(locationInTerrain.y - (midPoint / terrainSize.z * resolution.y));
 
         //calculate the size of the brush within the heightmap
         int width = (int)(brushData.brushRadius / terrainSize.x * resolution.x);
