@@ -18,6 +18,7 @@ public class ProceduralGeneration
 {
     public Vector2 perlinOffset;
 
+    //hills
     public float scale;
     public int iterations;
     public float iterationFactor;
@@ -27,16 +28,37 @@ public class ProceduralGeneration
     public float cellSize;
     public float noiseAmplitude;
     public Vector2 voronoiOffset;
-    public float voronoiValleys;
     public int voronoiType;
 
     public float factor;
+    public float hillAmplitude;
+
+    //mountains
+    public int mountainType;
+    public Vector2 mountainOffset;
+    public float mountainScale;
+    public float mountainAmplitude;
+    public int mountainIterations;
+    public float mountainIterationFactor;
+    public float mountainIterationRotation;
+    public int mountainVoronoiType;
+
+    //plateaus
+    public bool plateausOn;
+    public Vector2 plateauOffset;
+    public float plateauScale;
+    public float plateauAmplitude;
+    public int plateauVoronoiType;
+    public float plateauHeight;
+
     public bool clampEdges;
     public float clampHeight;
     public bool toggle;
 
     public float minHeight;
+    public float maxHeight;
     public float heightscale;
+    public bool invert;
 
     public ComputeShader proceduralGenerationShader;
     public ComputeShader erosionShader;
@@ -105,24 +127,51 @@ public class ProceduralGeneration
         ComputeBuffer heightBuffer = new ComputeBuffer(resolution * resolution, sizeof(float));
         int kernelHandle = proceduralGenerationShader.FindKernel("GenerateTerrain");
 
-        proceduralGenerationShader.SetFloat("PerlinScale", scale);
-        proceduralGenerationShader.SetFloat("PerlinXOffset", perlinOffset.x);
-        proceduralGenerationShader.SetFloat("PerlinYOffset", perlinOffset.y);
-        proceduralGenerationShader.SetInt("PerlinIterations", iterations);
-        proceduralGenerationShader.SetFloat("PerlinIterationFactor", iterationFactor);
-        proceduralGenerationShader.SetFloat("PerlinIterationRotation", iterationRotation);
-
+        //generic settings
         proceduralGenerationShader.SetInt("Resolution", resolution);
 
-        proceduralGenerationShader.SetFloat("VoronoiXOffset", voronoiOffset.x);
-        proceduralGenerationShader.SetFloat("VoronoiYOffset", voronoiOffset.y);
-        proceduralGenerationShader.SetFloat("CellSize", cellSize);
-        proceduralGenerationShader.SetFloat("VoronoiValleys", voronoiValleys);
-        proceduralGenerationShader.SetInt("VoronoiType", voronoiType);
+        //settings for hills       
+        proceduralGenerationShader.SetFloat("HillPerlinScale", scale);
+        proceduralGenerationShader.SetFloat("HillPerlinXOffset", perlinOffset.x);
+        proceduralGenerationShader.SetFloat("HillPerlinYOffset", perlinOffset.y);
+        proceduralGenerationShader.SetInt("HillIterations", iterations);
+        proceduralGenerationShader.SetFloat("HillIterationFactor", iterationFactor);
+        proceduralGenerationShader.SetFloat("HillIterationRotation", iterationRotation);
+        proceduralGenerationShader.SetFloat("HillAmplitude", hillAmplitude);
 
-        proceduralGenerationShader.SetFloat("Factor", factor);
 
+        proceduralGenerationShader.SetFloat("HillVoronoiXOffset", voronoiOffset.x);
+        proceduralGenerationShader.SetFloat("HillVoronoiYOffset", voronoiOffset.y);
+        proceduralGenerationShader.SetFloat("HillVoronoiScale", cellSize);
+        proceduralGenerationShader.SetInt("HillVoronoiType", voronoiType);
+
+        proceduralGenerationShader.SetFloat("HillFactor", factor);
+
+        //mountain settings
+        proceduralGenerationShader.SetInt("MountainType", mountainType);
+        proceduralGenerationShader.SetFloat("MountainScale", mountainScale);
+        proceduralGenerationShader.SetFloat("MountainXOffset", mountainOffset.x);
+        proceduralGenerationShader.SetFloat("MountainYOffset", mountainOffset.y);
+        proceduralGenerationShader.SetInt("MountainIterations", mountainIterations);
+        proceduralGenerationShader.SetFloat("MountainIterationFactor", mountainIterationFactor);
+        proceduralGenerationShader.SetFloat("MountainIterationRotation", mountainIterationRotation);
+        proceduralGenerationShader.SetFloat("MountainAmplitude", mountainAmplitude);
+        proceduralGenerationShader.SetInt("MountainVoronoiType", mountainVoronoiType);
+
+        //plateau settings
+        proceduralGenerationShader.SetFloat("PlateauXOffset", plateauOffset.x);
+        proceduralGenerationShader.SetFloat("PlateauYOffset", plateauOffset.y);
+        proceduralGenerationShader.SetFloat("PlateauScale", plateauScale);
+        proceduralGenerationShader.SetInt("PlateauType", plateauVoronoiType);
+        if(plateausOn)
+            proceduralGenerationShader.SetFloat("PlateauHeight", plateauHeight);
+        else
+            proceduralGenerationShader.SetFloat("PlateauHeight", 10);
+
+        //modifier settings
         proceduralGenerationShader.SetFloat("MinHeight", minHeight);
+        proceduralGenerationShader.SetFloat("MaxHeight", maxHeight);
+        proceduralGenerationShader.SetBool("InvertHeight", invert);
         proceduralGenerationShader.SetFloat("HeightScale", heightscale);
         proceduralGenerationShader.SetBool("ClampEdges", clampEdges);
         proceduralGenerationShader.SetFloat("ClampHeight", clampHeight);
@@ -147,7 +196,6 @@ public class ProceduralGeneration
 
         float[] data = new float[heightBuffer.count];
         heightBuffer.GetData(data);
-
         heightBuffer.Release();
         heightBuffer = null;
 

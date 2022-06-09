@@ -2,27 +2,44 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel GenerateTerrain
 
-//perlin noise parameters
-float PerlinScale;
-float PerlinXOffset;
-float PerlinYOffset;
-uint PerlinIterations;
-float PerlinIterationFactor;
-float PerlinIterationRotation;
 uint Resolution;
 
-//voronoi noise parameters
-float VoronoiXOffset;
-float VoronoiYOffset;
-float CellSize;
-float VoronoiValleys;
-int VoronoiType;
+//hill noise parameters
+float HillPerlinScale;
+float HillPerlinXOffset;
+float HillPerlinYOffset;
+uint HillIterations;
+float HillIterationFactor;
+float HillIterationRotation;
+float HillAmplitude;
+float HillVoronoiScale;
+float HillVoronoiXOffset;
+float HillVoronoiYOffset;
+int HillVoronoiType;
+float HillFactor;
 
-//factor for mixing perlin and voronoi noise
-float Factor;
+//mountain parameters
+int MountainType;
+float MountainScale;
+float MountainXOffset;
+float MountainYOffset;
+uint MountainIterations;
+float MountainIterationFactor;
+float MountainIterationRotation;
+float MountainAmplitude;
+int MountainVoronoiType;
+
+//plateau parameters
+float PlateauHeight;
+float PlateauScale;
+float PlateauXOffset;
+float PlateauYOffset;
+int PlateauVoronoiType;
 
 //settings
 float MinHeight;
+float MaxHeight;
+bool InvertHeight;
 float HeightScale;
 bool ClampEdges;
 float ClampHeight;
@@ -61,19 +78,20 @@ float2 RotateVector(float2 oldVector, float degrees)
     return float2(newX, newY);
 }
 
-float VoronoiNoise(float xPos, float yPos)
+float VoronoiNoise(float xPos, float yPos, float cellSize, int type)
 {
-    float xcoord = abs(xPos + VoronoiXOffset);
-    float ycoord = abs(yPos + VoronoiYOffset);
+    float xcoord = abs(xPos);
+    float ycoord = abs(yPos);
 
-    float xPosition = xcoord / CellSize;
-    float yPosition = ycoord / CellSize;
+    float xPosition = xcoord / cellSize;
+    float yPosition = ycoord / cellSize;
 
     uint xBase = floor(xPosition);
     uint yBase = floor(yPosition);
 
     float minDistance = 100;
     float minDistance2 = 110;
+    float minDistance3 = 120;
 
     for(int x=-1; x<=1; x++) {
         for(int y=-1; y<=1; y++) {
@@ -93,33 +111,118 @@ float VoronoiNoise(float xPos, float yPos)
             //Vector2.Distance(voronoiCells[cell.x, cell.y], pos);
 
             if(distToCell < minDistance){
+                minDistance3 = minDistance2;
                 minDistance2 = minDistance;
                 minDistance = distToCell;
             } else if(distToCell < minDistance2) {
+                minDistance3 = minDistance2;
                 minDistance2 = distToCell;
-            }   
+            } else if(distToCell < minDistance3) {
+                minDistance3 = distToCell;
+            }
         }
     }
 
     float result = 0;
 
-    if(VoronoiType == 0) {          //F1
+    if(type == 0) {          //F1
         result = minDistance;
-    } else if(VoronoiType == 1) {   //F2
+    } else if(type == 1) {   //F2
         result = minDistance2;
-    } else if(VoronoiType == 2) {   //F2 - F1
+    } else if(type == 2) {   //F2 - F1
         result = minDistance2 - minDistance;
+    } else if(type == 3) {   //F3
+        result = minDistance3;
+    } else if(type == 4) {   //F3 - F1
+        result = minDistance3 - minDistance;
+    } else if(type == 5) {   //F3 - F2
+        result = minDistance3 - minDistance2;
     }
 
-    result = max(result - VoronoiValleys, 0) / (1 - VoronoiValleys);
-
     return result;
+}
+
+float InverseVoronoiNoise(float xpos, float ypos, float cellSize, int type)
+{
+    return 1 - VoronoiNoise(xpos, ypos, cellSize, type);
 }
 
 //sigmoid value used for terracing
 float Sigmoid(float k, float t)
 {
     return (k * t) / (1 + k - t);
+}
+
+float SmoothStep(float start, float end, float value)
+{
+    float lambda = max(0, (value - start) / (end - start));
+    lambda = min(1, lambda);
+
+    return (3 * lambda * lambda - 2 * pow(lambda, 3));
+}
+
+float PerlinNoise(float x, float y, float scale, float startAmplitude, uint iterations, float rotation, float factor)
+{
+    float perlin = 0;
+    float totalAmplitude = 0;
+    float amplitude = startAmplitude;
+
+    float2 position = float2(x, y);
+    //calculate sum of a series of perlin noise functions
+    for(uint i = 0; i < iterations; i++) {
+        position = RotateVector(position, rotation);
+
+        float value = snoise(float2(position.x * scale + 0.1, position.y * scale + 0.1));
+        value = (value + 1) / 2;
+        perlin += value * amplitude;
+
+        scale *= 2;
+        totalAmplitude += amplitude;
+        amplitude *= factor;
+    }
+
+    perlin /= totalAmplitude;
+
+    return perlin * startAmplitude;
+}
+
+float RidgedMultiFractal(float x, float y, float scale, float startAmplitude, uint iterations, float rotation, float factor)
+{
+    float rmf = 0;
+    float totalAmplitude = 0;
+    float amplitude = startAmplitude;
+
+    float2 position = float2(x, y);
+    //calculate sum of a series of perlin noise functions
+    for(uint i = 0; i < iterations; i++) {
+        position = RotateVector(position, rotation);
+
+        float value = snoise(float2(position.x * scale + 0.1, position.y * scale + 0.1));
+        value = 1 - abs(value);
+        rmf += value * value * amplitude;
+
+        scale *= 2;
+        totalAmplitude += amplitude;
+        amplitude *= factor;
+    }
+
+    rmf /= totalAmplitude;
+
+    return rmf * startAmplitude;
+}
+
+float SquareTiles(float x, float y, float resolution, int cycles, float low, float high)
+{
+    float xHeight = x * cycles / resolution;
+    xHeight = SmoothStep(0.4, 0.5, (xHeight - ceil(xHeight) + 1));
+
+    float yHeight = y * cycles / resolution;
+    yHeight = SmoothStep(04., 0.5, round(yHeight - ceil(xHeight) + 1));
+
+    float height = abs(xHeight - yHeight);  //xHeight xor yHeight
+
+    //return high if height = 1, low if height = 0
+    return height * (high - low) + low;
 }
 
 float Terraces(int index, float height)
@@ -152,35 +255,43 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
     uint x = id.x % Resolution;
     uint y = id.x / Resolution;
 
-    float amplitude = 1.0;
-    float scale = PerlinScale / 500.0;
+    float scale1 = 1 / (500.0 * HillPerlinScale);
+    float scale2 = 1 / (500.0 * MountainScale);
 
-    float perlin = 0;
-    float totalAmplitude = 0;
+    float perlin = PerlinNoise(x + HillPerlinXOffset, y + HillPerlinYOffset, scale1, 1.0, HillIterations, HillIterationRotation, HillIterationFactor);
+    float voronoi = VoronoiNoise(x + HillVoronoiXOffset, y + HillVoronoiYOffset, HillVoronoiScale, HillVoronoiType);
+    float hills = (perlin * HillFactor + voronoi * (1 - HillFactor)) * HillAmplitude;
 
-    float2 position = float2(PerlinXOffset + x, PerlinYOffset + y);
-    //calculate sum of a series of perlin noise functions
-    for(uint i = 0; i < PerlinIterations; i++) {
-        position = RotateVector(position, PerlinIterationRotation);
+    float mountains = 0;
+    float mountainCutOff = .4;
+    if(MountainType == 1)
+        mountains = SmoothStep(mountainCutOff, 1, PerlinNoise(x + MountainXOffset, y + MountainYOffset,  scale2, MountainAmplitude, MountainIterations, MountainIterationRotation, MountainIterationFactor));
+    else if (MountainType == 2)
+        mountains = SmoothStep(mountainCutOff, 1, RidgedMultiFractal(x + MountainXOffset, y + MountainYOffset, scale2, MountainAmplitude, MountainIterations, MountainIterationRotation, MountainIterationFactor));
+    else if(MountainType == 3)
+        mountains = SmoothStep(mountainCutOff, 1, VoronoiNoise(x + MountainXOffset , y + MountainYOffset, MountainScale * 500, MountainVoronoiType)) * MountainAmplitude;
+    else if(MountainType == 4)
+        mountains = SmoothStep(mountainCutOff, 1, InverseVoronoiNoise(x + MountainXOffset, y + MountainYOffset, MountainScale * 500, MountainVoronoiType)) * MountainAmplitude;
 
-        float value = snoise(float2(position.x * scale + 0.1, position.y * scale + 0.1));
-        value = (value + 1) / 2;
-        perlin += value * amplitude;
 
-        scale *= 2;
-        totalAmplitude += amplitude;
-        amplitude *= PerlinIterationFactor;
+    float height =  mountains + hills;
+
+    //plateaus
+    float plateauHeight = PerlinNoise(x, y,  0.0001, PlateauHeight, 1, 0, 1) * 10; 
+    float plateauFloor = floor(plateauHeight);
+    float difference = Sigmoid(0.1, plateauHeight - plateauFloor);
+
+    difference = max(0, difference - 0.75) * 4;
+    plateauHeight = lerp(plateauFloor, plateauFloor + 1, difference) / 10;
+
+    if(height > plateauHeight) {
+        float voronoi = VoronoiNoise(x + PlateauXOffset, y + PlateauYOffset, PlateauScale * 500, PlateauVoronoiType) * 0.7;
+        if(voronoi > 0.5)
+            height = plateauHeight;
+        else 
+            height = lerp(height, plateauHeight, voronoi * 2);
     }
-
-    perlin /= totalAmplitude;
-
-    //calculate the voronoi noise
-    float voronoi = VoronoiNoise(x, y) * 0.7;
-
-    //mix the two noise functions
-    float height = (voronoi * (1 - Factor) + perlin * Factor);
-
-
+    
     //if Clamp Edges is true then ensure the height tends to the midpoint at the edges of the heightmap
     float edgeClamp = 0;
     float center = Resolution / 2;
@@ -199,6 +310,13 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
         height = lerp(height, ClampHeight, edgeClamp);                    
     }
 
+
+    //apply the scale value
+    height = (height - 0.5f) * HeightScale + 0.5f;
+
+    if(InvertHeight)
+        height = 1 - height;
+
     //ensure the height is above the minimum value
     if(height < MinHeight + 0.05) {
         if(height < MinHeight - 0.05) {
@@ -208,8 +326,14 @@ void GenerateTerrain (uint3 id : SV_DispatchThreadID)
         }
     }
 
-    //apply the scale value
-    height = (height - 0.5f) * HeightScale + 0.5f;
+    if(height > MaxHeight - 0.05) {
+        if(height > MaxHeight + 0.05) {
+            height = MaxHeight;                        
+        } else {
+            height = lerp(MaxHeight - 0.05, MaxHeight, (height + 0.05f - MaxHeight) * 10);
+        }
+    }
+
 
     //add any terraces
     for(uint terraceIndex = 0; terraceIndex < 3; terraceIndex++) {

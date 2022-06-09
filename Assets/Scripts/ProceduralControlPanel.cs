@@ -29,17 +29,41 @@ public class ProceduralControlPanel : MonoBehaviour
     public Slider voronoiXOffsetSlider;
     public Slider voronoiYOffsetSlider;
     public Slider voronoiCellSizeSlider;
-    public Slider voronoiValleySlider;
     public TMP_Dropdown voronoiTypeDropdown;
 
     [Header("Factor")]
     public Slider factorSlider;
+    public Slider hillAmplitudeSlider;
+
+    [Header("Mountains")]
+    public TMP_Dropdown mountainTypeDropdown;
+    public GameObject mountainPanel1;
+    public GameObject mountainPanel2;
+    public GameObject mountainPanel3;
+    public Slider mountainXOffsetSlider;
+    public Slider mountainYOffsetSlider;
+    public Slider mountainScaleSlider;
+    public Slider mountainAmplitudeSlider;
+    public Slider mountainIterationsSlider;
+    public Slider mountainIterationFactorSlider;
+    public Slider mountainIterationRotationSlider;
+    public TMP_Dropdown mountainVoronoiTypeDropdown;
+
+    [Header("Plateaus")]
+    public Slider plateauXOffsetSlider;
+    public Slider plateauYOffsetSlider;
+    public Slider plateauScaleSlider;
+    public Slider plateauAmplitudeSlider;
+    public TMP_Dropdown plateauVoronoiTypeDropdown;
+    public Toggle plateauToggle;
 
     [Header("Settings")]
     public Slider minimumHeightSlider;
+    public Slider maximumHeightSlider;
     public Slider heightScaleSlider;
     public Toggle clampToggle;
     public Slider heightClampSlider;
+    public Toggle invertToggle;
 
 
     [Header("Terrace UI")]
@@ -138,14 +162,32 @@ public class ProceduralControlPanel : MonoBehaviour
 
         procGen.voronoiOffset = new Vector2(voronoiXOffsetSlider.value, voronoiYOffsetSlider.value);
         procGen.cellSize = voronoiCellSizeSlider.value; // * 100;
-        procGen.voronoiValleys = voronoiValleySlider.value;
         procGen.voronoiType = voronoiTypeDropdown.value;
 
         procGen.factor = factorSlider.value;
+        procGen.hillAmplitude = hillAmplitudeSlider.value;
+
+        procGen.mountainType = mountainTypeDropdown.value;
+        procGen.mountainOffset = new Vector2(mountainXOffsetSlider.value, mountainYOffsetSlider.value);
+        procGen.mountainScale = mountainScaleSlider.value;
+        procGen.mountainIterations = (int)mountainIterationsSlider.value;
+        procGen.mountainIterationFactor = mountainIterationFactorSlider.value;
+        procGen.mountainIterationRotation = mountainIterationRotationSlider.value;
+        procGen.mountainAmplitude = mountainAmplitudeSlider.value;
+        procGen.mountainVoronoiType = mountainVoronoiTypeDropdown.value;
+
+        procGen.plateausOn = plateauToggle.isOn;
+        procGen.plateauOffset = new Vector2(plateauXOffsetSlider.value, plateauYOffsetSlider.value);
+        procGen.plateauScale = plateauScaleSlider.value;
+        procGen.plateauAmplitude = plateauAmplitudeSlider.value;
+        procGen.plateauVoronoiType = plateauVoronoiTypeDropdown.value;
+        procGen.plateauHeight = plateauAmplitudeSlider.value;
 
         procGen.clampEdges = clampToggle.isOn;
         procGen.clampHeight = heightClampSlider.value;
         procGen.minHeight = minimumHeightSlider.value;
+        procGen.maxHeight = maximumHeightSlider.value;
+        procGen.invert = invertToggle.isOn;
         procGen.heightscale = heightScaleSlider.value;
 
         procGen.erosionShader = erosionShader;
@@ -215,6 +257,27 @@ public class ProceduralControlPanel : MonoBehaviour
 
     public void RedrawButtonClick()
     {
+        UpdateTerrain();
+    }
+
+    public void MountainTypeChange(int value)
+    {
+        if(value == 0) {
+            mountainPanel1.SetActive(false);
+            mountainPanel2.SetActive(false);
+            mountainPanel3.SetActive(false);
+        } else {
+            mountainPanel1.SetActive(true);
+
+            if(value == 1 || value == 2) {
+                mountainPanel2.SetActive(true);
+                mountainPanel3.SetActive(false);
+            } else {
+                mountainPanel2.SetActive(false);
+                mountainPanel3.SetActive(true);
+            }
+
+        }
         UpdateTerrain();
     }
 }
