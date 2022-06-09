@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SkyPanel : MonoBehaviour, IPanel
 {
@@ -15,6 +16,8 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private Toggle autoColorToggle;
 
     [Header("Clouds")]
+    [SerializeField] private CloudPresetsDataScriptable[] CloudPresets;
+    [SerializeField] private TMP_Dropdown CloudPresetDropdown;
     [SerializeField] private Material SkyMaterial;
     [SerializeField] private GameObject SkyPlane;
     [SerializeField] private Toggle CloudActiveToggle;
@@ -24,6 +27,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private Slider CloudScaleSlider;
     [SerializeField] private Slider CloudStartSlider;
     [SerializeField] private Slider CloudEndSlider;
+    [SerializeField] private Slider BrightnessSlider;
 
     [SerializeField] private Slider WindDirectionSlider;
     [SerializeField] private Slider WindSpeedSlider;
@@ -37,6 +41,8 @@ public class SkyPanel : MonoBehaviour, IPanel
     private TerrainManager manager;
     private MaterialController materialController;
 
+    private bool presetOptionSelectedFlag = false;
+
     // Update is called once per frame
     void Update()
     {
@@ -47,13 +53,28 @@ public class SkyPanel : MonoBehaviour, IPanel
         manager = TerrainManager.Instance();
         materialController = manager.MaterialController;
         sunColorPicker.Awake();
-        ResetPanel();
         sunColorPicker.onColorChanged += delegate {ColorPickerChange(); };
-
         sunColorPicker.color = Color.white;
-        SkyMaterial.SetColor("_CloudColor", new Vector4(0.5f, 0.5f, 0.5f, 1));
 
+        CloudPresetDropdown.ClearOptions();
+
+        AddTMP_DropdownOption(CloudPresetDropdown, "Custom");
+        for(int index = 0; index < CloudPresets.Length; index++)
+        {
+            AddTMP_DropdownOption(CloudPresetDropdown, CloudPresets[index].presetName);
+        }
+
+        ResetPanel();
         MoveSun();
+    }
+
+    private void AddTMP_DropdownOption(TMP_Dropdown dropdown, string label)
+    {
+        TMP_Dropdown.OptionData newData;
+        newData = new TMP_Dropdown.OptionData();
+        newData.text = label;
+
+        dropdown.options.Add(newData);
     }
 
     public void ResetPanel()
@@ -94,6 +115,9 @@ public class SkyPanel : MonoBehaviour, IPanel
         CloudEndSlider.value = internalData.cloudEnd;
         WindDirectionSlider.value = internalData.windDirection;
         WindSpeedSlider.value = internalData.windSpeed;
+
+        BrightnessSlider.value = 0.9f;
+        CloudPresetDropdown.value = 2;
     }
 
     public void FromJson(string dataString)
@@ -216,6 +240,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     {
         sun.color = sunColor;
 
+        SkyMaterial.SetColor("_SunColor", sunColor);
         materialController.UpdateLighting();
     }
 
@@ -263,12 +288,40 @@ public class SkyPanel : MonoBehaviour, IPanel
     {
         SkyMaterial.SetFloat("_CloudStart", CloudStartSlider.value);
         internalData.cloudStart = CloudStartSlider.value;
+
+        if(!presetOptionSelectedFlag)
+            CloudPresetDropdown.value = 0;
     }
 
     public void CloudEndSliderChange(float value)
     {
         SkyMaterial.SetFloat("_CloudEnd", CloudEndSlider.value);
         internalData.cloudEnd = CloudEndSlider.value;
+
+        if(!presetOptionSelectedFlag)
+            CloudPresetDropdown.value = 0;
+    }
+    
+    public void CloudBrightnessSliderChange(float value)
+    {
+        Color cloudColor = new Color(value, value, value, 1);
+
+        SkyMaterial.SetColor("_CloudColor", cloudColor);
+
+        if(!presetOptionSelectedFlag)
+            CloudPresetDropdown.value = 0;
     }
 
+    public void CloudPresetDropdownChange(int value)
+    {
+        if(value > 0) {
+            CloudPresetsDataScriptable preset = CloudPresets[value - 1];
+
+            presetOptionSelectedFlag = true;
+            CloudStartSlider.value = preset.cloudStart;
+            CloudEndSlider.value = preset.cloudEnd;
+            BrightnessSlider.value = preset.cloudBrightness;
+            presetOptionSelectedFlag = false;
+        }
+    }
 }
