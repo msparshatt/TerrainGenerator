@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SkyMaterialFlat
-  m_Shader: {fileID: 4800000, guid: 4f9c6f776becd3249b8b188cde9ad4a0, type: 3}
+  m_Shader: {fileID: 4800000, guid: e10100e579ccf2049aef86b783c7728d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -58,8 +58,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
-    - _CloudEnd: 1
-    - _CloudStart: -2.5
+    - _CloudEnd: 4
+    - _CloudStart: -0.3
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -82,9 +82,9 @@ Material:
     - _YOffset: 0.34203824
     - _ZWrite: 1
     m_Colors:
-    - _CloudColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
+    - _CloudColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainLightPosition: {r: 0, g: 0.42261827, b: -0.90630776, a: 0}
-    - _SunColor: {r: 0.9320848, g: 0.9124827, b: 0.8889281, a: 1}
+    - _SunColor: {r: 1, g: 0.39999998, b: 0.39999998, a: 1}
   m_BuildTextureStacks: []
