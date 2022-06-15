@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class HeightmapController : MonoBehaviour
 {
-    [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private Texture2D busyCursor;
 
@@ -50,10 +49,11 @@ public class HeightmapController : MonoBehaviour
 
     public void ApplyChanges(ProceduralGeneration procGen, bool erosion)
     {
+        int resolution = thisTerrain.terrainData.heightmapResolution;
         thisTerrain.terrainData = originalData;
         thisTerrain.GetComponent<TerrainCollider>().terrainData = originalData;    
 
-        CreateProceduralTerrain(procGen, erosion);
+        CreateProceduralTerrain(procGen, erosion, resolution);
         //ApplyTextures();
     }
 
@@ -89,14 +89,17 @@ public class HeightmapController : MonoBehaviour
         return data;
     }
 
-    public void CreateFlatTerrain()
+    public void CreateFlatTerrain(int resolution)
     {
-        heightmapResolution = settingsData.defaultTerrainResolution;
+        if(thisTerrain == null)
+            thisTerrain = gameObject.GetComponent<Terrain>();
 
-        float[,] heights = new float[heightmapResolution, heightmapResolution];
+        thisTerrain.terrainData.heightmapResolution = resolution;
 
-        for(int x = 0; x < heightmapResolution; x++) {
-            for(int y = 0; y < heightmapResolution; y++) {
+        float[,] heights = new float[resolution, resolution];
+
+        for(int x = 0; x < resolution; x++) {
+            for(int y = 0; y < resolution; y++) {
                 heights[y, x] = 0.5f;
             }
         }
@@ -148,9 +151,9 @@ public class HeightmapController : MonoBehaviour
         CreateTerrain(heights);
     }
 
-    public void CreateProceduralTerrain(ProceduralGeneration procGen, bool erosion)
+    public void CreateProceduralTerrain(ProceduralGeneration procGen, bool erosion, int heightmapResolution)
     {
-        heightmapResolution = thisTerrain.terrainData.heightmapResolution;
+        thisTerrain.terrainData.heightmapResolution = heightmapResolution;
 
         float[] heights;
         Debug.Log("generating terrain");
@@ -171,9 +174,10 @@ public class HeightmapController : MonoBehaviour
 
     protected void CreateTerrain(float[,] heights)
     {
-        Debug.Log("Creating Terrain");
-        if(thisTerrain != null)
+        Debug.Log("Creating Terrain " + thisTerrain.terrainData.heightmapResolution);
+        if(thisTerrain != null) {
             thisTerrain.terrainData.SetHeights(0,0, heights);
+        }
     }
 
     public int HeightmapResolution()

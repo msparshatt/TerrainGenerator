@@ -65,7 +65,7 @@ public class SystemPanel : MonoBehaviour, IPanel
     public void FlatButtonClick()
     {
         proceduralPanel.SetActive(false);
-        heightmapController.CreateFlatTerrain();
+        heightmapController.CreateFlatTerrain(settingsData.defaultTerrainResolution);
         materialController.ApplyTextures();
     }
 

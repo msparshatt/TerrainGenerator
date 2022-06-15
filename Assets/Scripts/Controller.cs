@@ -69,8 +69,6 @@ public class Controller : MonoBehaviour
         //cache the instance of the GameResources object
         gameResources = GameResources.instance;
 
-        heightmapController.CreateFlatTerrain();
-
         //set up brush settings
         sculptBrushData.brushRadius = 50;
         sculptBrushData.brushStrength = 0.05f;
@@ -93,6 +91,8 @@ public class Controller : MonoBehaviour
         internalData.customMaterials = new List<string>();
 
         InitialiseMainPanels();
+
+        heightmapController.CreateFlatTerrain(settingsData.defaultTerrainResolution);
 
         LoadCustomBrushes();
         LoadCustomTextures();
@@ -389,7 +389,7 @@ public class Controller : MonoBehaviour
     }
 
     public void Reset() {
-        heightmapController.CreateFlatTerrain();
+        heightmapController.CreateFlatTerrain(settingsData.defaultTerrainResolution);
         materialController.ClearOverlay();
 
         for(int index = 0; index < panels.Length; index++) {

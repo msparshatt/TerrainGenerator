@@ -5,12 +5,13 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
 
-public class SettingsPanel : MonoBehaviour
+public class SettingsPanel : MonoBehaviour, IPanel
 {
     [SerializeField] private Slider movementSlider;
     [SerializeField] private Slider sensitivitySlider;
     [SerializeField] private SettingsDataScriptable dataScriptable;
     [SerializeField] private Dropdown ResolutionDropdown;
+    [SerializeField] private Dropdown HeightmapResolutionDropdown;
     [SerializeField] private TMP_InputField undoCountInputField;
     [SerializeField] private GameObject aboutPanel;
 
@@ -41,8 +42,7 @@ public class SettingsPanel : MonoBehaviour
         sensitivitySlider.value = PlayerPrefs.GetFloat("cameraSensitivity", defaultSensitivity);
         dataScriptable.defaultTerrainResolution = 513; //PlayerPrefs.GetInt("DefaultTerrainResolution");
 
-        if(dataScriptable.defaultTerrainResolution == 0)
-            dataScriptable.defaultTerrainResolution = 513;
+        HeightmapResolutionDropdown.value = PlayerPrefs.GetInt("heightmapResolution", 1);
 
         ResolutionDropdown.value = PlayerPrefs.GetInt("ScreenshotResolution");
 
@@ -77,7 +77,7 @@ public class SettingsPanel : MonoBehaviour
         aboutPanel.SetActive(false);
     }
 
-    public void Start()
+    public void InitialisePanel()
     {
         ReloadButtonClick();
     }
@@ -102,5 +102,13 @@ public class SettingsPanel : MonoBehaviour
         }
 
         dataScriptable.undoCount = number;
+    }
+
+    public void HeightmapResolutionDropdownChange(int value)
+    {
+        int[] heightmapResolutions = new int[] {257, 513, 1025, 2049};
+
+        if(value < heightmapResolutions.Length)
+            dataScriptable.defaultTerrainResolution = heightmapResolutions[value];
     }
 }

@@ -223,7 +223,7 @@ public class ProceduralControlPanel : MonoBehaviour
             }
         }
 
-        heightmapController.CreateProceduralTerrain(procGen, erosion);
+        heightmapController.CreateProceduralTerrain(procGen, erosion, settingsData.defaultTerrainResolution);
 
         heightmapImage.GetComponent<RawImage>().texture = heightmapController.GetHeightmapTexture();
     }
