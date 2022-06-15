@@ -110,21 +110,8 @@ public class HeightmapController : MonoBehaviour
     public void CreateTerrainFromHeightmap(string path = "")
     {
         float[,] heights = ReadHeightmap(path);
-
-        if(heights.GetLength(0) > thisTerrain.terrainData.heightmapResolution) {
-            heightmapResolution = thisTerrain.terrainData.heightmapResolution;
-            float[,] newHeights = new float[heightmapResolution, heightmapResolution];
-
-            for(int i = 0; i < heightmapResolution; i++) {
-                for(int j = 0; j < heightmapResolution; j++) {
-                    newHeights[i, j] = heights[i, j];
-                }
-            }
-
-            CreateTerrain(newHeights);
-        } else {
-            CreateTerrain(heights); 
-        }
+        thisTerrain.terrainData.heightmapResolution = heights.GetLength(0);
+        CreateTerrain(heights); 
 
         thisTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
         //ApplyTextures();
