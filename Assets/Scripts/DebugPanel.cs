@@ -12,6 +12,8 @@ public class DebugPanel : MonoBehaviour
     [SerializeField] private TMP_Text gcMemory;
     [SerializeField] private TMP_Text textureMemory;
     [SerializeField] private TMP_Text meshMemory;
+    [SerializeField] private TMP_Text terainResolution;
+    [SerializeField] private Terrain terrrain;
 
     private bool profiling;
 
@@ -29,6 +31,8 @@ public class DebugPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(terrrain != null)
+            terainResolution.text = terrrain.terrainData.heightmapResolution.ToString();
         if(profiling) {
             totalMemory.text = "Total Memory: " + ( _totalReservedMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
             gcMemory.text = "GC Memory: " + (_gcReservedMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
