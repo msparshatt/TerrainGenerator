@@ -15,8 +15,6 @@ Shader "Unlit/TerrainShader"
         _CursorRotation("Cursor Rotation", float) = 0
 
         _ApplyLighting("ApplyLighting", int) = 0
-        _MainLightPosition("MainLightPosition", Vector) = (0,0,0,0)
-        _LightColor("LightColor", Color) = (1,1,1,1)
 
         _ApplyMask("ApplyMask", int) = 0
     }
@@ -32,6 +30,8 @@ Shader "Unlit/TerrainShader"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "AutoLight.cginc"
+            #include "UnityLightingCommon.cginc"
 
             struct appdata
             {
@@ -68,8 +68,6 @@ Shader "Unlit/TerrainShader"
             float4 _CursorLocation;
 
             int _ApplyLighting;
-            uniform float3 _MainLightPosition;
-            uniform float4 _LightColor;          
 
             int _ApplyMask;
 
@@ -84,10 +82,10 @@ Shader "Unlit/TerrainShader"
                 half3 worldNormal = UnityObjectToWorldNormal(v.normal);
                 // dot product between normal and light direction for
                 // standard diffuse (Lambert) lighting
-                half nl = max(0, dot(worldNormal, _MainLightPosition.xyz));
+                half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
 
                 // factor in the light color
-                o.diff = nl * _LightColor;
+                o.diff = nl * _LightColor0;
 
                 return o;
             }
