@@ -202,7 +202,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         if(autoColor) {
             Color skyColor = Color.white;
             if(sunHeightSlider.value <= 15) {
-                skyColor  =  Color.Lerp(Color.white, Color.red, (15 - sunHeightSlider.value) / 15);
+                skyColor  =  Color.Lerp(Color.white, sunsetColor, (15 - sunHeightSlider.value) / 15);
             }
             SetSunColor(skyColor);
         }
@@ -231,10 +231,14 @@ public class SkyPanel : MonoBehaviour, IPanel
             skyboxMaterial.SetColor("_SkyColor", skyColor);
             skyboxMaterial.SetColor("_HorizonColor", horizonColor);
         } else if(height > 0) {
-            skyboxMaterial.SetColor("_SkyColor", skyColor);
-            skyboxMaterial.SetColor("_HorizonColor", sunsetColor);
+            float factor = height / 15.0f;
+            
+            skyboxMaterial.SetColor("_SkyColor", Color.Lerp(nightColor, skyColor, factor));
+            skyboxMaterial.SetColor("_HorizonColor", Color.Lerp(sun.color, horizonColor, factor));
         } else {
-
+            float factor = (height + 10) / 10.0f;
+            skyboxMaterial.SetColor("_SkyColor", nightColor);
+            skyboxMaterial.SetColor("_HorizonColor", Color.Lerp(nightColor, sun.color, factor));
         }
     }
     public void AutoColorToggleChange(bool isOn)
