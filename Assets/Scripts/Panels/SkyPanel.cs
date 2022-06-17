@@ -237,8 +237,6 @@ public class SkyPanel : MonoBehaviour, IPanel
     private void SetSunColor(Color sunColor)
     {
         sun.color = sunColor;
-
-        SkyMaterial.SetColor("_SunColor", sunColor);
     }
 
     public void CloudToggleChange(bool isOn)
