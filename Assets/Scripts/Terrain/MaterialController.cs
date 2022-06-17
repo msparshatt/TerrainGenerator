@@ -275,15 +275,6 @@ public class MaterialController : MonoBehaviour
         terrainMaterial.SetInt("_ApplyLighting", lightOn);
     }
 
-    public void UpdateLighting()
-    {
-        if(terrainMaterial != null) {
-            terrainMaterial.SetColor("_LightColor", sun.color);
-            Vector3 sunPos = sun.transform.rotation * Vector3.back;
-            terrainMaterial.SetVector("_MainLightPosition", sunPos);
-        }
-    }
-
     public void SetAO(bool isOn)
     {
         if(isOn)
