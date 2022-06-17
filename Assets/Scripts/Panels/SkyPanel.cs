@@ -213,8 +213,6 @@ public class SkyPanel : MonoBehaviour, IPanel
     private void MoveSun()
     {
         sun.transform.localRotation = Quaternion.Euler(internalData.sunHeight, internalData.sunDirection, 0);
-
-        materialController.UpdateLighting();
     }
 
     public void AutoColorToggleChange(bool isOn)
@@ -241,7 +239,6 @@ public class SkyPanel : MonoBehaviour, IPanel
         sun.color = sunColor;
 
         SkyMaterial.SetColor("_SunColor", sunColor);
-        materialController.UpdateLighting();
     }
 
     public void CloudToggleChange(bool isOn)
