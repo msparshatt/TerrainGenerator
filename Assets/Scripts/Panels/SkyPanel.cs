@@ -37,6 +37,13 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private InternalDataScriptable defaultData;
 
+    [Header("Skybox")]
+    [SerializeField] private Material skyboxMaterial;
+    [SerializeField] private Color skyColor;
+    [SerializeField] private Color horizonColor;
+    [SerializeField] private Color sunsetColor;
+    [SerializeField] private Color nightColor;
+
     private bool autoColor = true;
     private TerrainManager manager;
     private MaterialController materialController;
@@ -66,6 +73,7 @@ public class SkyPanel : MonoBehaviour, IPanel
 
         ResetPanel();
         MoveSun();
+        UpdateSkyBox();
     }
 
     private void AddTMP_DropdownOption(TMP_Dropdown dropdown, string label)
@@ -199,6 +207,7 @@ public class SkyPanel : MonoBehaviour, IPanel
             SetSunColor(skyColor);
         }
 
+        UpdateSkyBox();
         //CloudSliderChange();
 
         MoveSun();
@@ -215,6 +224,19 @@ public class SkyPanel : MonoBehaviour, IPanel
         sun.transform.localRotation = Quaternion.Euler(internalData.sunHeight, internalData.sunDirection, 0);
     }
 
+    private void UpdateSkyBox()
+    {
+        float height = sunHeightSlider.value;
+        if(height > 15) {
+            skyboxMaterial.SetColor("_SkyColor", skyColor);
+            skyboxMaterial.SetColor("_HorizonColor", horizonColor);
+        } else if(height > 0) {
+            skyboxMaterial.SetColor("_SkyColor", skyColor);
+            skyboxMaterial.SetColor("_HorizonColor", sunsetColor);
+        } else {
+
+        }
+    }
     public void AutoColorToggleChange(bool isOn)
     {
         autoColor = isOn;
