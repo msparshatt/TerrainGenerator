@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: b6228cd0227c92e85814352d6eefef82, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.4964127, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.27673313, g: 0.6463219, b: 0.6951537, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -66284,6 +66284,11 @@ MonoBehaviour:
   ocean: {fileID: 1236204358}
   internalData: {fileID: 11400000, guid: a508d623ea12c46edabb841b5ccf7a0f, type: 2}
   defaultData: {fileID: 11400000, guid: 8e79c3e9ed207bddba840b24d1cb2e87, type: 2}
+  skyboxMaterial: {fileID: 2100000, guid: b6228cd0227c92e85814352d6eefef82, type: 2}
+  skyColor: {r: 0.10902455, g: 0.7794503, b: 0.9245283, a: 0}
+  horizonColor: {r: 0.16237983, g: 0.54680204, b: 0.8396226, a: 0}
+  sunsetColor: {r: 0.8773585, g: 0.42159507, b: 0.16967781, a: 0}
+  nightColor: {r: 0.122641504, g: 0.118592024, b: 0.118592024, a: 0}
 --- !u!114 &1085847826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77074,8 +77079,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 535104878}
   m_HandleRect: {fileID: 535104877}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
