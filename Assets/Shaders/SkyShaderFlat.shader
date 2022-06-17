@@ -2,7 +2,6 @@ Shader "Unlit/SkyShaderFlat"
 {
     Properties
     {
-        _SunColor("Sun color", Color) = (1, 1, 1, 1)
         _CloudColor("Cloud Color", Color) = (0.5, 0.5, 0.5, 0.5)
         _CloudStart("Cloud Start", float) = -1
         _CloudEnd("Cloud End", float) = 1
@@ -25,6 +24,7 @@ Shader "Unlit/SkyShaderFlat"
 
             #include "UnityCG.cginc"
             #include "noiseSimplex.cginc"
+            #include "UnityLightingCommon.cginc"
 
             struct appdata
             {
@@ -42,7 +42,6 @@ Shader "Unlit/SkyShaderFlat"
             float4 _MainTex_ST;
             float _CloudStart;
             float _CloudEnd;
-            float4 _SunColor;
             float _XOffset;
             float _YOffset;
             float _Scale;
@@ -89,7 +88,7 @@ Shader "Unlit/SkyShaderFlat"
                 if(i.uv.y > 0.9)
                     value *= ((1 - i.uv.y) * 10);
 
-                col = fixed4(lerp(_SunColor.xyz, _CloudColor.xyz, value) , value);
+                col = fixed4(lerp(_LightColor0, _CloudColor.xyz, value) , value);
                 
                 return col;
             }
