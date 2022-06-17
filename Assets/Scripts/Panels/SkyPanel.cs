@@ -230,15 +230,18 @@ public class SkyPanel : MonoBehaviour, IPanel
         if(height > 15) {
             skyboxMaterial.SetColor("_SkyColor", skyColor);
             skyboxMaterial.SetColor("_HorizonColor", horizonColor);
+            skyboxMaterial.SetFloat("_StarBrightness", 0);
         } else if(height > 0) {
             float factor = height / 15.0f;
             
             skyboxMaterial.SetColor("_SkyColor", Color.Lerp(nightColor, skyColor, factor));
             skyboxMaterial.SetColor("_HorizonColor", Color.Lerp(sun.color, horizonColor, factor));
+            skyboxMaterial.SetFloat("_StarBrightness", (1 - factor) / 2);
         } else {
             float factor = (height + 10) / 10.0f;
             skyboxMaterial.SetColor("_SkyColor", nightColor);
             skyboxMaterial.SetColor("_HorizonColor", Color.Lerp(nightColor, sun.color, factor));
+            skyboxMaterial.SetFloat("_StarBrightness", 0.5f);
         }
     }
     public void AutoColorToggleChange(bool isOn)
@@ -263,6 +266,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     private void SetSunColor(Color sunColor)
     {
         sun.color = sunColor;
+        UpdateSkyBox();
     }
 
     public void CloudToggleChange(bool isOn)
