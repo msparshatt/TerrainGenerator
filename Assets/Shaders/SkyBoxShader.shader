@@ -90,9 +90,9 @@ Shader "Unlit/SkyBoxShader"
 
                     col =  lerp(_HorizonColor, _SkyColor, height);
 
-                    float scale = 100;
+                    float scale = 10000;
                     float star = snoise(float2(i.uv.x * scale, i.uv.y * scale));
-                    star = (max(0.95, star) - 0.95) * 20;
+                    star = (max(0.9, star) - 0.9) * 20;
                     col += (1, 1, 1, 1) * star * _StarBrightness;
 
                     float4 sunPosition = _WorldSpaceLightPos0;
