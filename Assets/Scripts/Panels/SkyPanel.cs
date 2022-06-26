@@ -38,17 +38,22 @@ public class SkyPanel : MonoBehaviour, IPanel
     [SerializeField] private InternalDataScriptable defaultData;
 
     [Header("Skybox")]
-    [SerializeField] private Material skyboxMaterial;
+    [SerializeField] private Toggle advancedSkyboxToggle;
+    [SerializeField] private Material basicSkyboxMaterial;
+    [SerializeField] private Material advancedSkyboxMaterial;
     [SerializeField] private Color skyColor;
     [SerializeField] private Color horizonColor;
     [SerializeField] private Color sunsetColor;
     [SerializeField] private Color nightColor;
+    [SerializeField] private Color groundColor;
 
     private bool autoColor = true;
     private TerrainManager manager;
     private MaterialController materialController;
 
     private bool presetOptionSelectedFlag = false;
+    private bool advancedSkybox;
+    private Material currentSkybox;
 
     // Update is called once per frame
     void Update()
@@ -73,6 +78,7 @@ public class SkyPanel : MonoBehaviour, IPanel
 
         ResetPanel();
         MoveSun();
+        InitialiseSkybox();
         UpdateSkyBox();
     }
 
@@ -102,6 +108,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.windSpeed = defaultData.windSpeed;
         internalData.windDirection = defaultData.windDirection;
 
+        advancedSkyboxToggle.isOn = false;
         LoadPanel();
     }
 
@@ -224,24 +231,35 @@ public class SkyPanel : MonoBehaviour, IPanel
         sun.transform.localRotation = Quaternion.Euler(internalData.sunHeight, internalData.sunDirection, 0);
     }
 
+    private void InitialiseSkybox()
+    {
+        advancedSkyboxMaterial.SetColor("_SkyTint", skyColor);
+        advancedSkyboxMaterial.SetColor("_HorizonColor", horizonColor);
+        advancedSkyboxMaterial.SetColor("_GroundColor", groundColor);
+        advancedSkyboxMaterial.SetFloat("_StarBrightness", 0);
+
+        basicSkyboxMaterial.SetColor("_SkyTint", skyColor);
+        basicSkyboxMaterial.SetColor("_HorizonColor", horizonColor);
+        basicSkyboxMaterial.SetColor("_GroundColor", groundColor);
+    }
     private void UpdateSkyBox()
     {
         float height = sunHeightSlider.value;
         if(height > 15) {
-            skyboxMaterial.SetColor("_SkyColor", skyColor);
-            skyboxMaterial.SetColor("_HorizonColor", horizonColor);
-            skyboxMaterial.SetFloat("_StarBrightness", 0);
+            advancedSkyboxMaterial.SetColor("_SkyTint", skyColor);
+            advancedSkyboxMaterial.SetColor("_HorizonColor", horizonColor);
+            advancedSkyboxMaterial.SetFloat("_StarBrightness", 0);
         } else if(height > 0) {
             float factor = height / 15.0f;
             
-            skyboxMaterial.SetColor("_SkyColor", Color.Lerp(nightColor, skyColor, factor));
-            skyboxMaterial.SetColor("_HorizonColor", Color.Lerp(sun.color, horizonColor, factor));
-            skyboxMaterial.SetFloat("_StarBrightness", (1 - factor) / 2);
+            advancedSkyboxMaterial.SetColor("_SkyTint", Color.Lerp(nightColor, skyColor, factor));
+            advancedSkyboxMaterial.SetColor("_HorizonColor", Color.Lerp(horizonColor, sun.color, (1 - factor)));
+            advancedSkyboxMaterial.SetFloat("_StarBrightness", (1 - factor) / 2);
         } else {
-            float factor = (height + 10) / 10.0f;
-            skyboxMaterial.SetColor("_SkyColor", nightColor);
-            skyboxMaterial.SetColor("_HorizonColor", Color.Lerp(nightColor, sun.color, factor));
-            skyboxMaterial.SetFloat("_StarBrightness", 0.5f);
+            float factor = (height + 10) / 20.0f;
+            advancedSkyboxMaterial.SetColor("_SkyTint", nightColor);
+            advancedSkyboxMaterial.SetColor("_HorizonColor", Color.Lerp(nightColor, sun.color, factor));
+            advancedSkyboxMaterial.SetFloat("_StarBrightness", 0.5f);
         }
     }
     public void AutoColorToggleChange(bool isOn)
@@ -348,5 +366,21 @@ public class SkyPanel : MonoBehaviour, IPanel
             BrightnessSlider.value = preset.cloudBrightness;
             presetOptionSelectedFlag = false;
         }
+    }
+
+    public void AdvancedSkyboxToggleChange(bool isOn)
+    {
+        if(isOn) {
+            RenderSettings.skybox = advancedSkyboxMaterial;
+            currentSkybox = advancedSkyboxMaterial;
+        } else {
+            RenderSettings.skybox = basicSkyboxMaterial;
+            currentSkybox = basicSkyboxMaterial;
+        }
+    }
+
+    public void SunSizeSliderChange(float value)
+    {
+        advancedSkyboxMaterial.SetFloat("_SunSize", value / 100);
     }
 }
