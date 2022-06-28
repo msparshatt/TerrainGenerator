@@ -73,7 +73,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _StarBrightness: 0.5
+    - _StarBrightness: 0
     - _SunDisk: 2
     - _SunSize: 0.04
     - _SunSizeConvergence: 5
@@ -83,6 +83,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.18431401, g: 0.6509434, b: 0.16273585, a: 0}
-    - _HorizonColor: {r: 0.38716796, g: 0.15613998, b: 0.13610442, a: 0}
-    - _SkyTint: {r: 0.122641504, g: 0.118592024, b: 0.118592024, a: 0}
+    - _HorizonColor: {r: 0.8457191, g: 0.9344962, b: 0.990566, a: 0}
+    - _SkyTint: {r: 0.31523672, g: 0.5767732, b: 0.8679245, a: 0}
   m_BuildTextureStacks: []

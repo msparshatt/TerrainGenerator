@@ -6,7 +6,6 @@ Properties {
     _SunSize ("Sun Size", Range(0,1)) = 0.04
     _SunSizeConvergence("Sun Size Convergence", Range(1,10)) = 5
 
-    _AtmosphereThickness ("Atmosphere Thickness", Range(0,5)) = 1.0
     _SkyTint ("Sky Tint", Color) = (.5, .5, .5, 1)
     _GroundColor ("Ground", Color) = (.369, .349, .341, 1)
 
@@ -35,7 +34,6 @@ SubShader {
         uniform half _SunSize;
         uniform half _SunSizeConvergence;
         uniform half3 _SkyTint;
-        uniform half _AtmosphereThickness;
         float _StarBrightness;
         float4 _HorizonColor;
 
@@ -63,8 +61,6 @@ SubShader {
         // if set vprog will output color in final color space (instead of linear always)
         // in case of rendering in gamma mode that means that we will do lerps in gamma mode too, so there will be tiny difference around horizon
         // #define SKYBOX_COLOR_IN_TARGET_COLOR_SPACE 0
-
-
     #ifndef SKYBOX_COLOR_IN_TARGET_COLOR_SPACE
         #if defined(SHADER_API_MOBILE)
             #define SKYBOX_COLOR_IN_TARGET_COLOR_SPACE 1
