@@ -1,5 +1,5 @@
 ---
-title: "Terrain Generator Manual"
+title: "Terrain Generator Manual V0.8"
 geometry: "top=1cm"
 ---
 
@@ -280,6 +280,9 @@ Adds a layer of clouds using simple perlin noise. The color of the clouds is aff
 - **Wind direction** The direction the clouds should move in degrees. 0 Will move them 
 - **Wind Speed** The speed of clouds movement
 
+## Skybox
+- **Advanced Skybox** - switches to a procedural skybox which changes color depending on the height of the sun
+
 \newpage
 
 # Water Tab
@@ -295,6 +298,20 @@ Adds a layer of clouds using simple perlin noise. The color of the clouds is aff
 - **Foam amount** How much foam to place
 - **Shoreline foam** Places foam where the terrain intersects with the ocean
 - **Foam Spread** How far the foam should spread out from the shoreline
+
+\newpage
+
+# Post Processing Tab
+
+## Chromatic Aberation
+Splits up colors as if being viewed through a lens
+
+## Vignette
+
+Darkens the corners of the scene
+
+## Color Grading
+Allows you to control the exposure and coloring of the scene
 
 \newpage
 
@@ -329,6 +346,31 @@ The amount of Perlin vs Voronoi noise to use
 - Min height: Set a minimum height
 - Height factor: Multiply all heights by this amount
 - Clamp Edges: Ensures the heights tend towards the midpoint as they get closer to the edge
+
+\newpage
+
+## Features
+
+### Mountains
+- Type dropdown: The type of noise to use to create the mountains
+- X offset: X offset for the noise
+- Y offset: Y offset for the noise
+- Scale: The scale of the noise
+- Height: Height factor applied to the noise
+- Iterations: Number of iterations of noise to apply
+- Factor: Multiplier to apply to each iteration of noise
+- Rotation: How much to rotate each iteration of noise
+- Voronoi type: Method for calculating the voronoi noise
+
+
+### Plateaus
+Adds flattened areas to the heightmap. Which areas to flatten is determined using voronoi noise while the height to flatten to is determined using perlin noise.
+
+- X offset, Y offset: Offsets for the noise
+- Scale: Scale factor for the noise
+- Amplitude: Factor applied to the perlin noise funtion when calculating plateau height
+- Voronoi type: Method for calculating the voronoi noise
+
 
 \newpage
 

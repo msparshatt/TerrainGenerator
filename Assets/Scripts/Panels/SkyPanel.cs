@@ -130,6 +130,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         CloudEndSlider.value = internalData.cloudEnd;
         WindDirectionSlider.value = internalData.windDirection;
         WindSpeedSlider.value = internalData.windSpeed;
+        advancedSkyboxToggle.isOn = internalData.advancedSkybox;
 
         BrightnessSlider.value = 0.9f;
         CloudPresetDropdown.value = 2;
@@ -155,6 +156,7 @@ public class SkyPanel : MonoBehaviour, IPanel
             internalData.cloudEnd = data.cloudEnd;
             internalData.windSpeed = data.windSpeed;
             internalData.windDirection = data.windDirection;
+            internalData.advancedSkybox = data.advancedSkybox;
         } else {
             internalData.lightTerrain = defaultData.lightTerrain;
             internalData.sunHeight = defaultData.sunHeight;
@@ -170,6 +172,7 @@ public class SkyPanel : MonoBehaviour, IPanel
             internalData.cloudEnd = defaultData.cloudEnd;
             internalData.windSpeed = defaultData.windSpeed;
             internalData.windDirection = defaultData.windDirection;
+            internalData.advancedSkybox = defaultData.advancedSkybox;
         }
     }
 
@@ -193,6 +196,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         data.cloudEnd = internalData.cloudEnd;
         data.windSpeed = internalData.windSpeed;
         data.windDirection = internalData.windDirection;
+        data.advancedSkybox = internalData.advancedSkybox;
 
         return JsonUtility.ToJson(data);
     }

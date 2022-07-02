@@ -383,6 +383,9 @@ public class Controller : MonoBehaviour
 
     public void InitialiseMainPanels()
     {
+        //Ensure that all panels are initialised at startup even if the panel wasn't active when the program was run
+        //This is needed since the Start method is only called on active GameObjects which can cause errors due to
+        //properties not being initialised in time
         for(int index = 0; index < panels.Length; index++) {
             panels[index].GetComponent<IPanel>().InitialisePanel();
         }

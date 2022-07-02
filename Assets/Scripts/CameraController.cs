@@ -437,9 +437,11 @@ public class CameraController : MonoBehaviour
 
     public void SwitchCamera(int camera)
     {
-        cameraNumber = camera;
-        transform.position = cameras[camera].position;
-        transform.rotation = cameras[camera].rotation;
+        if(cameras != null) {
+            cameraNumber = camera;
+            transform.position = cameras[camera].position;
+            transform.rotation = cameras[camera].rotation;
+        }
     }
 
     public string ToJson()

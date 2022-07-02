@@ -21,4 +21,7 @@ public struct SkySaveData_v1
     public float windDirection;
     public float windSpeed;
     public float cloudIterations;
+
+    //skybox settings
+    public bool advancedSkybox;
 }

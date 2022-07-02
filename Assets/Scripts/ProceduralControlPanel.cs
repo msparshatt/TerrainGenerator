@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 public enum GeneratorMode {perlin, ds_perlin, ds_random, maxVal};
-public class ProceduralControlPanel : MonoBehaviour
+public class ProceduralControlPanel : MonoBehaviour, IPanel
 {
     [Header("Tabs")]
     public GameObject[] panels;
@@ -115,10 +115,8 @@ public class ProceduralControlPanel : MonoBehaviour
 
     private float[] basePanelHeights;
 
-    // Start is called before the first frame update
-    public void Start()
+    public void InitialisePanel()
     {
-        Debug.Log("start");
         procGen = new ProceduralGeneration(settingsData.defaultTerrainResolution);
         procGen.proceduralGenerationShader = proceduralGenerationShader;
         erosion = false;
