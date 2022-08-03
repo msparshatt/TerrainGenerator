@@ -116,7 +116,7 @@ public class PostProcessPanel : MonoBehaviour, IPanel
         volume.profile.TryGetSettings(out color);
         
         exposureValue = value;
-        color.postExposure.value = value;
+        color.brightness.value = value;
     }
 
     public void ContrastSliderChange(float value)
