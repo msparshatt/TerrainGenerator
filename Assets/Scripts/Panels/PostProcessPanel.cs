@@ -172,4 +172,14 @@ public class PostProcessPanel : MonoBehaviour, IPanel
         vignetteColor = colorPicker.color;
         vignette.color.value = vignetteColor;
     }
+
+    public void ResetButtonClick()
+    {
+        exposureSlider.value = 0;
+        constrastSlider.value = 0;
+        saturationSlider.value = 0;
+        temperatureSlider.value = 0;
+        tintSlider.value = 0;
+        hueShiftSlider.value = 0;
+    }
 }
