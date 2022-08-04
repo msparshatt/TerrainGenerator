@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.Profiling;
+using UnityEngine.Rendering.PostProcessing;
+
 
 public class DebugPanel : MonoBehaviour
 {
@@ -12,8 +14,10 @@ public class DebugPanel : MonoBehaviour
     [SerializeField] private TMP_Text gcMemory;
     [SerializeField] private TMP_Text textureMemory;
     [SerializeField] private TMP_Text meshMemory;
-    [SerializeField] private TMP_Text terainResolution;
+    [SerializeField] private TMP_Text debugText;
     [SerializeField] private Terrain terrrain;
+    [SerializeField] private PostProcessVolume volume;
+
 
     private bool profiling;
 
@@ -31,14 +35,20 @@ public class DebugPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(terrrain != null)
-            terainResolution.text = terrrain.terrainData.heightmapResolution.ToString();
+        if(volume != null) {
+            ColorGrading color = null;
+            volume.profile.TryGetSettings(out color);
+            
+            debugText.text = color.brightness.value.ToString();
+        }
         if(profiling) {
             totalMemory.text = "Total Memory: " + ( _totalReservedMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
             gcMemory.text = "GC Memory: " + (_gcReservedMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
             textureMemory.text = "Texture Memory: " + (_textureMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
             meshMemory.text = "Mesh Memory: " + (_meshMemoryRecorder.LastValue / (1024 * 1024)) + " MB";
         }
+
+
     }
 
     public void DeleteAllButtonClick()
