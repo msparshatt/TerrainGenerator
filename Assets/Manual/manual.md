@@ -49,6 +49,10 @@ You can switch between QWERTY and AZERTY controls in the settings panel.
 |left mouse  | interact |
 |right mouse | rotate camera |
 
+# Camera selection
+
+There are 4 cameras which can be selected using the four numbered buttons at the top right of the screen.
+
 \newpage
 
 # System tab

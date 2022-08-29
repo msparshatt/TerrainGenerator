@@ -49,6 +49,8 @@ You can switch between QWERTY and AZERTY controls in the settings panel.
 |left mouse  | interact |
 |right mouse | rotate camera |
 
+# Camera selection
+In the top right there is a set of 4 numbered buttons which can be us
 \newpage
 
 # System tab
@@ -311,7 +313,7 @@ Adds a layer of clouds using simple perlin noise. The color of the clouds is aff
 
 # Post Processing Tab
 
-![Post processing controls image](Screenshots/postprocess.png)
+![Post processing controls image](Screenshots/postprocess_panel.png)
 
 ## Chromatic Aberation
 Splits up colors as if being viewed through a lens
