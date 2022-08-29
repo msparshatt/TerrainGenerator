@@ -188,7 +188,7 @@ Erodes the terrain under the brush.
 
 - **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
 - **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
-- **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controlled with control and the mousewheel)
 
 The erosion control is left click to erode the terrain.
 
@@ -199,7 +199,7 @@ The erosion control is left click to erode the terrain.
 - Deposit sp - How fast terrain is deposited
 - Evaporation - How fast water evaporates
 - Lifetime - How many cycles each particle should last for
-- start speed - How fast each particle is moving (speed affects the amount of sediment water can hold)
+- start speed - How fast each particle is moving (speed effects the amount of sediment water can hold)
 - Start water - The amount of water each particle contains at the start
 - Inertia - How closely does the water particle follow the terrain (lower inertia will follow the terrain more closely while higer inertia will try to maintain a constant velocity)
 
@@ -350,7 +350,7 @@ Controls the settings for the perlin noise.
 - Xoffset & Yoffset: the position within the noise.
 - Scale: the size of the noise
 - Iterations: how many layers of perlin noise to add.
-- Factor: How much to change the affect of each successive iteraion
+- Factor: How much to change the effect of each successive iteration
 
 ### Voronoi
 
@@ -358,20 +358,16 @@ Controls the settings for the voronoi noise
 
 - Xoffset & Yoffset: the position within the noise.
 - Cell Size: the size of the voronoi cells
-- Valleys: Creates valleys between each section of voronoi noise
+- Voronoi type: Adjusts the algorithm used to generate the voronoi noise
 
 ### Factor
-The amount of Perlin vs Voronoi noise to use
-
-### Settings
-
-- Min height: Set a minimum height
-- Height factor: Multiply all heights by this amount
-- Clamp Edges: Ensures the heights tend towards the midpoint as they get closer to the edge
+The amount of Perlin vs Voronoi noise to use. Amplitude controls the height of the noise functions.
 
 \newpage
 
 ## Features
+
+![Procedural generation feature tab image](Screenshots/proc-features.png)
 
 ### Mountains
 - Type dropdown: The type of noise to use to create the mountains
@@ -399,6 +395,14 @@ Adds flattened areas to the heightmap. Which areas to flatten is determined usin
 ## Modifiers
 ![Procedural generation modifiers tab image](Screenshots/proc-modifiers.png)
 
+### Height
+
+- Height Scale: Multiply all heights by this amount
+- Invert: Inverts the heightmap
+- Min height: Set a minimum height
+- Max height: Set a maximum height
+- Clamp Edges: Ensures the heights tend towards the a fixed value (set by the slider) as they get closer to the edge
+
 ### Terraces
 
 Add a terrace effect to the terrain. You can add up to three layers of terraces.
@@ -409,7 +413,7 @@ Add a terrace effect to the terrain. You can add up to three layers of terraces.
 ### Erode
 
 Adds an erosion effect. This implements a particle based hydraulic erosion system.
-Note this is a work in progress and currently won't produce good results
+Note this is a work in progress and might not produce good results
 
 - Iterations - The number of particles to simulate
 - Capacity - how much sediment the water can hold
@@ -423,11 +427,11 @@ Note this is a work in progress and currently won't produce good results
 
 ## Heightmap
 
-A top down view of the heightmap
+A top down view of the heightmap (NB This doesn't show the correct result when running on Linux)
 
 ## Buttons
 
-- Cancel: Cancel the procedutal generation and return the terrain to it's previous form
+- Cancel: Cancel the procedural generation and return the terrain to its previous form
 - Apply: permanently apply the procedurally generated terrain. This cannot be undone.
 
 \newpage
