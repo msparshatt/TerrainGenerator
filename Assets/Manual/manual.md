@@ -266,6 +266,14 @@ It's possible to place a mask so that only certain areas will be painted to. Thi
 - **Auto** Automatically set the color of the sun based on its height
 - **Color Picker** Used to control the color of the sun when in manual mode
 
+## Skybox
+![Advanced skybox image](Screenshots/skypanel_advanced.png)
+
+This allows you to turn on a procedurally generated skybox which will change depending on the height of the sun.
+
+- **Advanced Skybox** Turns on a procedurally generated skybox
+- **Sun size** controls the size of the sun disk
+
 ## Clouds
 
 ![Cloud controls image](Screenshots/skypanel_clouds.png)
