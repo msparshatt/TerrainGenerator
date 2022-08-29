@@ -311,15 +311,25 @@ Adds a layer of clouds using simple perlin noise. The color of the clouds is aff
 
 # Post Processing Tab
 
+![Post processing controls image](Screenshots/postprocess_panel.png)
+
 ## Chromatic Aberation
 Splits up colors as if being viewed through a lens
 
 ## Vignette
 
-Darkens the corners of the scene
+Darkens the corners of the scene. The of the corners can be set using the color selector.
 
 ## Color Grading
 Allows you to control the exposure and coloring of the scene
+
+- **Brightness** Control the scene's brightness
+- **Contrast** Control the contrast between bright and dark areas
+- **Saturation** Controls color saturation
+- **Temperature** Controls the white balance of the scene
+- **Tint** Applies a colored tint to the scene
+- **Hue shift** Shifts the colors of the scene
+- **Reset** Resets all the color grading settings
 
 \newpage
 

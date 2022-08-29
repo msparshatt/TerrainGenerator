@@ -269,7 +269,7 @@ It's possible to place a mask so that only certain areas will be painted to. Thi
 ## Skybox
 ![Advanced skybox image](Screenshots/skypanel_advanced.png)
 
-This allows you to turn on a pro
+This allows you to turn on a procedurally generated skybox which will change depending on the height of the sun.
 
 - **Advanced Skybox** Turns on a procedurally generated skybox
 - **Sun size** controls the size of the sun disk
@@ -311,15 +311,25 @@ Adds a layer of clouds using simple perlin noise. The color of the clouds is aff
 
 # Post Processing Tab
 
+![Post processing controls image](Screenshots/postprocess.png)
+
 ## Chromatic Aberation
 Splits up colors as if being viewed through a lens
 
 ## Vignette
 
-Darkens the corners of the scene
+Darkens the corners of the scene. The of the corners can be set using the color selector.
 
 ## Color Grading
 Allows you to control the exposure and coloring of the scene
+
+- **Brightness** Control the scene's brightness
+- **Contrast** Control the contrast between bright and dark areas
+- **Saturation** Controls color saturation
+- **Temperature** Controls the white balance of the scene
+- **Tint** Applies a colored tint to the scene
+- **Hue shift** Shifts the colors of the scene
+- **Reset** Resets all the color grading settings
 
 \newpage
 
