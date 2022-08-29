@@ -109,6 +109,8 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.windDirection = defaultData.windDirection;
 
         advancedSkyboxToggle.isOn = false;
+        CloudPresetDropdown.value = 0;
+
         LoadPanel();
     }
 
@@ -130,10 +132,8 @@ public class SkyPanel : MonoBehaviour, IPanel
         CloudEndSlider.value = internalData.cloudEnd;
         WindDirectionSlider.value = internalData.windDirection;
         WindSpeedSlider.value = internalData.windSpeed;
+        BrightnessSlider.value = internalData.cloudBrightness;
         advancedSkyboxToggle.isOn = internalData.advancedSkybox;
-
-        BrightnessSlider.value = 0.9f;
-        CloudPresetDropdown.value = 2;
     }
 
     public void FromJson(string dataString)
@@ -157,6 +157,8 @@ public class SkyPanel : MonoBehaviour, IPanel
             internalData.windSpeed = data.windSpeed;
             internalData.windDirection = data.windDirection;
             internalData.advancedSkybox = data.advancedSkybox;
+            internalData.cloudBrightness = data.cloudBrightness;
+            CloudPresetDropdown.value = data.cloudType;
         } else {
             internalData.lightTerrain = defaultData.lightTerrain;
             internalData.sunHeight = defaultData.sunHeight;
@@ -173,6 +175,9 @@ public class SkyPanel : MonoBehaviour, IPanel
             internalData.windSpeed = defaultData.windSpeed;
             internalData.windDirection = defaultData.windDirection;
             internalData.advancedSkybox = defaultData.advancedSkybox;
+            internalData.cloudBrightness = defaultData.cloudBrightness;
+
+            CloudPresetDropdown.value = 0;
         }
     }
 
@@ -197,6 +202,8 @@ public class SkyPanel : MonoBehaviour, IPanel
         data.windSpeed = internalData.windSpeed;
         data.windDirection = internalData.windDirection;
         data.advancedSkybox = internalData.advancedSkybox;
+        data.cloudType = CloudPresetDropdown.value;
+        data.cloudBrightness = internalData.cloudBrightness;
 
         return JsonUtility.ToJson(data);
     }
@@ -351,6 +358,7 @@ public class SkyPanel : MonoBehaviour, IPanel
     
     public void CloudBrightnessSliderChange(float value)
     {
+        internalData.cloudBrightness = value;
         Color cloudColor = new Color(value, value, value, 1);
 
         SkyMaterial.SetColor("_CloudColor", cloudColor);

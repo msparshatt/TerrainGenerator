@@ -13,6 +13,7 @@ public struct SkySaveData_v1
 
     //cloud settings;
     public bool cloudActive;
+    public int cloudType;
     public float cloudXoffset;
     public float cloudYOffset;
     public float cloudScale;
@@ -21,6 +22,7 @@ public struct SkySaveData_v1
     public float windDirection;
     public float windSpeed;
     public float cloudIterations;
+    public float cloudBrightness;
 
     //skybox settings
     public bool advancedSkybox;

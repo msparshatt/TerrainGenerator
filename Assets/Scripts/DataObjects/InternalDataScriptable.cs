@@ -44,6 +44,7 @@ public class InternalDataScriptable : ScriptableObject
     public float windDirection;
     public float windSpeed;
     public float cloudIterations;
+    public float cloudBrightness;
     public bool advancedSkybox;
 
 
