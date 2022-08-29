@@ -359,13 +359,16 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void OnDisable()
     {
-        materialController.TogglePaintMask(false);
-        textureImage.color = settingsData.deselectedColor;
-        paintBrushImage.color = settingsData.deselectedColor;
+        if(materialController != null) {
+            materialController.TogglePaintMask(false);
+            textureImage.color = settingsData.deselectedColor;
+            paintBrushImage.color = settingsData.deselectedColor;
+        }
     }
 
     public void OnEnable()
     {
-        materialController.TogglePaintMask(filterToggle.isOn);
+        if(materialController != null)
+            materialController.TogglePaintMask(filterToggle.isOn);
     }
 }
