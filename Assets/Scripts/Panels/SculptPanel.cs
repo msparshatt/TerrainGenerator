@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using SimpleFileBrowser;
+using TMPro;
+
 
 public class SculptPanel : MonoBehaviour, IPanel
 {
@@ -17,10 +19,12 @@ public class SculptPanel : MonoBehaviour, IPanel
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameObject gameState;
 
+    [SerializeField] private TMP_Dropdown modeDropdown;
     [SerializeField] private Slider radiusSlider;
     [SerializeField] private Slider strengthSlider;
     [SerializeField] private Slider rotationSlider;
-
+    [SerializeField] private Slider heightSlider;
+    [SerializeField] private Toggle contourToggle;
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
@@ -34,10 +38,15 @@ public class SculptPanel : MonoBehaviour, IPanel
     private GameResources gameResources;
     private Controller controller;
 
+    private TerrainManager manager;
+    private MaterialController materialController;
+
     public void InitialisePanel()
     {
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
+        manager = TerrainManager.Instance();
+        materialController = manager.MaterialController;
         
         brushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
 
@@ -51,6 +60,13 @@ public class SculptPanel : MonoBehaviour, IPanel
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
+
+        modeDropdown.value = 0;
+        brushData.mode = 0;
+
+        heightSlider.gameObject.SetActive(false);
+        heightSlider.value = 0.5f;
+        brushData.brushHeight = 0.5f;
     }
 
     public string ToJson()
@@ -76,9 +92,19 @@ public class SculptPanel : MonoBehaviour, IPanel
 
     public void OnDisable()
     {
-            brushImage.color = settingsData.deselectedColor;
+        brushImage.color = settingsData.deselectedColor;
+
+        if(materialController != null) {
+            materialController.ToggleContourMask(false);
+        }
     }
     
+    public void OnEnable()
+    {
+        if(materialController != null)
+            materialController.ToggleContourMask(contourToggle.isOn);
+    }
+
     public void BrushButtonClick()
     {
         bool active = !sculptBrushPanel.activeSelf;
@@ -170,5 +196,32 @@ public class SculptPanel : MonoBehaviour, IPanel
         newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
         newButton.transform.SetParent(sculptBrushScrollView.transform);
         brushIcons.Add(newButton);
+    }
+
+    public void ModeChange(int mode)
+    {
+        if(mode == 1) {
+            heightSlider.gameObject.SetActive(true);
+        } else {
+            heightSlider.gameObject.SetActive(false);
+        }
+
+        brushData.mode = mode;
+    }
+
+    public void HeightSliderChange(float height)
+    {
+        brushData.brushHeight = height;
+    }
+
+    public void SetHeightButtonClick()
+    {
+        TerrainManager.Instance().TerrainSculpter.SetTerrainHeight(brushData.brushHeight);
+    }
+
+    public void ContourToggleChange(bool isOn)
+    {
+        if(materialController != null)
+            materialController.ToggleContourMask(contourToggle.isOn);
     }
 }
