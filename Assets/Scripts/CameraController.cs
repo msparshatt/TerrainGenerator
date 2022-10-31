@@ -46,6 +46,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider sculptStrengthSlider;
     [SerializeField] private Slider sculptRotationSlider;
 
+    [SerializeField] private Slider sculptHeightSlider;
+
     [Header("Paint Sliders")]
     [SerializeField] private Slider paintRadiusSlider;
     [SerializeField] private Slider paintStrengthSlider;
@@ -317,14 +319,24 @@ public class CameraController : MonoBehaviour
                     operation = new Operation();
 
                 if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
-                    TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
-                    if(modifier1) {
-                        mode = TerrainSculpter.SculptMode.Lower;
-                    } else if(modifier2) {
-                        mode = TerrainSculpter.SculptMode.Flatten;
+                    if(sculptBrushData.mode == 0) {
+                        TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
+                        if(modifier1) {
+                            mode = TerrainSculpter.SculptMode.Lower;
+                        } else if(modifier2) {
+                            mode = TerrainSculpter.SculptMode.Flatten;
+                        }
+                        manager.TerrainSculpter.SculptTerrain(mode, raycastTarget.point, operation);
+                    } else {
+                        if(modifier1) {
+                            float height = manager.TerrainSculpter.GetHeightAtPoint(raycastTarget.point);
+                            Debug.Log(height);
+                            sculptHeightSlider.value = height/ 1000.0f;
+                        } else {
+                            manager.TerrainSculpter.SetHeight(raycastTarget.point, operation);
+                        }
                     }
 
-                    manager.TerrainSculpter.SculptTerrain(mode, raycastTarget.point, operation);
                 } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
                     TerrainPainter painter = manager.TerrainPainter;
                     TerrainPainter.PaintMode mode = TerrainPainter.PaintMode.Paint;

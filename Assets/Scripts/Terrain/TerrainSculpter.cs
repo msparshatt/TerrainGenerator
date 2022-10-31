@@ -88,20 +88,9 @@ public class TerrainSculpter : MonoBehaviour
         ModifyRectangle rectangle = new ModifyRectangle(location, brushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
         float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
         float[,] changes = new float[rectangle.size.y, rectangle.size.x];
+      
+        float averageHeight = CalculateAverageHeight(rectangle, heights);
 
-        //Calculate the average height
-        int counter = 0;
-        float total = 0f;
-        for (int x = 0; x < rectangle.size.x; x++)
-        {
-            for (int y = 0; y < rectangle.size.y; y++)
-            {
-                counter++;
-                total += heights[y, x];
-            }
-        }
-        float averageHeight = total/counter;
-        
         //move each height value towards the average depending on the mask value and the strength
         for (int x = 0; x < rectangle.size.x; x++)
         {
@@ -117,5 +106,82 @@ public class TerrainSculpter : MonoBehaviour
 
         terrainData.SetHeights(rectangle.topLeft.x, rectangle.topLeft.y, heights);
         sculptOperation.AddSubOperation(new SculptSubOperation(terrain, rectangle.topLeft, rectangle.size, changes));
+    }
+
+    public void SetHeight(Vector3 location, Operation sculptOperation)
+    {
+        TerrainData terrainData = terrain.terrainData;
+
+        ModifyRectangle rectangle = new ModifyRectangle(location, brushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
+        float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
+        float[,] changes = new float[rectangle.size.y, rectangle.size.x];
+
+        for (int x = 0; x < rectangle.size.x; x++)
+        {
+            for (int y = 0; y < rectangle.size.y; y++)
+            {                   
+                float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -brushData.brushRotation, brushData.brushStrength);
+                float heightChange = brushData.brushHeight - heights[y,x];
+
+                heights[y, x] += (heightChange * Time.smoothDeltaTime * maskValue);
+                changes[y,x] =  (heightChange * Time.smoothDeltaTime * maskValue);
+            }
+        }
+
+        terrainData.SetHeights(rectangle.topLeft.x, rectangle.topLeft.y, heights);
+        sculptOperation.AddSubOperation(new SculptSubOperation(terrain, rectangle.topLeft, rectangle.size, changes));        
+    }
+
+    private float CalculateAverageHeight(ModifyRectangle rectangle, float[,] heights)
+    {
+        //Calculate the average height
+        int counter = 0;
+        float total = 0f;
+        for (int x = 0; x < rectangle.size.x; x++)
+        {
+            for (int y = 0; y < rectangle.size.y; y++)
+            {
+                counter++;
+                total += heights[y, x];
+            }
+        }
+
+        float averageHeight = total/counter;
+
+        return averageHeight;
+    }
+
+    public float GetHeightAtPoint(Vector3 location)
+    {
+        TerrainData terrainData = terrain.terrainData;
+        Vector3 terrainSize = terrainData.size;
+
+        Vector3 tempCoord = (location - terrain.GetPosition()); //get target position relative to the terrain
+        Vector2 locationInTerrain = TranslateCoordinates(new Vector2(tempCoord.x, tempCoord.z), new Vector2(terrainSize.x, terrainSize.z), new Vector2(terrainData.heightmapResolution, terrainData.heightmapResolution));
+
+        return terrainData.GetHeight((int)locationInTerrain.x, (int)locationInTerrain.y);
+    }
+
+    private Vector2 TranslateCoordinates(Vector2 coords, Vector2 terrainSize, Vector2 mapSize)
+    {
+        float x = coords.x * mapSize.x / terrainSize.x;
+        float y = coords.y * mapSize.y / terrainSize.y;
+        return new Vector2(x, y);
+    }
+
+    public void SetTerrainHeight(float height)
+    {
+        TerrainData terrainData = terrain.terrainData;
+        int resolution = terrainData.heightmapResolution;
+
+        float[,] heights = new float[resolution, resolution];
+
+        for(int x = 0; x < resolution; x++) {
+            for(int y = 0; y < resolution; y++) {
+                heights[y, x] = height;
+            }
+        }
+
+        terrainData.SetHeights(0,0, heights);
     }
 }
