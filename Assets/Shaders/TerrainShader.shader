@@ -130,9 +130,8 @@ Shader "Unlit/TerrainShader"
             {
                 fixed4 mask = tex2D(_ContourMask, i.uv);
 
-                col = col * (1 - mask.a) + mask * mask.a;
                 if(_ApplyContours > 0) {
-
+                    col = col * (1 - mask.a) + mask * mask.a;
                 }
                 return col;
             }
