@@ -280,6 +280,15 @@ public class MaterialController : MonoBehaviour
         }
     }
 
+    public void ToggleContourMask(bool isOn)
+    {
+        if(isOn) {
+            terrainMaterial.SetInt("_ApplyContours", 1);
+        } else {
+            terrainMaterial.SetInt("_ApplyContours", 0);
+        }
+    }
+
     public void ApplyLighting(bool apply)
     {
         int lightOn = 0;
