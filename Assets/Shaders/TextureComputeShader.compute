@@ -8,6 +8,7 @@
 RWTexture2D<float4> Result;
 RWTexture2D<float4> aoResult;
 RWTexture2D<float4> paintMask;
+RWTexture2D<float4> contourMask;
 
 Texture2DArray<float4> textures;
 Texture2DArray<float4> aotextures;
@@ -141,11 +142,35 @@ void CalculatePaintMask(uint3 id)
     paintMask[id.xy] = pixelTexture;
 }
 
+void CalculateContours(uint3 id)
+{
+    int3 pos = int3((id.x * tiling) % width, (id.y * tiling) % height, 0);
+    float4 color;
+
+    float factor = 0;
+
+    int2 hmPos = int2((id.x * heightMapResolution) / width, (id.y * heightMapResolution) / height); //convert from texture coords to heightmap coords
+    int hmIndex = hmPos.x + hmPos.y * heightMapResolution;
+    float height = floor(heightmap[hmIndex] * 1000) + 7;
+
+    float4 pixelTexture = float4(0, 0, 0, 0);
+
+    if(fmod(height, 100) < 4)
+        pixelTexture = float4(0, 0, 0, 0.6);
+    else if(fmod(height, 10) < 2)
+        pixelTexture = float4(0, 0, 0, 0.4);
+
+
+
+    contourMask[id.xy] = pixelTexture;
+}
+
 [numthreads(8,8,1)]
 void ApplyTextures(uint3 id : SV_DispatchThreadID)
 {
     CaculatePixel(id);
     CalculatePaintMask(id);
+    CalculateContours(id);
 }
 
 [numthreads(8,8,1)]

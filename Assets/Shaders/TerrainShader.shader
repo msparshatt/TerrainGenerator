@@ -9,6 +9,7 @@ Shader "Unlit/TerrainShader"
         _MainTex ("Texture", 2D) = "white" {}
         _AOTexture ("AmbientOcclusion", 2D) = "white" {}
         _PaintMask ("Paint Mask", 2D) = "white" {}
+        _ContourMask ("Contour Mask", 2D) = "white" {}
         _OverlayTexture("Overlay", 2D) = "RGBA 0,0,0,0" {}
         _CursorLocation("Cursor Location", Vector) = (0, 0, 0.5, 0.5)
         _CursorTexture("Cursor Texture", 2D) = "white" {}
@@ -17,6 +18,7 @@ Shader "Unlit/TerrainShader"
         _ApplyLighting("ApplyLighting", int) = 0
 
         _ApplyMask("ApplyMask", int) = 0
+        _ApplyContours("ApplyContours", int) = 0
     }
     SubShader
     {
@@ -47,6 +49,7 @@ Shader "Unlit/TerrainShader"
                 float2 uv : TEXCOORD0;
                 float2 uv2 : TEXCOORD1;
                 float4 vertex : SV_POSITION;
+                float4 ov : TEXCOORD2;
 
                 /*float3 lightdir : TEXCOORD2;
 
@@ -61,6 +64,7 @@ Shader "Unlit/TerrainShader"
             sampler2D _OverlayTexture;
             sampler2D _CursorTexture;
             sampler2D _PaintMask;
+            sampler2D _ContourMask;
             float _CursorRotation;
 
             float4 _MainTex_ST;
@@ -70,11 +74,13 @@ Shader "Unlit/TerrainShader"
             int _ApplyLighting;
 
             int _ApplyMask;
+            int _ApplyContours;
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                o.ov = v.vertex;
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv2 = TRANSFORM_TEX(v.uv, _OverlayTexture);
 
@@ -117,6 +123,17 @@ Shader "Unlit/TerrainShader"
                     col = (col * 0.75) + (mask * 0.25);
                 }
 
+                return col;
+            }
+
+            fixed4 AddContours(fixed4 col, v2f i)
+            {
+                fixed4 mask = tex2D(_ContourMask, i.uv);
+
+                col = col * (1 - mask.a) + mask * mask.a;
+                if(_ApplyContours > 0) {
+
+                }
                 return col;
             }
 
@@ -164,8 +181,8 @@ Shader "Unlit/TerrainShader"
                 }
 
                 col = AddMask(col, i);
+                col = AddContours(col, i);
                 col = AddCursor(col, i);
-
                 return col;
             }
 

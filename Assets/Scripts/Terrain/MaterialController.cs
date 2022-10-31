@@ -32,8 +32,10 @@ public class MaterialController : MonoBehaviour
     private RenderTexture resultRenderTexture;
     private RenderTexture aoRenderTexture;
     private RenderTexture mask;
+    private RenderTexture contours;
     private Texture2D resultTexture;
     private Texture2D maskTexture;
+    private Texture2D contourTexture;
     private int textureResolution = 2048;
 
 
@@ -57,8 +59,13 @@ public class MaterialController : MonoBehaviour
         mask.enableRandomWrite = true;
         mask.Create();
 
+        contours = new RenderTexture(textureResolution, textureResolution, 24);
+        contours.enableRandomWrite = true;
+        contours.Create();
+
         resultTexture = new Texture2D(textureResolution, textureResolution, TextureFormat.ARGB32, true);
         maskTexture = new Texture2D(textureResolution, textureResolution, TextureFormat.ARGB32, true);
+        contourTexture = new Texture2D(textureResolution, textureResolution, TextureFormat.ARGB32, true);
         painter = gameObject.GetComponent<TerrainPainter>();
 
         CreateTextures();        
@@ -115,6 +122,7 @@ public class MaterialController : MonoBehaviour
         textureShader.SetTexture(kernelHandle, "Result", resultRenderTexture);
         textureShader.SetTexture(kernelHandle, "aoResult", aoRenderTexture);
         textureShader.SetTexture(kernelHandle, "paintMask", mask);
+        textureShader.SetTexture(kernelHandle, "contourMask", contours);
 
         //send parameters to the compute shader
         textureShader.SetFloat("tiling", materialSettings.materialScale);
@@ -196,6 +204,12 @@ public class MaterialController : MonoBehaviour
         maskTexture.Apply();
         paintBrushData.paintMask = maskTexture;
         terrainMaterial.SetTexture("_PaintMask", maskTexture);
+
+        RenderTexture.active = contours;
+        contourTexture.ReadPixels(new Rect(0, 0, resultRenderTexture.width, resultRenderTexture.height), 0, 0);
+        contourTexture.Apply();
+        //paintBrushData.paintMask = maskTexture;
+        terrainMaterial.SetTexture("_ContourMask", contourTexture);
 
         heightMapBuffer.Release();
 
