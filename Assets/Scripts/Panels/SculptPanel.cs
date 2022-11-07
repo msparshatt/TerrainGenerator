@@ -11,6 +11,8 @@ using TMPro;
 public class SculptPanel : MonoBehaviour, IPanel
 {
     [Header("UI elements")]
+    [SerializeField] private GameObject[] brushPanels;
+    [SerializeField] private GameObject erosionPanel;
     [SerializeField] private GameObject sculptBrushScrollView;
     [SerializeField] private GameObject sculptBrushPanel;
     [SerializeField] private GameObject sidePanels;
@@ -64,7 +66,6 @@ public class SculptPanel : MonoBehaviour, IPanel
         modeDropdown.value = 0;
         brushData.mode = 0;
 
-        heightSlider.gameObject.SetActive(false);
         heightSlider.value = 0.5f;
         brushData.brushHeight = 0.5f;
     }
@@ -200,11 +201,16 @@ public class SculptPanel : MonoBehaviour, IPanel
 
     public void ModeChange(int mode)
     {
-        if(mode == 1) {
-            heightSlider.gameObject.SetActive(true);
-        } else {
-            heightSlider.gameObject.SetActive(false);
+        for(int i = 0; i < brushPanels.Length; i++) {
+            brushPanels[i].SetActive(false);
         }
+        brushPanels[mode].SetActive(true);
+
+        if(mode == 3)
+            erosionPanel.SetActive(true);
+        else
+            erosionPanel.SetActive(false);
+
 
         brushData.mode = mode;
     }
