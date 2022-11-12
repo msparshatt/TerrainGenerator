@@ -21,6 +21,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private PaintBrushDataScriptable paintBrushData;
     [SerializeField] private BrushDataScriptable erosionBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
+    [SerializeField] private BrushDataScriptable setHeightBrushData;
 
     [Header("Settings")]
     [SerializeField] private SettingsDataScriptable settingsData;
@@ -46,7 +47,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider sculptStrengthSlider;
     [SerializeField] private Slider sculptRotationSlider;
 
-    [SerializeField] private Slider sculptHeightSlider;
 
     [Header("Paint Sliders")]
     [SerializeField] private Slider paintRadiusSlider;
@@ -62,6 +62,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider erosionRadiusSlider;
     [SerializeField] private Slider erosionRotationSlider;
     [SerializeField] private Slider erosionStrengthSlider;
+
+    [Header("Set Height Sliders")]
+    [SerializeField] private Slider setHeightRadiusSlider;
+    [SerializeField] private Slider setHeightRotationSlider;
+    [SerializeField] private Slider setHeightStrengthSlider;
+    [SerializeField] private Slider setHeightHeightSlider;
 
     [Header("Other")]
     [SerializeField] private Texture2D busyCursor;
@@ -184,22 +190,29 @@ public class CameraController : MonoBehaviour
             Slider rotationSlider;
             Slider radiusSlider;
 
-            if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
+            if(internalData.mode == InternalDataScriptable.Modes.Terrain) {
                 strengthSlider = sculptStrengthSlider;
                 rotationSlider = sculptRotationSlider;
                 radiusSlider = sculptRadiusSlider;
+
+                 if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+                    strengthSlider = setHeightStrengthSlider;
+                    rotationSlider = setHeightRotationSlider;
+                    radiusSlider = setHeightRadiusSlider;
+                } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+                    Debug.Log("Stamp");
+                    strengthSlider = stampHeightSlider;
+                    rotationSlider = stampRotationSlider;
+                    radiusSlider = stampRadiusSlider;
+                } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode){
+                    strengthSlider = erosionStrengthSlider;
+                    rotationSlider = erosionRotationSlider;
+                    radiusSlider = erosionRadiusSlider;
+                }
             } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
                 strengthSlider = paintStrengthSlider;
                 rotationSlider = paintRotationSlider;
                 radiusSlider = paintRadiusSlider;
-            } else if(internalData.mode == InternalDataScriptable.Modes.Stamp) {
-                strengthSlider = stampHeightSlider;
-                rotationSlider = stampRotationSlider;
-                radiusSlider = stampRadiusSlider;
-            }  else if(internalData.mode == InternalDataScriptable.Modes.Erode) {
-                strengthSlider = erosionStrengthSlider;
-                rotationSlider = erosionRotationSlider;
-                radiusSlider = erosionRadiusSlider;
             } else {
                 return;
             }
@@ -294,7 +307,7 @@ public class CameraController : MonoBehaviour
         if (EventSystem.current.IsPointerOverGameObject())
             return;
         
-        if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Paint || internalData.mode == InternalDataScriptable.Modes.Stamp || internalData.mode == InternalDataScriptable.Modes.Erode) {
+        if(internalData.mode == InternalDataScriptable.Modes.Terrain || internalData.mode == InternalDataScriptable.Modes.Paint) {
             projectImage(); 
         } else {
             currentTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
@@ -318,8 +331,8 @@ public class CameraController : MonoBehaviour
                 if(operation == null)
                     operation = new Operation();
 
-                if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
-                    if(sculptBrushData.mode == 0) {
+                if(internalData.mode == InternalDataScriptable.Modes.Terrain) {
+                    if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
                         TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
                         if(modifier1) {
                             mode = TerrainSculpter.SculptMode.Lower;
@@ -327,14 +340,27 @@ public class CameraController : MonoBehaviour
                             mode = TerrainSculpter.SculptMode.Flatten;
                         }
                         manager.TerrainSculpter.SculptTerrain(mode, raycastTarget.point, operation);
-                    } else {
+                    } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
                         if(modifier1) {
                             float height = manager.TerrainSculpter.GetHeightAtPoint(raycastTarget.point);
                             Debug.Log(height);
-                            sculptHeightSlider.value = height/ 1000.0f;
+                            setHeightHeightSlider.value = height/ 1000.0f;
                         } else {
                             manager.TerrainSculpter.SetHeight(raycastTarget.point, operation);
                         }
+                    } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp && !stampApplied) {
+                        TerrainStamper stamper = manager.TerrainStamper;
+                        TerrainStamper.StampMode mode = TerrainStamper.StampMode.Raise;
+
+                        if(modifier1) {
+                            mode = TerrainStamper.StampMode.Lower;
+                        }
+                        stamper.ModifyTerrain(mode, raycastTarget.point, operation);
+                        stampApplied = true;
+                    } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode){
+                        TerrainEroder eroder = manager.TerrainEroder;
+
+                        eroder.ErodeTerrain(raycastTarget.point, operation);
                     }
 
                 } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
@@ -346,20 +372,7 @@ public class CameraController : MonoBehaviour
                     Texture2D overlayTexture = (Texture2D)currentTerrain.materialTemplate.GetTexture("_OverlayTexture");
 
                     painter.PaintTerrain(mode, overlayTexture, raycastTarget.point, operation);
-                } else if(internalData.mode == InternalDataScriptable.Modes.Stamp && !stampApplied) {
-                    TerrainStamper stamper = manager.TerrainStamper;
-                    TerrainStamper.StampMode mode = TerrainStamper.StampMode.Raise;
-
-                    if(modifier1) {
-                        mode = TerrainStamper.StampMode.Lower;
-                    }
-                    stamper.ModifyTerrain(mode, raycastTarget.point, operation);
-                    stampApplied = true;
-                } else if(internalData.mode == InternalDataScriptable.Modes.Erode){
-                    TerrainEroder eroder = manager.TerrainEroder;
-
-                    eroder.ErodeTerrain(raycastTarget.point, operation);
-                }
+                } 
             }
         }
 
@@ -369,7 +382,7 @@ public class CameraController : MonoBehaviour
             operation = null;
             stampApplied = false;
 
-            if(internalData.mode == InternalDataScriptable.Modes.Sculpt || internalData.mode == InternalDataScriptable.Modes.Stamp || internalData.mode == InternalDataScriptable.Modes.Erode) {
+            if(internalData.mode == InternalDataScriptable.Modes.Terrain) {
                 materialController.ApplyTextures();
 
                 if(internalData.oceanActive)
@@ -395,22 +408,30 @@ public class CameraController : MonoBehaviour
             float radius = 0;
             float rotation = 0;
             Texture2D shape = null;
-            if(internalData.mode == InternalDataScriptable.Modes.Sculpt) {
+            if(internalData.mode == InternalDataScriptable.Modes.Terrain) {
                 radius = sculptBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                 rotation = sculptBrushData.brushRotation;
                 shape = sculptBrushData.brush;
+
+                 if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+                    radius = setHeightBrushData.brushRadius / (currentTerrain.terrainData.size.x);
+                    rotation = setHeightBrushData.brushRotation;
+                    shape = setHeightBrushData.brush;
+                } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+                    radius = stampBrushData.brushRadius / (currentTerrain.terrainData.size.x);
+                    rotation = stampBrushData.brushRotation;
+                    shape = stampBrushData.brush;
+                } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode){
+                    radius = erosionBrushData.brushRadius / (currentTerrain.terrainData.size.x);
+                    rotation = erosionBrushData.brushRotation;
+                    shape = erosionBrushData.brush;
+                }
             } else if (internalData.mode == InternalDataScriptable.Modes.Paint) {
                 radius = paintBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                 rotation = paintBrushData.brushRotation;
                 shape = paintBrushData.brush;
             } else if (internalData.mode == InternalDataScriptable.Modes.Stamp) {
-                radius = stampBrushData.brushRadius / (currentTerrain.terrainData.size.x);
-                rotation = stampBrushData.brushRotation;
-                shape = stampBrushData.brush;
             } else if (internalData.mode == InternalDataScriptable.Modes.Erode) {
-                radius = erosionBrushData.brushRadius / (currentTerrain.terrainData.size.x);
-                rotation = erosionBrushData.brushRotation;
-                shape = erosionBrushData.brush;
             }
 
             Vector3 location = raycastTarget.point;
