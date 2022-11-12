@@ -30,6 +30,7 @@ public class SculptPanel : MonoBehaviour, IPanel
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
+    [SerializeField] private BrushDataScriptable setHeightBrushData;
     [SerializeField] private BrushDataScriptable defaultBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
@@ -64,7 +65,9 @@ public class SculptPanel : MonoBehaviour, IPanel
         strengthSlider.value = defaultBrushData.brushStrength;
 
         modeDropdown.value = 0;
-        brushData.mode = 0;
+        ModeChange(0);
+
+        internalData.terrainMode = InternalDataScriptable.TerrainModes.Sculpt;
 
         heightSlider.value = 0.5f;
         brushData.brushHeight = 0.5f;
@@ -155,6 +158,21 @@ public class SculptPanel : MonoBehaviour, IPanel
 
     public void RotationSliderChange(float value)
     {
+        setHeightBrushData.brushRotation = value;
+    }
+
+    public void SetHeightRadiusSliderChange(float value)
+    {
+        setHeightBrushData.brushRadius = (int)value;
+    }
+
+    public void SetHeightStrengthSliderChange(float value)
+    {
+        setHeightBrushData.brushStrength = value;
+    }
+
+    public void SetHeightRotationSliderChange(float value)
+    {
         brushData.brushRotation = value;
     }
 
@@ -212,7 +230,7 @@ public class SculptPanel : MonoBehaviour, IPanel
             erosionPanel.SetActive(false);
 
 
-        brushData.mode = mode;
+        internalData.terrainMode = (InternalDataScriptable.TerrainModes)mode;
     }
 
     public void HeightSliderChange(float height)
