@@ -8,7 +8,7 @@ using SimpleFileBrowser;
 using TMPro;
 
 
-public class SculptPanel : MonoBehaviour, IPanel
+public class TerrainPanel : MonoBehaviour, IPanel
 {
     [Header("UI elements")]
     [SerializeField] private GameObject[] brushPanels;
