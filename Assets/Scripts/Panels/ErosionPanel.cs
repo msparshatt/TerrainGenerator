@@ -52,14 +52,14 @@ public class ErosionPanel : MonoBehaviour, IPanel
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
         
-        brushIcons = UIHelper.SetupPanel(gameResources.erosionBrushes, erosionBrushScrollView.transform, SelectBrushIcon);   
+        //brushIcons = UIHelper.SetupPanel(gameResources.erosionBrushes, erosionBrushScrollView.transform, SelectBrushIcon);   
 
         ResetPanel();
     }
 
     public void ResetPanel()
     {
-        SelectBrushIcon(0);
+        //SelectBrushIcon(0);
 
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;

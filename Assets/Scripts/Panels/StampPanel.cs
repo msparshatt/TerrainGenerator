@@ -73,14 +73,14 @@ public class StampPanel : MonoBehaviour, IPanel
     {
         gameResources = GameResources.instance;
         controller = gameState.GetComponent<Controller>();
-        brushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollView.transform, SelectBrushIcon);
+        //brushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollView.transform, SelectBrushIcon);
 
         ResetPanel();
     }
 
     public void ResetPanel()
     {
-        SelectBrushIcon(0);
+        //SelectBrushIcon(0);
 
         brushData.brushRadius = defaultBrushData.brushRadius;
         brushData.brushRotation = defaultBrushData.brushRotation;

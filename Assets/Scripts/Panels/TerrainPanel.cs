@@ -14,29 +14,80 @@ public class TerrainPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject[] brushPanels;
     [SerializeField] private GameObject erosionPanel;
     [SerializeField] private GameObject sculptBrushScrollView;
+    [SerializeField] private GameObject stampBrushScrollView;
+    [SerializeField] private GameObject erosionBrushScrollView;
+    [SerializeField] private GameObject sculptBrushScrollViewContents;
+    [SerializeField] private GameObject stampBrushScrollViewContents;
+    [SerializeField] private GameObject erosionBrushScrollViewContents;
+
     [SerializeField] private GameObject sculptBrushPanel;
     [SerializeField] private GameObject sidePanels;
     [SerializeField] private Button brushDeleteButton;
-    [SerializeField] private RawImage brushImage;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private GameObject gameState;
 
     [SerializeField] private TMP_Dropdown modeDropdown;
+    [SerializeField] private Toggle contourToggle;
+
+    [Header("Sculpt UI")]
     [SerializeField] private Slider radiusSlider;
     [SerializeField] private Slider strengthSlider;
     [SerializeField] private Slider rotationSlider;
-    [SerializeField] private Slider heightSlider;
-    [SerializeField] private Toggle contourToggle;
+    [SerializeField] private RawImage brushImage;
+
+    [Header("Set Height UI")]
+    [SerializeField] private Slider setHeightRadiusSlider;
+    [SerializeField] private Slider setHeightStrengthSlider;
+    [SerializeField] private Slider setHeightRotationSlider;
+    [SerializeField] private Slider setHeightHeightSlider;
+
+    [Header("Stamp UI")]
+    [SerializeField] private Slider stampRadiusSlider;
+    [SerializeField] private Slider stampStrengthSlider;
+    [SerializeField] private Slider stampRotationSlider;
+    [SerializeField] private RawImage stampBrushImage;
+
+    [Header("Erode UI")]
+    [SerializeField] private Slider erodeRadiusSlider;
+    [SerializeField] private Slider erodeStrengthSlider;
+    [SerializeField] private Slider erodeRotationSlider;
+    [SerializeField] private RawImage erodeBrushImage;
 
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
     [SerializeField] private BrushDataScriptable setHeightBrushData;
+    [SerializeField] private BrushDataScriptable stampBrushData;
+    [SerializeField] private BrushDataScriptable erodeBrushData;
+
     [SerializeField] private BrushDataScriptable defaultBrushData;
+    [SerializeField] private BrushDataScriptable defaultSetHeightBrushData;
+    [SerializeField] private BrushDataScriptable defaultStampBrushData;
+    [SerializeField] private BrushDataScriptable defaultErodeBrushData;
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
+    [SerializeField] private ErosionDataScriptable erosionData;
+    [SerializeField] private ErosionDataScriptable defaultErosionData;
 
-    private List<GameObject> brushIcons;
+    [Header("Erosion Settings")]
+    [SerializeField] private Slider lifetimeSlider;
+    [SerializeField] private Slider sedimentCapacityFactorSlider;
+    [SerializeField] private Slider inertiaSlider;
+    [SerializeField] private Slider depositSpeedSlider;
+    [SerializeField] private Slider erodeSpeedSlider;
+    [SerializeField] private Slider startSpeedSlider;
+    [SerializeField] private Slider evaporateSpeedSlider;
+    [SerializeField] private Slider startWaterSlider;
+
+
+
+    private List<GameObject> sculptBrushIcons;
+    private List<GameObject> stampBrushIcons;
+    private List<GameObject> erodeBrushIcons;
+
     private int brushIndex;
+    private int stampBrushIndex;
+    private int erodeBrushIndex;
+
 
     private GameResources gameResources;
     private Controller controller;
@@ -51,26 +102,44 @@ public class TerrainPanel : MonoBehaviour, IPanel
         manager = TerrainManager.Instance();
         materialController = manager.MaterialController;
         
-        brushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollView.transform, SelectBrushIcon);   
+        sculptBrushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollViewContents.transform, SelectBrushIcon);   
+        stampBrushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollViewContents.transform, SelectBrushIcon);   
+        erodeBrushIcons = UIHelper.SetupPanel(gameResources.erosionBrushes, erosionBrushScrollViewContents.transform, SelectBrushIcon);   
 
         ResetPanel();
     }
 
     public void ResetPanel()
     {
-        SelectBrushIcon(0);
+        SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Sculpt);
+        SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Stamp);
+        SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Erode);
+
+        sculptBrushScrollView.SetActive(false);
+        stampBrushScrollView.SetActive(false);
+        erosionBrushScrollView.SetActive(false);
 
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
+        setHeightRadiusSlider.value = defaultBrushData.brushRadius;
+        setHeightRotationSlider.value = defaultBrushData.brushRotation;
+        setHeightStrengthSlider.value = defaultBrushData.brushStrength;
+        setHeightRadiusSlider.value = defaultSetHeightBrushData.brushRadius;
+        setHeightRotationSlider.value = defaultSetHeightBrushData.brushRotation;
+        setHeightStrengthSlider.value = defaultSetHeightBrushData.brushStrength;
+        setHeightHeightSlider.value = defaultSetHeightBrushData.brushHeight;
+        stampRadiusSlider.value = defaultStampBrushData.brushRadius;
+        stampRotationSlider.value = defaultStampBrushData.brushRotation;
+        stampStrengthSlider.value = defaultStampBrushData.brushStrength;
+        erodeRadiusSlider.value = defaultErodeBrushData.brushRadius;
+        erodeRotationSlider.value = defaultErodeBrushData.brushRotation;
+        erodeStrengthSlider.value = defaultErodeBrushData.brushStrength;
 
         modeDropdown.value = 0;
         ModeChange(0);
 
         internalData.terrainMode = InternalDataScriptable.TerrainModes.Sculpt;
-
-        heightSlider.value = 0.5f;
-        brushData.brushHeight = 0.5f;
     }
 
     public string ToJson()
@@ -97,6 +166,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
     public void OnDisable()
     {
         brushImage.color = settingsData.deselectedColor;
+        stampBrushImage.color = settingsData.deselectedColor;
+        erodeBrushImage.color = settingsData.deselectedColor;
 
         if(materialController != null) {
             materialController.ToggleContourMask(false);
@@ -118,14 +189,58 @@ public class TerrainPanel : MonoBehaviour, IPanel
         if(active) {
             sidePanels.SetActive(true);
             sculptBrushPanel.SetActive(true);
+
+            if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+                sculptBrushScrollView.SetActive(true);
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+                stampBrushScrollView.SetActive(true);
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+                erosionBrushScrollView.SetActive(true);
+            }
+
             brushImage.color = settingsData.selectedColor;
+            stampBrushImage.color = settingsData.selectedColor;
+            erodeBrushImage.color = settingsData.selectedColor;
         } else {
             brushImage.color = settingsData.deselectedColor;
+            stampBrushImage.color = settingsData.deselectedColor;
+            erodeBrushImage.color = settingsData.deselectedColor;
+
+            sculptBrushScrollView.SetActive(false);
+            stampBrushScrollView.SetActive(false);
+            erosionBrushScrollView.SetActive(false);
         }
     }
 
     public void SelectBrushIcon(int buttonIndex)
     {
+        SelectBrushIcon(buttonIndex, internalData.terrainMode);
+    }
+
+
+    public void SelectBrushIcon(int buttonIndex, InternalDataScriptable.TerrainModes terrainMode)
+    {
+        List<GameObject> brushIcons = null;
+
+        if(terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+            brushData.brush = gameResources.brushes[buttonIndex];
+            brushImage.texture = brushData.brush;
+            brushIndex = buttonIndex;
+            brushIcons = sculptBrushIcons;
+        } else if(terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+            stampBrushData.brush = gameResources.stampBrushes[buttonIndex];
+            stampBrushImage.texture = stampBrushData.brush;
+            stampBrushIndex = buttonIndex;
+
+            brushIcons = stampBrushIcons;
+        } else if(terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+            erodeBrushData.brush = gameResources.erosionBrushes[buttonIndex];
+            erodeBrushImage.texture = erodeBrushData.brush;
+            erodeBrushIndex = buttonIndex;
+
+            brushIcons = erodeBrushIcons;
+        }
+
         brushData.brush = gameResources.brushes[buttonIndex];
         brushImage.texture = brushData.brush;
         brushIndex = buttonIndex;
@@ -136,44 +251,56 @@ public class TerrainPanel : MonoBehaviour, IPanel
             brushDeleteButton.interactable = false;
         }        
 
-        for (int i = 0; i < brushIcons.Count; i++) {
-            if(i == buttonIndex) {
-                brushIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
+        if(brushIcons != null) {
+            for (int i = 0; i < brushIcons.Count; i++) {
+                if(i == buttonIndex) {
+                    brushIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
 
-            } else {
-                brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
+                } else {
+                    brushIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
+                }
             }
         }
     }
 
+    //Slider controls
     public void RadiusSliderChange(float value)
     {
-        brushData.brushRadius = (int)value;
+        if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+            brushData.brushRadius = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+            setHeightBrushData.brushRadius = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+            stampBrushData.brushRadius = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+            erodeBrushData.brushRadius = (int)value;
+        }
     }
 
     public void StrengthSliderChange(float value)
     {
-        brushData.brushStrength = value;
+        if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+            brushData.brushStrength = value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+            setHeightBrushData.brushStrength = value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+            stampBrushData.brushStrength = value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+            erodeBrushData.brushStrength = value;
+        }
     }
 
     public void RotationSliderChange(float value)
     {
-        setHeightBrushData.brushRotation = value;
-    }
-
-    public void SetHeightRadiusSliderChange(float value)
-    {
-        setHeightBrushData.brushRadius = (int)value;
-    }
-
-    public void SetHeightStrengthSliderChange(float value)
-    {
-        setHeightBrushData.brushStrength = value;
-    }
-
-    public void SetHeightRotationSliderChange(float value)
-    {
-        brushData.brushRotation = value;
+        if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+            brushData.brushRotation = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+            setHeightBrushData.brushRotation = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+            stampBrushData.brushRotation = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+            erodeBrushData.brushRotation = (int)value;
+        }
     }
 
     public void BrushImportButtonclick()
@@ -200,8 +327,9 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
         internalData.customSculptBrushes.RemoveAt(customBrushIndex);
         gameResources.brushes.RemoveAt(brushIndex);
-        Destroy(brushIcons[brushIndex]);
-        brushIcons.RemoveAt(brushIndex);
+        Destroy(sculptBrushIcons[brushIndex]);
+
+        sculptBrushIcons.RemoveAt(brushIndex);
         
         SelectBrushIcon(0);
     }
@@ -209,12 +337,12 @@ public class TerrainPanel : MonoBehaviour, IPanel
     public void AddButton(Texture2D texture, int index = 0)
     {
         GameObject newButton;
-        int ObjectIndex = brushIcons.Count;
+        int ObjectIndex = sculptBrushIcons.Count;
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
         newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
         newButton.transform.SetParent(sculptBrushScrollView.transform);
-        brushIcons.Add(newButton);
+        sculptBrushIcons.Add(newButton);
     }
 
     public void ModeChange(int mode)
@@ -224,6 +352,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         }
         brushPanels[mode].SetActive(true);
 
+        sculptBrushPanel.SetActive(false);
         if(mode == 3)
             erosionPanel.SetActive(true);
         else
@@ -247,5 +376,17 @@ public class TerrainPanel : MonoBehaviour, IPanel
     {
         if(materialController != null)
             materialController.ToggleContourMask(contourToggle.isOn);
+    }
+
+    public void ErosionSliderChange()
+    {
+        erosionData.lifetime = (int)lifetimeSlider.value;
+        erosionData.sedimentCapacityFactor = sedimentCapacityFactorSlider.value;
+        erosionData.inertia = inertiaSlider.value;
+        erosionData.depositSpeed = depositSpeedSlider.value;
+        erosionData.erodeSpeed = erodeSpeedSlider.value;
+        erosionData.startSpeed = startSpeedSlider.value;
+        erosionData.evaporateSpeed = evaporateSpeedSlider.value;
+        erosionData.startWater = startWaterSlider.value;
     }
 }
