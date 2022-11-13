@@ -200,7 +200,6 @@ public class CameraController : MonoBehaviour
                     rotationSlider = setHeightRotationSlider;
                     radiusSlider = setHeightRadiusSlider;
                 } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
-                    Debug.Log("Stamp");
                     strengthSlider = stampHeightSlider;
                     rotationSlider = stampRotationSlider;
                     radiusSlider = stampRadiusSlider;
