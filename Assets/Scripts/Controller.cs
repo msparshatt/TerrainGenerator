@@ -24,11 +24,9 @@ public class Controller : MonoBehaviour
     [Header("Panels")]
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject[] panels;
-    [SerializeField] private GameObject sculptPanel;
-    [SerializeField] private GameObject stampPanel;
+    [SerializeField] private GameObject terrainPanel;
     [SerializeField] private GameObject materialPanel;
     [SerializeField] private GameObject paintPanel;
-    [SerializeField] private GameObject erosionPanel;
     [SerializeField] private GameObject systemPanel;
 
     [SerializeField] private GameObject sidePanels;
@@ -318,7 +316,7 @@ public class Controller : MonoBehaviour
         gameResources.brushes.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        sculptPanel.GetComponent<IPanel>().AddButton(texture);
+        terrainPanel.GetComponent<IPanel>().AddButton(texture);
     }
 
     public void LoadCustomStampBrush(string filename)
@@ -332,7 +330,7 @@ public class Controller : MonoBehaviour
         gameResources.stampBrushes.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        stampPanel.GetComponent<IPanel>().AddButton(texture);
+        terrainPanel.GetComponent<TerrainPanel>().AddStampButton(texture);
     }
 
     public void LoadCustomPaintBrush(string filename)
@@ -360,9 +358,7 @@ public class Controller : MonoBehaviour
         gameResources.erosionBrushes.Add(texture);
 
         //Add the brush to the  brush selection panel          
-        IPanel test = erosionPanel.GetComponent<IPanel>();
-        Debug.Log(test);
-        erosionPanel.GetComponent<IPanel>().AddButton(texture, 0);
+        terrainPanel.GetComponent<TerrainPanel>().AddErodeButton(texture, 0);
     }
 
     private void CloseAllPanels()

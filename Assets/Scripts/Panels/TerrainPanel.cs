@@ -40,6 +40,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
     [SerializeField] private Slider setHeightStrengthSlider;
     [SerializeField] private Slider setHeightRotationSlider;
     [SerializeField] private Slider setHeightHeightSlider;
+    [SerializeField] private RawImage setHeightBrushImage;
 
     [Header("Stamp UI")]
     [SerializeField] private Slider stampRadiusSlider;
@@ -160,7 +161,41 @@ public class TerrainPanel : MonoBehaviour, IPanel
         radiusSlider.value = data.brushRadius;
         rotationSlider.value = data.brushRotation;
         strengthSlider.value = data.brushStrength;
-        SelectBrushIcon(data.brushIndex);
+        SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Sculpt);
+    }
+
+    public void LoadStampSettings(string json)
+    {
+        BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
+
+        stampRadiusSlider.value = data.brushRadius;
+        stampRotationSlider.value = data.brushRotation;
+        stampStrengthSlider.value = data.brushStrength;
+
+        SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Stamp);        
+    }
+
+    public void LoadErodeSettings(string json)
+    {
+        if(json != null && json != "") {
+            ErosionSaveData_v1 data = JsonUtility.FromJson<ErosionSaveData_v1>(json);
+            erodeRadiusSlider.value = data.brushRadius;
+            erodeRotationSlider.value = data.brushRotation;
+            erodeStrengthSlider.value = data.brushStrength;
+
+            lifetimeSlider.value = data.lifetime;
+            sedimentCapacityFactorSlider.value = data.sedimentCapacityFactor;
+            inertiaSlider.value = data.inertia;
+            depositSpeedSlider.value = data.depositSpeed;
+            erodeSpeedSlider.value = data.erodeSpeed;
+            startSpeedSlider.value = data.startSpeed;
+            evaporateSpeedSlider.value = data.evaporateSpeed;
+            startWaterSlider.value = data.startWater;
+
+            SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Erode);
+        } else {
+            ResetPanel();
+        }
     }
 
     public void OnDisable()
@@ -226,24 +261,28 @@ public class TerrainPanel : MonoBehaviour, IPanel
             brushData.brush = gameResources.brushes[buttonIndex];
             brushImage.texture = brushData.brush;
             brushIndex = buttonIndex;
+
             brushIcons = sculptBrushIcons;
+
+            brushImage.texture = brushData.brush;
         } else if(terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
             stampBrushData.brush = gameResources.stampBrushes[buttonIndex];
             stampBrushImage.texture = stampBrushData.brush;
             stampBrushIndex = buttonIndex;
 
             brushIcons = stampBrushIcons;
+
+            stampBrushImage.texture = stampBrushData.brush;
         } else if(terrainMode == InternalDataScriptable.TerrainModes.Erode) {
             erodeBrushData.brush = gameResources.erosionBrushes[buttonIndex];
             erodeBrushImage.texture = erodeBrushData.brush;
             erodeBrushIndex = buttonIndex;
 
             brushIcons = erodeBrushIcons;
+
+            erodeBrushImage.texture = erodeBrushData.brush;
         }
 
-        brushData.brush = gameResources.brushes[buttonIndex];
-        brushImage.texture = brushData.brush;
-        brushIndex = buttonIndex;
 
         if(buttonIndex >= (gameResources.brushes.Count - internalData.customSculptBrushes.Count)) {
             brushDeleteButton.interactable = true;
@@ -343,6 +382,28 @@ public class TerrainPanel : MonoBehaviour, IPanel
         newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
         newButton.transform.SetParent(sculptBrushScrollView.transform);
         sculptBrushIcons.Add(newButton);
+    }
+
+    public void AddStampButton(Texture2D texture, int index = 0)
+    {
+        GameObject newButton;
+        int ObjectIndex = stampBrushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(sculptBrushScrollView.transform);
+        stampBrushIcons.Add(newButton);
+    }
+
+    public void AddErodeButton(Texture2D texture, int index = 0)
+    {
+        GameObject newButton;
+        int ObjectIndex = erodeBrushIcons.Count;
+        Vector2 scale = new Vector2(1.0f, 1.0f);
+
+        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
+        newButton.transform.SetParent(sculptBrushScrollView.transform);
+        erodeBrushIcons.Add(newButton);
     }
 
     public void ModeChange(int mode)
