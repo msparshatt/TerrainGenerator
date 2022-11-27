@@ -332,34 +332,34 @@ public class CameraController : MonoBehaviour
 
                 if(internalData.mode == InternalDataScriptable.Modes.Terrain) {
                     if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
-                        TerrainSculpter.SculptMode mode = TerrainSculpter.SculptMode.Raise;
+                        TerrainModifier.SculptMode mode = TerrainModifier.SculptMode.Raise;
                         if(modifier1) {
-                            mode = TerrainSculpter.SculptMode.Lower;
+                            mode = TerrainModifier.SculptMode.Lower;
                         } else if(modifier2) {
-                            mode = TerrainSculpter.SculptMode.Flatten;
+                            mode = TerrainModifier.SculptMode.Flatten;
                         }
-                        manager.TerrainSculpter.SculptTerrain(mode, raycastTarget.point, operation);
+                        manager.TerrainModifier.SculptTerrain(mode, raycastTarget.point, operation);
                     } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
                         if(modifier1) {
-                            float height = manager.TerrainSculpter.GetHeightAtPoint(raycastTarget.point);
+                            float height = manager.TerrainModifier.GetHeightAtPoint(raycastTarget.point);
                             Debug.Log(height);
                             setHeightHeightSlider.value = height/ 1000.0f;
                         } else {
-                            manager.TerrainSculpter.SetHeight(raycastTarget.point, operation);
+                            manager.TerrainModifier.SetHeight(raycastTarget.point, operation);
                         }
                     } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp && !stampApplied) {
-                        TerrainStamper stamper = manager.TerrainStamper;
-                        TerrainStamper.StampMode mode = TerrainStamper.StampMode.Raise;
+                        TerrainModifier modifier = manager.TerrainModifier;
+                        TerrainModifier.StampMode mode = TerrainModifier.StampMode.Raise;
 
                         if(modifier1) {
-                            mode = TerrainStamper.StampMode.Lower;
+                            mode = TerrainModifier.StampMode.Lower;
                         }
-                        stamper.ModifyTerrain(mode, raycastTarget.point, operation);
+                        modifier.StampTerrain(mode, raycastTarget.point, operation);
                         stampApplied = true;
                     } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode){
-                        TerrainEroder eroder = manager.TerrainEroder;
+                        TerrainModifier modifier = manager.TerrainModifier;
 
-                        eroder.ErodeTerrain(raycastTarget.point, operation);
+                        modifier.ErodeTerrain(raycastTarget.point, operation);
                     }
 
                 } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {

@@ -20,11 +20,11 @@ public class SculptSubOperation : SubOperation
 
     public override void Do()
     {
-        terrain.GetComponent<TerrainSculpter>().RedoSculpt(topLeft, size, changes);
+        terrain.GetComponent<TerrainModifier>().RedoSculpt(topLeft, size, changes);
     }
 
     public override void Undo()
     {
-        terrain.GetComponent<TerrainSculpter>().UndoSculpt(topLeft, size, changes);
+        terrain.GetComponent<TerrainModifier>().UndoSculpt(topLeft, size, changes);
     }
 }

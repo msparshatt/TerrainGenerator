@@ -53,18 +53,8 @@ public class TerrainManager
         get {return terrainObject.GetComponent<TerrainPainter>();}
     }
 
-    public TerrainSculpter TerrainSculpter
+    public TerrainModifier TerrainModifier
     {
-        get {return terrainObject.GetComponent<TerrainSculpter>();}
-    }
-
-    public TerrainStamper TerrainStamper
-    {
-        get {return terrainObject.GetComponent<TerrainStamper>();}
-    }
-
-    public TerrainEroder TerrainEroder
-    {
-        get {return terrainObject.GetComponent<TerrainEroder>();}
+        get {return terrainObject.GetComponent<TerrainModifier>();}
     }
 }

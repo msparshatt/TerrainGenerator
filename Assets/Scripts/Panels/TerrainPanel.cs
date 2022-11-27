@@ -457,7 +457,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
     public void SetHeightButtonClick()
     {
-        TerrainManager.Instance().TerrainSculpter.SetTerrainHeight(brushData.brushHeight);
+        TerrainManager.Instance().TerrainModifier.SetTerrainHeight(brushData.brushHeight);
     }
 
     public void ContourToggleChange(bool isOn)
