@@ -22,6 +22,7 @@ public class InternalDataScriptable : ScriptableObject
     public List<string> customSculptBrushes;
     public List<string> customStampBrushes;
     public List<string> customErosionBrushes;
+    public List<string> customSetHeightBrushes;
     public List<string> customTextures;
 
     //sculpt panel

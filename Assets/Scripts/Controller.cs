@@ -85,6 +85,7 @@ public class Controller : MonoBehaviour
         internalData.customStampBrushes = new List<string>();
         internalData.customPaintBrushes = new List<string>();
         internalData.customErosionBrushes = new List<string>();
+        internalData.customSetHeightBrushes = new List<string>();
         internalData.customTextures = new List<string>();
         internalData.customMaterials = new List<string>();
 
@@ -95,7 +96,6 @@ public class Controller : MonoBehaviour
         LoadCustomBrushes();
         LoadCustomTextures();
         LoadCustomMaterials();
-        LoadCustomStamps();
 
         InitialiseFlags();
     }
@@ -125,7 +125,6 @@ public class Controller : MonoBehaviour
     public void DoExit()
     {
         SaveCustomBrushes();
-        SaveCustomStamps();
         SaveCustomTextures();
         SaveCustomMaterials();
 
@@ -157,6 +156,20 @@ public class Controller : MonoBehaviour
             for(int i = 0; i < internalData.customErosionBrushes.Count; i++)                
                 PlayerPrefs.SetString("CustomErosionBrush_" + i, internalData.customErosionBrushes[i]);
         }        
+
+        PlayerPrefs.SetInt("CustomStampCount", internalData.customStampBrushes.Count);
+
+        if(internalData.customStampBrushes.Count > 0) {
+            for(int i = 0; i < internalData.customStampBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomStamp_" + i, internalData.customStampBrushes[i]);
+        }        
+
+        PlayerPrefs.SetInt("CustomSetHeightBrushCount", internalData.customSetHeightBrushes.Count);
+
+        if(internalData.customSetHeightBrushes.Count > 0) {
+            for(int i = 0; i < internalData.customSetHeightBrushes.Count; i++)                
+                PlayerPrefs.SetString("CustomSetHeightBrush_" + i, internalData.customSetHeightBrushes[i]);
+        }        
     }
 
     public void LoadCustomBrushes()
@@ -167,7 +180,7 @@ public class Controller : MonoBehaviour
             for(int i = 0; i < count; i++) {
                 string name = PlayerPrefs.GetString("CustomBrush_" + i);
 
-                LoadCustomBrush(name);
+                LoadCustomTerrainBrush(name, InternalDataScriptable.TerrainModes.Sculpt);
                 internalData.customSculptBrushes.Add(name);
             }
         }
@@ -189,32 +202,30 @@ public class Controller : MonoBehaviour
             for(int i = 0; i < count; i++) {
                 string name = PlayerPrefs.GetString("CustomErosionBrush_" + i);
 
-                LoadCustomErosionBrush(name);
+                LoadCustomTerrainBrush(name, InternalDataScriptable.TerrainModes.Erode);
                 internalData.customErosionBrushes.Add(name);
             }
         }
-    }
 
-    public void SaveCustomStamps()
-    {
-        PlayerPrefs.SetInt("CustomStampCount", internalData.customStampBrushes.Count);
-
-        if(internalData.customStampBrushes.Count > 0) {
-            for(int i = 0; i < internalData.customStampBrushes.Count; i++)                
-                PlayerPrefs.SetString("CustomStamp_" + i, internalData.customStampBrushes[i]);
-        }        
-    }
-
-    public void LoadCustomStamps()
-    {
-        int count = PlayerPrefs.GetInt("CustomStampCount");
+        count = PlayerPrefs.GetInt("CustomStampCount");
 
         if(count > 0) {
             for(int i = 0; i < count; i++) {
                 string name = PlayerPrefs.GetString("CustomStamp_" + i);
 
-                LoadCustomStampBrush(name);
+                LoadCustomTerrainBrush(name, InternalDataScriptable.TerrainModes.Stamp);
                 internalData.customStampBrushes.Add(name);
+            }
+        }
+
+        count = PlayerPrefs.GetInt("CustomSetHeightBrushCount");
+
+        if(count > 0) {
+            for(int i = 0; i < count; i++) {
+                string name = PlayerPrefs.GetString("CustomSetHeightBrush_" + i);
+
+                LoadCustomTerrainBrush(name, InternalDataScriptable.TerrainModes.SetHeight);
+                internalData.customSetHeightBrushes.Add(name);
             }
         }
     }
@@ -305,7 +316,7 @@ public class Controller : MonoBehaviour
         paintPanel.GetComponent<IPanel>().AddButton(texture, 1);
     }
 
-    public void LoadCustomBrush(string filename)
+    public void LoadCustomTerrainBrush(string filename, InternalDataScriptable.TerrainModes mode = InternalDataScriptable.TerrainModes.Sculpt)
     {
         Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
         byte[] bytes = File.ReadAllBytes(filename);
@@ -313,24 +324,18 @@ public class Controller : MonoBehaviour
         texture.filterMode = FilterMode.Trilinear;
         texture.LoadImage(bytes);
 
-        gameResources.brushes.Add(texture);
+        if(mode == InternalDataScriptable.TerrainModes.Sculpt) {
+            gameResources.brushes.Add(texture);
+        } else if(mode == InternalDataScriptable.TerrainModes.SetHeight) {
+            gameResources.setHeightBrushes.Add(texture);
+        } else if(mode == InternalDataScriptable.TerrainModes.Stamp) {
+            gameResources.stampBrushes.Add(texture);
+        } else if(mode == InternalDataScriptable.TerrainModes.Erode) {
+            gameResources.erosionBrushes.Add(texture);
+        }
 
         //Add the brush to the  brush selection panel          
-        terrainPanel.GetComponent<IPanel>().AddButton(texture);
-    }
-
-    public void LoadCustomStampBrush(string filename)
-    {
-        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
-        byte[] bytes = File.ReadAllBytes(filename);
-
-        texture.filterMode = FilterMode.Trilinear;
-        texture.LoadImage(bytes);
-
-        gameResources.stampBrushes.Add(texture);
-
-        //Add the brush to the  brush selection panel          
-        terrainPanel.GetComponent<TerrainPanel>().AddStampButton(texture);
+        terrainPanel.GetComponent<IPanel>().AddTerrainButton(texture, mode);
     }
 
     public void LoadCustomPaintBrush(string filename)
@@ -347,20 +352,6 @@ public class Controller : MonoBehaviour
         paintPanel.GetComponent<IPanel>().AddButton(texture, 0);
     }
     
-    public void LoadCustomErosionBrush(string filename)
-    {
-        Texture2D texture = new Texture2D(128,128, TextureFormat.RGB24, false); 
-        byte[] bytes = File.ReadAllBytes(filename);
-
-        texture.filterMode = FilterMode.Trilinear;
-        texture.LoadImage(bytes);
-
-        gameResources.erosionBrushes.Add(texture);
-
-        //Add the brush to the  brush selection panel          
-        terrainPanel.GetComponent<TerrainPanel>().AddErodeButton(texture, 0);
-    }
-
     private void CloseAllPanels()
     {
         ClosaAllMainPanels();

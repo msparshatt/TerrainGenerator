@@ -125,6 +125,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         sculptBrushScrollView.SetActive(false);
         stampBrushScrollView.SetActive(false);
         erosionBrushScrollView.SetActive(false);
+        setHeightBrushScrollView.SetActive(false);
 
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
@@ -268,6 +269,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
     public void SelectBrushIcon(int buttonIndex, InternalDataScriptable.TerrainModes terrainMode)
     {
         List<GameObject> brushIcons = null;
+        List<Texture2D> brushes = null;
+        List<string> customBrushes = null;
 
         if(terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
             brushData.brush = gameResources.brushes[buttonIndex];
@@ -275,6 +278,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
             brushIndex = buttonIndex;
 
             brushIcons = sculptBrushIcons;
+            brushes = gameResources.brushes;
+            customBrushes = internalData.customSculptBrushes;
 
             brushImage.texture = brushData.brush;
         } else if(terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
@@ -283,6 +288,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
             stampBrushIndex = buttonIndex;
 
             brushIcons = stampBrushIcons;
+            brushes = gameResources.stampBrushes;
+            customBrushes = internalData.customStampBrushes;
 
             stampBrushImage.texture = stampBrushData.brush;
         } else if(terrainMode == InternalDataScriptable.TerrainModes.Erode) {
@@ -291,20 +298,23 @@ public class TerrainPanel : MonoBehaviour, IPanel
             erodeBrushIndex = buttonIndex;
 
             brushIcons = erodeBrushIcons;
-
+            brushes = gameResources.erosionBrushes;
+            customBrushes = internalData.customErosionBrushes;
             erodeBrushImage.texture = erodeBrushData.brush;
         } else if(terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
             setHeightBrushData.brush = gameResources.setHeightBrushes[buttonIndex];
             setHeightBrushImage.texture = setHeightBrushData.brush;
             setHeightBrushIndex = buttonIndex;
 
-            brushIcons = erodeBrushIcons;
+            brushIcons = setHeightBrushIcons;
+            brushes = gameResources.setHeightBrushes;
+            customBrushes = internalData.customSetHeightBrushes;
 
             setHeightBrushImage.texture = setHeightBrushData.brush;
         }
 
 
-        if(buttonIndex >= (gameResources.brushes.Count - internalData.customSculptBrushes.Count)) {
+        if(buttonIndex >= (brushes.Count - customBrushes.Count)) {
             brushDeleteButton.interactable = true;
         } else {
             brushDeleteButton.interactable = false;
@@ -374,56 +384,94 @@ public class TerrainPanel : MonoBehaviour, IPanel
     public void OnBrushImport(string filename)
     {      
         if(filename != "") {
-            controller.LoadCustomBrush(filename);
-            internalData.customSculptBrushes.Add(filename);
-            SelectBrushIcon(gameResources.brushes.Count - 1);
+            controller.LoadCustomTerrainBrush(filename, internalData.terrainMode);
+            int index = 0;
+
+            if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+                internalData.customSculptBrushes.Add(filename);
+                index = gameResources.brushes.Count - 1;
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+                internalData.customSetHeightBrushes.Add(filename);
+                index = gameResources.setHeightBrushes.Count - 1;
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+                internalData.customStampBrushes.Add(filename);
+                index = gameResources.stampBrushes.Count - 1;
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+                internalData.customErosionBrushes.Add(filename);
+                index = gameResources.erosionBrushes.Count - 1;
+            } 
+
+            SelectBrushIcon(index);
         }
     }
 
     public void BrushDeleteButtonClick()
     {
-        int customBrushIndex = brushIndex + internalData.customSculptBrushes.Count - gameResources.brushes.Count;
+        int customBrushIndex = 0;
+        if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Sculpt) {
+            customBrushIndex = brushIndex + internalData.customSculptBrushes.Count - gameResources.brushes.Count;
 
-        internalData.customSculptBrushes.RemoveAt(customBrushIndex);
-        gameResources.brushes.RemoveAt(brushIndex);
-        Destroy(sculptBrushIcons[brushIndex]);
+            internalData.customSculptBrushes.RemoveAt(customBrushIndex);
+            gameResources.brushes.RemoveAt(brushIndex);
+            Destroy(sculptBrushIcons[brushIndex]);
 
-        sculptBrushIcons.RemoveAt(brushIndex);
-        
+            sculptBrushIcons.RemoveAt(brushIndex);
+            
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+            customBrushIndex = setHeightBrushIndex + internalData.customSetHeightBrushes.Count - gameResources.setHeightBrushes.Count;
+
+            internalData.customSetHeightBrushes.RemoveAt(customBrushIndex);
+            gameResources.setHeightBrushes.RemoveAt(setHeightBrushIndex);
+            Destroy(setHeightBrushIcons[setHeightBrushIndex]);
+
+            setHeightBrushIcons.RemoveAt(setHeightBrushIndex);            
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Stamp) {
+            customBrushIndex = stampBrushIndex + internalData.customStampBrushes.Count - gameResources.stampBrushes.Count;
+
+            internalData.customStampBrushes.RemoveAt(customBrushIndex);
+            gameResources.stampBrushes.RemoveAt(stampBrushIndex);
+            Destroy(stampBrushIcons[stampBrushIndex]);
+
+            stampBrushIcons.RemoveAt(stampBrushIndex);            
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
+            customBrushIndex = erodeBrushIndex + internalData.customErosionBrushes.Count - gameResources.erosionBrushes.Count;
+
+            internalData.customErosionBrushes.RemoveAt(customBrushIndex);
+            gameResources.erosionBrushes.RemoveAt(erodeBrushIndex);
+            Destroy(erodeBrushIcons[erodeBrushIndex]);
+
+            erodeBrushIcons.RemoveAt(erodeBrushIndex);            
+        }
+
         SelectBrushIcon(0);
     }
 
-    public void AddButton(Texture2D texture, int index = 0)
+    public void AddTerrainButton(Texture2D texture, InternalDataScriptable.TerrainModes mode = InternalDataScriptable.TerrainModes.Sculpt)
     {
-        GameObject newButton;
+        Transform transform = sculptBrushScrollViewContents.transform;
         int ObjectIndex = sculptBrushIcons.Count;
-        Vector2 scale = new Vector2(1.0f, 1.0f);
+        List<GameObject> brushIcons = sculptBrushIcons;
 
-        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
-        newButton.transform.SetParent(sculptBrushScrollView.transform);
-        sculptBrushIcons.Add(newButton);
-    }
+        if(mode == InternalDataScriptable.TerrainModes.SetHeight) {
+            transform = setHeightBrushScrollViewContents.transform;
+            ObjectIndex = setHeightBrushIcons.Count;
+            brushIcons = setHeightBrushIcons;
+        } else if(mode == InternalDataScriptable.TerrainModes.Stamp) {
+            transform = stampBrushScrollViewContents.transform;
+            ObjectIndex = stampBrushIcons.Count;
+            brushIcons = stampBrushIcons;
+        } else if(mode == InternalDataScriptable.TerrainModes.Erode) {
+            transform = erosionBrushScrollViewContents.transform;
+            ObjectIndex = erodeBrushIcons.Count;
+            brushIcons = erodeBrushIcons;
+        }
 
-    public void AddStampButton(Texture2D texture, int index = 0)
-    {
         GameObject newButton;
-        int ObjectIndex = stampBrushIcons.Count;
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
         newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
-        newButton.transform.SetParent(sculptBrushScrollView.transform);
-        stampBrushIcons.Add(newButton);
-    }
-
-    public void AddErodeButton(Texture2D texture, int index = 0)
-    {
-        GameObject newButton;
-        int ObjectIndex = erodeBrushIcons.Count;
-        Vector2 scale = new Vector2(1.0f, 1.0f);
-
-        newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
-        newButton.transform.SetParent(sculptBrushScrollView.transform);
-        erodeBrushIcons.Add(newButton);
+        newButton.transform.SetParent(transform);
+        brushIcons.Add(newButton);
     }
 
     public void ModeChange(int mode)
