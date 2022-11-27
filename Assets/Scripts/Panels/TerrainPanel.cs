@@ -207,11 +207,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
     public void OnDisable()
     {
-        brushImage.color = settingsData.deselectedColor;
-        stampBrushImage.color = settingsData.deselectedColor;
-        erodeBrushImage.color = settingsData.deselectedColor;
-        setHeightBrushImage.color = settingsData.deselectedColor;
-
+        DeactivateSidePanels();
+        
         if(materialController != null) {
             materialController.ToggleContourMask(false);
         }
@@ -227,7 +224,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
     {
         bool active = !sculptBrushPanel.activeSelf;
 
-        sidePanels.GetComponent<PanelController>().CloseAllPanels();
+        DeactivateSidePanels();
 
         if(active) {
             sidePanels.SetActive(true);
@@ -248,16 +245,22 @@ public class TerrainPanel : MonoBehaviour, IPanel
             erodeBrushImage.color = settingsData.selectedColor;
             setHeightBrushImage.color = settingsData.selectedColor;
         } else {
-            brushImage.color = settingsData.deselectedColor;
-            stampBrushImage.color = settingsData.deselectedColor;
-            erodeBrushImage.color = settingsData.deselectedColor;
-            setHeightBrushImage.color = settingsData.deselectedColor;
-
-            sculptBrushScrollView.SetActive(false);
-            stampBrushScrollView.SetActive(false);
-            erosionBrushScrollView.SetActive(false);
-            setHeightBrushScrollView.SetActive(false);
         }
+    }
+
+    private void DeactivateSidePanels()
+    {
+        sidePanels.GetComponent<PanelController>().CloseAllPanels();
+
+        brushImage.color = settingsData.deselectedColor;
+        stampBrushImage.color = settingsData.deselectedColor;
+        erodeBrushImage.color = settingsData.deselectedColor;
+        setHeightBrushImage.color = settingsData.deselectedColor;
+
+        sculptBrushScrollView.SetActive(false);
+        stampBrushScrollView.SetActive(false);
+        erosionBrushScrollView.SetActive(false);
+        setHeightBrushScrollView.SetActive(false);
     }
 
     public void SelectBrushIcon(int buttonIndex)
@@ -481,13 +484,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         }
         brushPanels[mode].SetActive(true);
 
-        sculptBrushPanel.SetActive(false);
-        sidePanels.SetActive(false);
-
-        brushImage.color = settingsData.deselectedColor;
-        stampBrushImage.color = settingsData.deselectedColor;
-        erodeBrushImage.color = settingsData.deselectedColor;
-        setHeightBrushImage.color = settingsData.deselectedColor;
+        DeactivateSidePanels();
 
         if(mode == 3)
             erosionPanel.SetActive(true);
