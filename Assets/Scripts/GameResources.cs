@@ -35,13 +35,14 @@ public class GameResources
     private void LoadResources()
     {
         Debug.Log("loading sculpt brushes " + Time.realtimeSinceStartup);
-        brushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("Brushes"));
+        brushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("TerrainBrushes/Sculpt"));
+        Debug.Log(brushes.Count);
         Debug.Log("loading paint brushes " + Time.realtimeSinceStartup);
         paintBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("PaintBrushes"));
         Debug.Log("loading stamp brushes " + Time.realtimeSinceStartup);
-        stampBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("Stamps"));
+        stampBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("TerrainBrushes/Stamp"));
         Debug.Log("loading erosion brushes " + Time.realtimeSinceStartup);
-        erosionBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("ErosionBrushes"));
+        erosionBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("TerrainBrushes/Erosion"));
 
         Debug.Log("loading materials " + Time.realtimeSinceStartup);
         Material[] loadedMaterials = Resources.LoadAll<Material>("Materials");
