@@ -209,6 +209,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         brushImage.color = settingsData.deselectedColor;
         stampBrushImage.color = settingsData.deselectedColor;
         erodeBrushImage.color = settingsData.deselectedColor;
+        setHeightBrushImage.color = settingsData.deselectedColor;
 
         if(materialController != null) {
             materialController.ToggleContourMask(false);
