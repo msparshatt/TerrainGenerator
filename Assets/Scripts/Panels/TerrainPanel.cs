@@ -433,6 +433,13 @@ public class TerrainPanel : MonoBehaviour, IPanel
         brushPanels[mode].SetActive(true);
 
         sculptBrushPanel.SetActive(false);
+        sidePanels.SetActive(false);
+
+        brushImage.color = settingsData.deselectedColor;
+        stampBrushImage.color = settingsData.deselectedColor;
+        erodeBrushImage.color = settingsData.deselectedColor;
+        setHeightBrushImage.color = settingsData.deselectedColor;
+
         if(mode == 3)
             erosionPanel.SetActive(true);
         else
