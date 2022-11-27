@@ -19,6 +19,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject sculptBrushScrollViewContents;
     [SerializeField] private GameObject stampBrushScrollViewContents;
     [SerializeField] private GameObject erosionBrushScrollViewContents;
+    [SerializeField] private GameObject setHeightBrushScrollView;
+    [SerializeField] private GameObject setHeightBrushScrollViewContents;
 
     [SerializeField] private GameObject sculptBrushPanel;
     [SerializeField] private GameObject sidePanels;
@@ -84,10 +86,12 @@ public class TerrainPanel : MonoBehaviour, IPanel
     private List<GameObject> sculptBrushIcons;
     private List<GameObject> stampBrushIcons;
     private List<GameObject> erodeBrushIcons;
+    private List<GameObject> setHeightBrushIcons;
 
     private int brushIndex;
     private int stampBrushIndex;
     private int erodeBrushIndex;
+    private int setHeightBrushIndex;
 
 
     private GameResources gameResources;
@@ -106,6 +110,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         sculptBrushIcons = UIHelper.SetupPanel(gameResources.brushes, sculptBrushScrollViewContents.transform, SelectBrushIcon);   
         stampBrushIcons = UIHelper.SetupPanel(gameResources.stampBrushes, stampBrushScrollViewContents.transform, SelectBrushIcon);   
         erodeBrushIcons = UIHelper.SetupPanel(gameResources.erosionBrushes, erosionBrushScrollViewContents.transform, SelectBrushIcon);   
+        setHeightBrushIcons = UIHelper.SetupPanel(gameResources.setHeightBrushes, setHeightBrushScrollViewContents.transform, SelectBrushIcon);   
 
         ResetPanel();
     }
@@ -115,6 +120,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Sculpt);
         SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Stamp);
         SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Erode);
+        SelectBrushIcon(0, InternalDataScriptable.TerrainModes.SetHeight);
 
         sculptBrushScrollView.SetActive(false);
         stampBrushScrollView.SetActive(false);
@@ -231,19 +237,24 @@ public class TerrainPanel : MonoBehaviour, IPanel
                 stampBrushScrollView.SetActive(true);
             } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
                 erosionBrushScrollView.SetActive(true);
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+                setHeightBrushScrollView.SetActive(true);
             }
 
             brushImage.color = settingsData.selectedColor;
             stampBrushImage.color = settingsData.selectedColor;
             erodeBrushImage.color = settingsData.selectedColor;
+            setHeightBrushImage.color = settingsData.selectedColor;
         } else {
             brushImage.color = settingsData.deselectedColor;
             stampBrushImage.color = settingsData.deselectedColor;
             erodeBrushImage.color = settingsData.deselectedColor;
+            setHeightBrushImage.color = settingsData.deselectedColor;
 
             sculptBrushScrollView.SetActive(false);
             stampBrushScrollView.SetActive(false);
             erosionBrushScrollView.SetActive(false);
+            setHeightBrushScrollView.SetActive(false);
         }
     }
 
@@ -281,6 +292,14 @@ public class TerrainPanel : MonoBehaviour, IPanel
             brushIcons = erodeBrushIcons;
 
             erodeBrushImage.texture = erodeBrushData.brush;
+        } else if(terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
+            setHeightBrushData.brush = gameResources.setHeightBrushes[buttonIndex];
+            setHeightBrushImage.texture = setHeightBrushData.brush;
+            setHeightBrushIndex = buttonIndex;
+
+            brushIcons = erodeBrushIcons;
+
+            setHeightBrushImage.texture = setHeightBrushData.brush;
         }
 
 
@@ -425,7 +444,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
     public void HeightSliderChange(float height)
     {
-        brushData.brushHeight = height;
+        setHeightBrushData.brushHeight = height;
     }
 
     public void SetHeightButtonClick()

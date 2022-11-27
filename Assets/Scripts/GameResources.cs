@@ -17,6 +17,7 @@ public class GameResources
     public List<Texture2D> paintBrushes;
     public List<Texture2D> stampBrushes;
     public List<Texture2D> erosionBrushes;
+    public List<Texture2D> setHeightBrushes;
 
     static public GameResources instance {
         get {
@@ -43,6 +44,8 @@ public class GameResources
         stampBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("TerrainBrushes/Stamp"));
         Debug.Log("loading erosion brushes " + Time.realtimeSinceStartup);
         erosionBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("TerrainBrushes/Erosion"));
+        Debug.Log("loading set height brushes " + Time.realtimeSinceStartup);
+        setHeightBrushes = new List<Texture2D>(Resources.LoadAll<Texture2D>("TerrainBrushes/SetHeight"));
 
         Debug.Log("loading materials " + Time.realtimeSinceStartup);
         Material[] loadedMaterials = Resources.LoadAll<Material>("Materials");

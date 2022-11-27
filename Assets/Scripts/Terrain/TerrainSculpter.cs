@@ -7,6 +7,7 @@ public class TerrainSculpter : MonoBehaviour
 {
     public enum SculptMode {Raise, Lower, Flatten}
     [SerializeField] private BrushDataScriptable brushData;
+    [SerializeField] private BrushDataScriptable setHeightBrushData;
 
     private Terrain terrain;
 
@@ -112,7 +113,7 @@ public class TerrainSculpter : MonoBehaviour
     {
         TerrainData terrainData = terrain.terrainData;
 
-        ModifyRectangle rectangle = new ModifyRectangle(location, brushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
+        ModifyRectangle rectangle = new ModifyRectangle(location, setHeightBrushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
         float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
         float[,] changes = new float[rectangle.size.y, rectangle.size.x];
 
@@ -120,8 +121,8 @@ public class TerrainSculpter : MonoBehaviour
         {
             for (int y = 0; y < rectangle.size.y; y++)
             {                   
-                float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -brushData.brushRotation, brushData.brushStrength);
-                float heightChange = brushData.brushHeight - heights[y,x];
+                float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -setHeightBrushData.brushRotation, setHeightBrushData.brushStrength);
+                float heightChange = setHeightBrushData.brushHeight - heights[y,x];
 
                 heights[y, x] += (heightChange * Time.smoothDeltaTime * maskValue);
                 changes[y,x] =  (heightChange * Time.smoothDeltaTime * maskValue);
