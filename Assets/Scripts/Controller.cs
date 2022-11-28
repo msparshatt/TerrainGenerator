@@ -89,6 +89,14 @@ public class Controller : MonoBehaviour
         internalData.customTextures = new List<string>();
         internalData.customMaterials = new List<string>();
 
+        internalData.customMaterialIndices = new List<int>();
+        internalData.customTextureIndices = new List<int>();
+        internalData.customPaintBrushIndices = new List<int>();
+        internalData.customSculptBrushIndices = new List<int>();
+        internalData.customSetHeightBrushIndices = new List<int>();
+        internalData.customStampBrushIndices = new List<int>();
+        internalData.customErosionBrushIndices = new List<int>();
+
         InitialiseMainPanels();
 
         heightmapController.CreateFlatTerrain(settingsData.defaultTerrainResolution);

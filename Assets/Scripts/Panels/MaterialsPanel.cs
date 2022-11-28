@@ -44,6 +44,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     private MaterialController materialController;
 
     private int materialPanelIndex;
+    private int[] selectedMaterialIndices = new int[] {0,0,0,0,0};
     bool changeToggle = true;
 
     // Start is called before the first frame update
@@ -68,6 +69,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         materialSettings.mixOffsets = new float[MaterialSettings.NUMBER_MATERIALS];
 
         materialIcons = UIHelper.SetupPanel(gameResources.icons, materialScrollView.transform, SelectMaterialIcon);   
+        SetupIconIndices(materialIcons, internalData.customMaterialIndices);
       
         colorPicker.Awake();
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
@@ -75,6 +77,13 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         changeToggle = true;
 
         ResetPanel();
+    }
+
+    private void SetupIconIndices(List<GameObject> brushIcons, List<int> iconIndices)
+    {
+        for(int i = 0; i < brushIcons.Count; i++) {
+            iconIndices.Add(i);
+        }
     }
 
     public void ResetPanel()
@@ -213,8 +222,10 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void SelectMaterialIcon(int panel, int buttonIndex)
     {
-        Material mat = gameResources.materials[buttonIndex];
-        materialSettings.currentMaterialIndices[panel] = buttonIndex;
+        selectedMaterialIndices[panel] = buttonIndex;        
+        int index = internalData.customMaterialIndices[buttonIndex];
+        Material mat = gameResources.materials[index];
+        materialSettings.currentMaterialIndices[panel] = index;
 
         if(changeToggle) {
             if(materialToggle.isOn) {
@@ -225,7 +236,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         }
 
         for (int i = 0; i < materialIcons.Count; i++) {
-            if(i == buttonIndex) {
+            if(i == index) {
                 materialIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
             } else {
                 materialIcons[i].GetComponent<Image>().color = settingsData.deselectedColor;
@@ -252,12 +263,16 @@ public class MaterialsPanel : MonoBehaviour, IPanel
             controller.LoadCustomMaterial(filename);
             internalData.customMaterials.Add(filename);
 
-            SelectMaterialIcon(gameResources.materials.Count - 1);
+            SelectMaterialIcon(internalData.customMaterialIndices.Count - 1);
         }
     }
 
     public void MaterialDeleteButtonClick()
     {
+        for(int i = selectedMaterialIndices[materialPanelIndex] + 1; i < internalData.customMaterialIndices.Count; i++) {
+            internalData.customMaterialIndices[i] -= 1;
+        }
+
         int customMaterialIndex = materialSettings.currentMaterialIndices[materialPanelIndex] + internalData.customMaterials.Count - gameResources.materials.Count;
 
         internalData.customMaterials.RemoveAt(customMaterialIndex);
@@ -371,7 +386,8 @@ public class MaterialsPanel : MonoBehaviour, IPanel
     public void AddButton(Texture2D texture, int index = 0)
     {
         GameObject newButton;
-        int ObjectIndex = materialIcons.Count;
+        internalData.customMaterialIndices.Add(materialIcons.Count);
+        int ObjectIndex = internalData.customMaterialIndices.Count - 1;
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
         newButton = UIHelper.MakeButton(texture, delegate {SelectMaterialIcon(ObjectIndex); }, ObjectIndex);

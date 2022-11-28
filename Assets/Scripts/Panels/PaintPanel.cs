@@ -57,6 +57,10 @@ public class PaintPanel : MonoBehaviour, IPanel
     private MaterialController materialController;
     private int brushIndex;
 
+    private int selectedBrushIndex;
+    private int selectedTextureIndex;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,8 +71,10 @@ public class PaintPanel : MonoBehaviour, IPanel
         manager = TerrainManager.Instance();
         materialController = manager.MaterialController;
         gameResources = GameResources.instance;
-        textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);           
+        textureIcons = UIHelper.SetupPanel(gameResources.icons, textureScrollView.transform, SelectTextureIcon);   
+        SetupIconIndices(textureIcons, internalData.customTextureIndices);        
         brushIcons = UIHelper.SetupPanel(gameResources.paintBrushes, paintBrushScrollView.transform, SelectBrushIcon);
+        SetupIconIndices(brushIcons, internalData.customPaintBrushIndices);        
         controller = gameState.GetComponent<Controller>();
 
         paintBrushData.filter = filterToggle.isOn;
@@ -80,6 +86,13 @@ public class PaintPanel : MonoBehaviour, IPanel
         colorPicker.color = Color.white;
         
         ResetPanel();
+    }
+
+    private void SetupIconIndices(List<GameObject> brushIcons, List<int> iconIndices)
+    {
+        for(int i = 0; i < brushIcons.Count; i++) {
+            iconIndices.Add(i);
+        }
     }
 
     public void ResetPanel()
@@ -143,19 +156,21 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void SelectTextureIcon(int buttonIndex)
     {
-        paintBrushData.paintTexture = (Texture2D)gameResources.textures[buttonIndex];
+        selectedTextureIndex = buttonIndex;
+        int index = internalData.customTextureIndices[buttonIndex];
+        paintBrushData.paintTexture = (Texture2D)gameResources.textures[index];
         textureIndex = buttonIndex;
 
-        if(buttonIndex >= (gameResources.icons.Count - internalData.customTextures.Count)) {
+        if(index >= (gameResources.icons.Count - internalData.customTextures.Count)) {
             textureDeleteButton.interactable = true;
-            textureImage.texture =  gameResources.textures[buttonIndex];
+            textureImage.texture =  gameResources.textures[index];
         } else {
             textureDeleteButton.interactable = false;
-            textureImage.texture = gameResources.icons[buttonIndex];
+            textureImage.texture = gameResources.icons[index];
         }        
 
         for (int i = 0; i < textureIcons.Count; i++) {
-            if(i == buttonIndex) {
+            if(i == index) {
                 textureIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
 
             } else {
@@ -165,6 +180,10 @@ public class PaintPanel : MonoBehaviour, IPanel
     }
     public void TextureDeleteButtonClick()
     {
+        for(int i = selectedTextureIndex + 1; i < internalData.customTextureIndices.Count; i++) {
+            internalData.customTextureIndices[i] -= 1;
+        }
+
         int customTextureIndex = textureIndex + internalData.customTextures.Count - gameResources.textures.Count;
 
         internalData.customTextures.RemoveAt(customTextureIndex);
@@ -181,7 +200,7 @@ public class PaintPanel : MonoBehaviour, IPanel
             controller.LoadCustomTexture(filename);
             internalData.customTextures.Add(filename);
 
-            SelectTextureIcon(gameResources.textures.Count - 1);
+            SelectTextureIcon(internalData.customTextureIndices.Count - 1);
         }
     }
 
@@ -221,7 +240,8 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void AddBrushButton(Texture2D texture)
     {
         GameObject newButton;
-        int ObjectIndex = brushIcons.Count;
+        internalData.customPaintBrushIndices.Add(brushIcons.Count);
+        int ObjectIndex = internalData.customPaintBrushIndices.Count - 1;
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
         newButton = UIHelper.MakeButton(texture, delegate {SelectBrushIcon(ObjectIndex); }, ObjectIndex);
@@ -232,7 +252,8 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void AddTextureButton(Texture2D texture)
     {
         GameObject newButton;
-        int ObjectIndex = textureIcons.Count;
+        internalData.customTextureIndices.Add(textureIcons.Count);
+        int ObjectIndex = internalData.customTextureIndices.Count - 1;
         Vector2 scale = new Vector2(1.0f, 1.0f);
 
         newButton = UIHelper.MakeButton(texture, delegate {SelectTextureIcon(ObjectIndex); }, ObjectIndex);
@@ -243,18 +264,21 @@ public class PaintPanel : MonoBehaviour, IPanel
     //Brush Panel
     public void SelectBrushIcon(int buttonIndex)
     {
-        paintBrushData.brush = gameResources.paintBrushes[buttonIndex];
-        paintBrushImage.texture = paintBrushData.brush;
-        brushIndex = buttonIndex;
+        selectedBrushIndex = buttonIndex;
+        int index = internalData.customPaintBrushIndices[buttonIndex];
 
-        if(buttonIndex >= (gameResources.paintBrushes.Count - internalData.customPaintBrushes.Count)) {
+        paintBrushData.brush = gameResources.paintBrushes[index];
+        paintBrushImage.texture = paintBrushData.brush;
+        brushIndex = index;
+
+        if(index >= (gameResources.paintBrushes.Count - internalData.customPaintBrushes.Count)) {
             paintBrushDeleteButton.interactable = true;
         } else {
             paintBrushDeleteButton.interactable = false;
         }        
 
         for (int i = 0; i < brushIcons.Count; i++) {
-            if(i == buttonIndex) {
+            if(i == index) {
                 brushIcons[i].GetComponent<Image>().color = settingsData.selectedColor;
 
             } else {
@@ -308,12 +332,16 @@ public class PaintPanel : MonoBehaviour, IPanel
         if(filename != "") {
             controller.LoadCustomPaintBrush(filename);
             internalData.customPaintBrushes.Add(filename);
-            SelectBrushIcon(gameResources.paintBrushes.Count - 1);
+            SelectBrushIcon(internalData.customPaintBrushIndices.Count - 1);
         }
     }
 
     public void BrushDeleteButtonClick()
     {
+        for(int i = selectedBrushIndex + 1; i < internalData.customPaintBrushIndices.Count; i++) {
+            internalData.customPaintBrushIndices[i] -= 1;
+        }
+
         int customBrushIndex = brushIndex + internalData.customPaintBrushes.Count - gameResources.paintBrushes.Count;
 
         internalData.customPaintBrushes.RemoveAt(customBrushIndex);

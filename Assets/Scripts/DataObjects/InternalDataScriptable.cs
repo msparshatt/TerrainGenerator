@@ -25,6 +25,14 @@ public class InternalDataScriptable : ScriptableObject
     public List<string> customSetHeightBrushes;
     public List<string> customTextures;
 
+    public List<int> customMaterialIndices;
+    public List<int> customTextureIndices;
+    public List<int> customPaintBrushIndices;
+    public List<int> customSculptBrushIndices;
+    public List<int> customStampBrushIndices;
+    public List<int> customSetHeightBrushIndices;
+    public List<int> customErosionBrushIndices;
+
     //sculpt panel
 
     //stamp panel
