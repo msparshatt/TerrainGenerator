@@ -8,6 +8,7 @@ public class Controller : MonoBehaviour
 {
     [SerializeField] private Texture blankAO;
     [SerializeField] private Texture2D busyCursor;
+    [SerializeField] private CameraController cameraController;
 
     [Header("Shaders")]
     [SerializeField] private ComputeShader textureShader;
@@ -393,6 +394,8 @@ public class Controller : MonoBehaviour
         for(int index = 0; index < panels.Length; index++) {
             panels[index].GetComponent<IPanel>().ResetPanel();
         }
+
+        cameraController.ResetCameras();
 
         internalData.unsavedChanges = false;
 

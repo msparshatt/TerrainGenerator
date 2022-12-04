@@ -128,6 +128,21 @@ public class CameraController : MonoBehaviour
         //currentTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
     }
 
+    public void ResetCameras()
+    {
+        for(int index = 0; index < NUMBER_OF_CAMERAS; index++) {
+            cameras[index].position = new Vector3(900, 200, -740);
+            cameras[index].rotation = new Quaternion(0, 0, 0, 0);
+
+            if(index == cameraNumber)
+            {
+                transform.position = cameras[index].position;
+                transform.rotation = cameras[index].rotation;
+            }
+        }
+        mainBar.SwitchCamera(0);
+    }
+
     public void FromJson(string json)
     {
         CameraSaveData_v1 data = JsonUtility.FromJson<CameraSaveData_v1>(json);
