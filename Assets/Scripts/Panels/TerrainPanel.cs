@@ -165,17 +165,6 @@ public class TerrainPanel : MonoBehaviour, IPanel
         internalData.terrainMode = InternalDataScriptable.TerrainModes.Sculpt;
     }
 
-    public string ToJson()
-    {
-        BrushSaveData_v1 data = new BrushSaveData_v1();
-        data.brushRadius = brushData.brushRadius;
-        data.brushRotation = brushData.brushRotation;
-        data.brushStrength = brushData.brushStrength;
-        data.brushIndex = brushIndex;
-
-        return JsonUtility.ToJson(data);
-    }
-
     public void FromJson(string json)
     {
         BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);

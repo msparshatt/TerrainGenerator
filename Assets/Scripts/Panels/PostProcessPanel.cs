@@ -63,21 +63,6 @@ public class PostProcessPanel : MonoBehaviour, IPanel
     {
     }
 
-    public string ToJson()
-    {
-        PostProcessingSaveData_v1 data = new PostProcessingSaveData_v1();
-        data.chromaticAberrationStrengh = chromaticAberrationIntensityValue;
-        data.vignetteStrength = vignetteIntensityValue;
-        data.vignetteColor = vignetteColor;
-        data.contrast = contrastValue;
-        data.exposure = exposureValue;
-        data.saturation = saturationValue;
-        data.temperature = temperatureValue;
-        data.tint = tintValue;
-        data.hueShift = hueShiftValue;
-        return JsonUtility.ToJson(data);
-    }
-
     public void FromJson(string json)
     {
         PostProcessingSaveData_v1 data = JsonUtility.FromJson<PostProcessingSaveData_v1>(json);

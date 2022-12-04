@@ -70,24 +70,6 @@ public class WaterPanel : MonoBehaviour, IPanel
         shorelineFoamAmountSlider.value = internalData.shorelineFoamAmount;
     }
 
-    public string ToJson()
-    {
-        WaterSaveData_v1 data = new WaterSaveData_v1();
-
-        Debug.Log("SAVE: Water panel data");
-        data.oceanActive = internalData.oceanActive;
-        data.oceanHeight = internalData.oceanHeight;
-        data.waveDirection = internalData.waveDirection;
-        data.waveSpeed = internalData.waveSpeed;
-        data.waveHeight = internalData.waveHeight;
-        data.waveChoppyness = internalData.waveChoppyness;
-        data.foamAmount = internalData.foamAmount;
-        data.shoreLineActive = internalData.shoreLineActive;
-        data.shorelineFoamAmount = internalData.shorelineFoamAmount;
-
-        return JsonUtility.ToJson(data);
-    }
-
     public void FromJson(string dataString)
     {
         if(dataString != null && dataString != "") {

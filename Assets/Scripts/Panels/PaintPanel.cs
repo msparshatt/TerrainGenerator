@@ -121,18 +121,6 @@ public class PaintPanel : MonoBehaviour, IPanel
         SelectBrushIcon(data.brushIndex);
     }
 
-    public string ToJson()
-    {
-        PaintSaveData_v1 data = new PaintSaveData_v1();
-        data.paintScale = internalData.paintScale;
-        data.brushIndex = brushIndex;
-        data.brushRadius = paintBrushData.brushRadius;
-        data.brushRotation = paintBrushData.brushRotation;
-        data.brushStrength = paintBrushData.brushStrength;
-        
-        return JsonUtility.ToJson(data);
-    }
-
     public string PanelName()
     {
         return "Paint";

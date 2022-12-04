@@ -126,22 +126,6 @@ public class MaterialsPanel : MonoBehaviour, IPanel
         materialSettings.colors = data.colors;
     }
 
-    public string ToJson()
-    {
-        MaterialSaveData_v1 data = new MaterialSaveData_v1();
-        data.ambientOcclusion = materialSettings.ambientOcclusion;
-        data.currentMaterialIndices = materialSettings.currentMaterialIndices;
-        data.materialScale = materialSettings.materialScale;
-        data.useTexture = materialSettings.useTexture;
-        data.mixTypes = materialSettings.mixTypes;
-        data.mixFactors = materialSettings.mixFactors;
-        data.mixOffsets = materialSettings.mixOffsets;
-        data.colors = materialSettings.colors;
-
-        //fix to work with custom materials
-        return  JsonUtility.ToJson(data);
-    }
-
     public string PanelName()
     {
         return "Materials";

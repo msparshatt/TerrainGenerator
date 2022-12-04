@@ -23,11 +23,6 @@ public interface IPanel
     {
     }
 
-    string ToJson()
-    {
-        return "";
-    }
-
     void FromJson(string data)
     {
 

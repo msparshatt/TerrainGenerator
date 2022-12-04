@@ -182,33 +182,6 @@ public class SkyPanel : MonoBehaviour, IPanel
         }
     }
 
-    public string ToJson()
-    {
-        Debug.Log("SAVE: Sky panel data");
-
-        SkySaveData_v1 data = new SkySaveData_v1();
-
-        data.lightTerrain = internalData.lightTerrain;
-        data.sunHeight = internalData.sunHeight;
-        data.sunDirection = internalData.sunDirection;
-        data.automaticColor = internalData.automaticColor;
-        data.sunColor = internalData.sunColor;
-        data.cloudActive = internalData.cloudActive;
-        data.cloudXoffset = internalData.cloudXoffset;
-        data.cloudYOffset = internalData.cloudYOffset;
-        data.cloudScale = internalData.cloudScale;
-        data.cloudIterations = internalData.cloudIterations;
-        data.cloudStart = internalData.cloudStart;
-        data.cloudEnd = internalData.cloudEnd;
-        data.windSpeed = internalData.windSpeed;
-        data.windDirection = internalData.windDirection;
-        data.advancedSkybox = internalData.advancedSkybox;
-        data.cloudType = CloudPresetDropdown.value;
-        data.cloudBrightness = internalData.cloudBrightness;
-
-        return JsonUtility.ToJson(data);
-    }
-
     public string PanelName()
     {
         return "Sky";
