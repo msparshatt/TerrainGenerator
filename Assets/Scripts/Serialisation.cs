@@ -257,7 +257,11 @@ public class Serialisation : MonoBehaviour
 
         materialController.ApplyTextures();
 
-        cameraController.FromDictionary(JsonConvert.DeserializeObject<Dictionary<string, string>>(data["camera_data"]));
+        if (data.ContainsKey("camera_data")) {
+            cameraController.FromDictionary(JsonConvert.DeserializeObject<Dictionary<string, string>>(data["camera_data"]));
+        } else {
+            cameraController.ResetCameras();
+        }
     }
 
     public void UpdateOldSaveFile()
