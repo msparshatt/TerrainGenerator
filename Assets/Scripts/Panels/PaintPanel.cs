@@ -133,6 +133,40 @@ public class PaintPanel : MonoBehaviour, IPanel
         return JsonUtility.ToJson(data);
     }
 
+    public string PanelName()
+    {
+        return "Paint";
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
+        data["paint_scale"] = internalData.paintScale.ToString();
+        data["brush_index"] = brushIndex.ToString();
+        data["brush_radius"] = paintBrushData.brushRadius.ToString();
+        data["brush_rotation"] = paintBrushData.brushRotation.ToString();
+        data["brush_strength"] = paintBrushData.brushStrength.ToString();
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        radiusSlider.value = int.Parse(data["brush_radius"]);
+        rotationSlider.value = float.Parse(data["brush_rotation"]);
+        strengthSlider.value = float.Parse(data["brush_strength"]);
+
+        paintScaleSlider.value = float.Parse(data["paint_scale"]);
+
+        SelectBrushIcon(int.Parse(data["brush_index"]));
+    }
+    
+    public void LoadPanel()
+    {
+        paintScaleSlider.value = internalData.paintScale;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -350,11 +384,6 @@ public class PaintPanel : MonoBehaviour, IPanel
         brushIcons.RemoveAt(brushIndex);
         
         SelectBrushIcon(0);
-    }
-
-    public void LoadPanel()
-    {
-        paintScaleSlider.value = internalData.paintScale;
     }
 
     public void TextureToggleChange(bool isOn)

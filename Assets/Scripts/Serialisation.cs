@@ -2,6 +2,7 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class Serialisation : MonoBehaviour
 {
@@ -53,7 +54,6 @@ public class Serialisation : MonoBehaviour
 
             //read the file version
             Version data = JsonUtility.FromJson<Version>(fileContents);
-
             if(data.version <= 1) {
                 bool version4 = fileContents.Contains("baseTexture2");
 
@@ -62,6 +62,8 @@ public class Serialisation : MonoBehaviour
                 Version2Load(fileContents);
             } else if (data.version == 3) {
                 Version3Load(fileContents);
+            } else if (data.version == 4) {
+                Version4Load(fileContents);
             }
 
             //reset the cursor
@@ -220,6 +222,44 @@ public class Serialisation : MonoBehaviour
         materialController.ApplyTextures();
     }
 
+    public void Version4Load(string fileContents)
+    {
+        Debug.Log("Version 4");
+
+        Debug.Log("Load: reading heightmap");
+        Dictionary<string, string> data = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileContents);
+        heightmapController.CreateTerrainFromHeightmap(JsonConvert.DeserializeObject<byte[]>(data["heightmap"]));
+
+        Debug.Log("Load: reading texture");
+
+        Texture2D texture = new Texture2D(10,10);
+        ImageConversion.LoadImage(texture, JsonConvert.DeserializeObject<byte[]>(data["overlay_texture"]));
+
+        materialController.SetOverlay(texture);
+
+        Debug.Log("Load: reading panel data");
+
+        Dictionary<string, string> panelData = JsonConvert.DeserializeObject<Dictionary<string, string>>(data["Panels"]);
+        GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
+
+        for(int index = 0; index < panels.Length; index++) {
+            IPanel panel = panels[index].GetComponent<IPanel>();
+            string panelName = panels[index].GetComponent<IPanel>().PanelName();
+
+            if(panelData[panelName] != "" && panelData[panelName] != "{}") {
+                Debug.Log("Reloading data for panel - " + panelName);
+                panel.FromDictionary(JsonConvert.DeserializeObject<Dictionary<string, string>>(panelData[panelName]));
+            } else {
+                Debug.Log("Resetting panel - " + panelName);
+                panel.ResetPanel();
+            }
+        }            
+
+        materialController.ApplyTextures();
+
+        cameraController.FromDictionary(JsonConvert.DeserializeObject<Dictionary<string, string>>(data["camera_data"]));
+    }
+
     public void UpdateOldSaveFile()
     {
         //backup save file
@@ -248,31 +288,36 @@ public class Serialisation : MonoBehaviour
             Cursor.visible = true;
 
             Debug.Log("SAVE: Creating SaveData object");
-            SaveData_v3 data = new SaveData_v3();
-            Texture2D texture;
 
-            data.version = 3;
-            Debug.Log("SAVE: Store heightmap");
+            Dictionary<string, string> saveData = new Dictionary<string, string>();
+            saveData["version"] = "4";
+
             //save the heightmap
-            data.terrainResolution = heightmapController.HeightmapResolution();
-            data.heightmap = heightmapController.GetHeightmapAsBytes();
+            Debug.Log("SAVE: Store heightmap");
+            saveData["heightmap_resolution"] = heightmapController.HeightmapResolution().ToString();
+            saveData["heightmap"] = JsonConvert.SerializeObject(heightmapController.GetHeightmapAsBytes());
 
             Debug.Log("SAVE: Store overlay texture");
-            texture = materialController.GetOverlay();
-            data.overlayTexture = texture.EncodeToPNG();
+            Texture2D texture = materialController.GetOverlay();
+            saveData["overlay_texture"] = JsonConvert.SerializeObject(texture.EncodeToPNG());
 
             Debug.Log("SAVE: Store panel settings");
+            Dictionary<string, string> panelData = new Dictionary<string, string>();
             GameObject[] panels = gameObject.GetComponent<Controller>().GetPanels();
-            data.panelData = new List<string>();
-            for(int index = 0; index < panels.Length; index++) {
-                data.panelData.Add(panels[index].GetComponent<IPanel>().ToJson());
-            }
 
+            for(int index = 0; index < panels.Length; index++) {
+                IPanel panel = panels[index].GetComponent<IPanel>();
+                string panelName = panels[index].GetComponent<IPanel>().PanelName();
+                Debug.Log(panelName);
+                panelData[panelName] = JsonConvert.SerializeObject(panel.ToDictionary());
+            }            
+
+            saveData["Panels"] = JsonConvert.SerializeObject(panelData);
             Debug.Log("SAVE: Store camera positions");
-            data.cameraData = cameraController.ToJson();
+            saveData["camera_data"] = JsonConvert.SerializeObject(cameraController.ToDictionary());
 
             Debug.Log("SAVE: Create json string");
-            string json = JsonUtility.ToJson(data);            
+            string json = JsonConvert.SerializeObject(saveData, Formatting.Indented);
 
             Debug.Log("SAVE: Write to file");
             var sr = File.CreateText(filename);
@@ -282,6 +327,7 @@ public class Serialisation : MonoBehaviour
 
             if(exitOnSave)
                 gameObject.GetComponent<Controller>().DoExit();
+
         }
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 

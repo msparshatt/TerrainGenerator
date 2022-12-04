@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using SimpleFileBrowser;
+using Newtonsoft.Json;
 
 public class MaterialsPanel : MonoBehaviour, IPanel
 {
@@ -139,6 +140,52 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         //fix to work with custom materials
         return  JsonUtility.ToJson(data);
+    }
+
+    public string PanelName()
+    {
+        return "Materials";
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["ambient_occlusion"] = JsonConvert.SerializeObject(materialSettings.ambientOcclusion);
+        data["current_material_indices"] = JsonConvert.SerializeObject(materialSettings.currentMaterialIndices);
+        data["material_scale"] = JsonConvert.SerializeObject(materialSettings.materialScale);
+        data["use_texture"] = JsonConvert.SerializeObject(materialSettings.useTexture);
+        data["mix_types"] = JsonConvert.SerializeObject(materialSettings.mixTypes);
+        data["mix_factors"] = JsonConvert.SerializeObject(materialSettings.mixFactors);
+        data["mix_offsets"] = JsonConvert.SerializeObject(materialSettings.mixOffsets);
+        List<float[]> colorValues = new List<float[]>();
+        for(int i = 0; i < MaterialSettings.NUMBER_MATERIALS; i++) {
+            Color col = materialSettings.colors[i];
+            float[] colorFloat = new float[4]{col.r, col.g, col.b, col.a};
+            colorValues.Add(colorFloat);
+        }
+        data["colors"] = JsonConvert.SerializeObject(colorValues);
+ 
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        materialSettings.ambientOcclusion = JsonConvert.DeserializeObject<bool>(data["ambient_occlusion"]);
+        materialSettings.currentMaterialIndices = JsonConvert.DeserializeObject<int[]>(data["current_material_indices"]);
+        materialSettings.materialScale = JsonConvert.DeserializeObject<float>(data["material_scale"]);
+        materialSettings.useTexture = JsonConvert.DeserializeObject<bool[]>(data["use_texture"]);
+        materialSettings.mixTypes = JsonConvert.DeserializeObject<int[]>(data["mix_types"]);
+        materialSettings.mixFactors = JsonConvert.DeserializeObject<float[]>(data["mix_factors"]);
+        materialSettings.mixOffsets = JsonConvert.DeserializeObject<float[]>(data["mix_offsets"]);
+        List<float[]> colorValues = JsonConvert.DeserializeObject<List<float[]>>(data["colors"]);
+        for(int i = 0; i < MaterialSettings.NUMBER_MATERIALS; i++) {
+            Color col = new Color(colorValues[i][0], colorValues[i][1], colorValues[i][2], colorValues[i][3]);
+
+            materialSettings.colors[i] = col;
+        }
+
+        LoadPanel();
     }
 
     // Update is called once per frame

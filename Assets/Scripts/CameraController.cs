@@ -7,6 +7,7 @@ using System;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
 using SimpleFileBrowser;
+using Newtonsoft.Json;
 
 public class PositionAndRotation
 {
@@ -125,6 +126,70 @@ public class CameraController : MonoBehaviour
             cameras[index].rotation = transform.rotation;
         }
         //currentTerrain.GetComponent<Ceto.AddAutoShoreMask>().CreateShoreMasks();
+    }
+
+    public string ToJson()
+    {
+        CameraSaveData_v1 data = new CameraSaveData_v1();
+        data.cameraPositions = new List<string>();
+        for(int index = 0; index < NUMBER_OF_CAMERAS; index++) {
+            string posString = JsonUtility.ToJson(new PositionAndRotationSaveData(cameras[index].position, cameras[index].rotation));
+            data.cameraPositions.Add(posString);
+        }
+
+        data.cameraIndex = cameraNumber;
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string json)
+    {
+        CameraSaveData_v1 data = JsonUtility.FromJson<CameraSaveData_v1>(json);
+
+        for(int index = 0; index < data.cameraPositions.Count; index++) {
+            PositionAndRotationSaveData posData = JsonUtility.FromJson<PositionAndRotationSaveData>(data.cameraPositions[index]);
+
+            cameras[index].position = posData.position;
+            cameras[index].rotation = posData.rotation;
+        }
+
+        mainBar.SwitchCamera(data.cameraIndex);
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
+        List<float[]> cameraPositions = new List<float[]>();
+        for(int index = 0; index < NUMBER_OF_CAMERAS; index++) {
+            float[] positionData = new float[7];
+            positionData[0] = cameras[index].position.x;
+            positionData[1] = cameras[index].position.y;
+            positionData[2] = cameras[index].position.z;
+            positionData[3] = cameras[index].rotation.x;
+            positionData[4] = cameras[index].rotation.y;
+            positionData[5] = cameras[index].rotation.z;
+            positionData[6] = cameras[index].rotation.w;
+            cameraPositions.Add(positionData);
+        }
+
+        data["positions"] = JsonConvert.SerializeObject(cameraPositions);
+        data["index"] = cameraNumber.ToString();
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        List<float[]> cameraPositions = JsonConvert.DeserializeObject<List<float[]>>(data["positions"]);
+        for(int index = 0; index < cameraPositions.Count; index++) {
+            float[] positionData = cameraPositions[index];
+
+            Vector3 position = new Vector3(positionData[0], positionData[1], positionData[2]);
+            Quaternion rotation = new Quaternion(positionData[3], positionData[4], positionData[5], positionData[6]);
+            cameras[index].position = position;
+            cameras[index].rotation = rotation;
+        }
+        mainBar.SwitchCamera(int.Parse(data["index"]));
     }
 
     //Callback functions for new input system
@@ -474,32 +539,5 @@ public class CameraController : MonoBehaviour
             transform.position = cameras[camera].position;
             transform.rotation = cameras[camera].rotation;
         }
-    }
-
-    public string ToJson()
-    {
-        CameraSaveData_v1 data = new CameraSaveData_v1();
-        data.cameraPositions = new List<string>();
-        for(int index = 0; index < NUMBER_OF_CAMERAS; index++) {
-            string posString = JsonUtility.ToJson(new PositionAndRotationSaveData(cameras[index].position, cameras[index].rotation));
-            data.cameraPositions.Add(posString);
-        }
-
-        data.cameraIndex = cameraNumber;
-        return JsonUtility.ToJson(data);
-    }
-
-    public void FromJson(string json)
-    {
-        CameraSaveData_v1 data = JsonUtility.FromJson<CameraSaveData_v1>(json);
-
-        for(int index = 0; index < data.cameraPositions.Count; index++) {
-            PositionAndRotationSaveData posData = JsonUtility.FromJson<PositionAndRotationSaveData>(data.cameraPositions[index]);
-
-            cameras[index].position = posData.position;
-            cameras[index].rotation = posData.rotation;
-        }
-
-        mainBar.SwitchCamera(data.cameraIndex);
     }
 }

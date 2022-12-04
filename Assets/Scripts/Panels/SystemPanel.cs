@@ -61,6 +61,11 @@ public class SystemPanel : MonoBehaviour, IPanel
         
     }
 
+    public string PanelName()
+    {
+        return "System";
+    }
+
     //new terrain panel
     public void FlatButtonClick()
     {

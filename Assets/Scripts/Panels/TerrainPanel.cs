@@ -220,6 +220,84 @@ public class TerrainPanel : MonoBehaviour, IPanel
         }
     }
 
+    public string PanelName()
+    {
+        return "Terrain";
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
+        data["sculpt_brush_radius"] = brushData.brushRadius.ToString();
+        data["sculpt_brush_rotation"] = brushData.brushRotation.ToString();
+        data["sculpt_brush_strength"] = brushData.brushStrength.ToString();
+        data["sculpt_brush_index"] = brushIndex.ToString();
+
+        data["stamp_brush_radius"] = stampBrushData.brushRadius.ToString();
+        data["stamp_brush_rotation"] = stampBrushData.brushRotation.ToString();
+        data["stamp_brush_strength"] = stampBrushData.brushStrength.ToString();
+        data["stamp_brush_index"] = stampBrushIndex.ToString();
+
+        data["erode_brush_radius"] = erodeBrushData.brushRadius.ToString();
+        data["erode_brush_rotation"] = erodeBrushData.brushRotation.ToString();
+        data["erode_brush_strength"] = erodeBrushData.brushStrength.ToString();
+        data["erode_brush_index"] = erodeBrushIndex.ToString();
+
+        data["erode_lifetime"] = lifetimeSlider.value.ToString();
+        data["erode_sediment_capacity_factor"] = sedimentCapacityFactorSlider.value.ToString();
+        data["erode_inertia"] = inertiaSlider.value.ToString();
+        data["erode_deposit_speed"] = depositSpeedSlider.value.ToString();
+        data["erode_speed"] = erodeSpeedSlider.value.ToString();
+        data["erode_start_speed"] = startSpeedSlider.value.ToString();
+        data["erode_evaporate_speed"] = evaporateSpeedSlider.value.ToString();
+        data["erode_start_water"] = startWaterSlider.value.ToString();
+
+        data["set_height_brush_radius"] = setHeightBrushData.brushRadius.ToString();
+        data["set_height_brush_rotation"] = setHeightBrushData.brushRotation.ToString();
+        data["set_height_brush_strength"] = setHeightBrushData.brushStrength.ToString();
+        data["set_height_brush_index"] = setHeightBrushIndex.ToString();
+        data["set_height_brush_height"] = setHeightBrushData.brushHeight.ToString();
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        radiusSlider.value = float.Parse(data["sculpt_brush_radius"]);
+        rotationSlider.value = float.Parse(data["sculpt_brush_rotation"]);
+        strengthSlider.value = float.Parse(data["sculpt_brush_strength"]);
+        SelectBrushIcon(int.Parse(data["sculpt_brush_index"]), InternalDataScriptable.TerrainModes.Sculpt);
+
+        stampRadiusSlider.value = float.Parse(data["stamp_brush_radius"]);
+        stampRotationSlider.value = float.Parse(data["stamp_brush_rotation"]);
+        stampStrengthSlider.value = float.Parse(data["stamp_brush_strength"]);
+
+        SelectBrushIcon(int.Parse(data["stamp_brush_index"]), InternalDataScriptable.TerrainModes.Stamp);        
+
+        erodeRadiusSlider.value = float.Parse(data["erode_brush_radius"]);
+        erodeRotationSlider.value = float.Parse(data["erode_brush_rotation"]);
+        erodeStrengthSlider.value = float.Parse(data["erode_brush_strength"]);
+
+        lifetimeSlider.value = float.Parse(data["erode_lifetime"]);
+        sedimentCapacityFactorSlider.value = float.Parse(data["erode_sediment_capacity_factor"]);
+        inertiaSlider.value = float.Parse(data["erode_inertia"]);
+        depositSpeedSlider.value = float.Parse(data["erode_deposit_speed"]);
+        erodeSpeedSlider.value = float.Parse(data["erode_speed"]);
+        startSpeedSlider.value = float.Parse(data["erode_start_speed"]);
+        evaporateSpeedSlider.value = float.Parse(data["erode_evaporate_speed"]);
+        startWaterSlider.value = float.Parse(data["erode_start_water"]);
+
+        SelectBrushIcon(int.Parse(data["erode_brush_index"]), InternalDataScriptable.TerrainModes.Erode);
+
+        setHeightRadiusSlider.value = float.Parse(data["set_height_brush_radius"]);
+        setHeightRotationSlider.value = float.Parse(data["set_height_brush_rotation"]);
+        setHeightStrengthSlider.value = float.Parse(data["set_height_brush_strength"]);
+        setHeightHeightSlider.value = float.Parse(data["set_height_brush_height"]);
+
+        SelectBrushIcon(int.Parse(data["set_height_brush_index"]), InternalDataScriptable.TerrainModes.SetHeight);        
+    }
+
     public void OnDisable()
     {
         DeactivateSidePanels();

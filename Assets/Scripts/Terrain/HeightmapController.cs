@@ -169,7 +169,8 @@ public class HeightmapController : MonoBehaviour
 
     public int HeightmapResolution()
     {
-        return heightmapResolution;
+        return thisTerrain.terrainData.heightmapResolution;
+        //return heightmapResolution;
     }
 
     private float[,] ReadHeightmap(string fileName)

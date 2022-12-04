@@ -114,6 +114,44 @@ public class WaterPanel : MonoBehaviour, IPanel
             internalData.shorelineFoamAmount = defaultData.shorelineFoamAmount;
         }
     }
+
+    public string PanelName()
+    {
+        return "Water";
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
+        data["ocean_active"] = internalData.oceanActive.ToString();
+        data["ocean_height"] = internalData.oceanHeight.ToString();
+        data["wave_direction"] = internalData.waveDirection.ToString();
+        data["wave_speed"] = internalData.waveSpeed.ToString();
+        data["wave_height"] = internalData.waveHeight.ToString();
+        data["wave_choppyness"] = internalData.waveChoppyness.ToString();
+        data["foam_amount"] = internalData.foamAmount.ToString();
+        data["shoreline_active"] = internalData.shoreLineActive.ToString();
+        data["shoreline_foam_amount"] = internalData.shorelineFoamAmount.ToString();
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        internalData.oceanActive = bool.Parse(data["ocean_active"]);
+        internalData.oceanHeight = float.Parse(data["ocean_height"]);
+        internalData.waveDirection = float.Parse(data["wave_direction"]);
+        internalData.waveSpeed = float.Parse(data["wave_speed"]);
+        internalData.waveHeight = float.Parse(data["wave_height"]);
+        internalData.waveChoppyness = float.Parse(data["foam_amount"]);
+        internalData.foamAmount = float.Parse(data["foam_amount"]);
+        internalData.shoreLineActive = bool.Parse(data["shoreline_active"]);
+        internalData.shorelineFoamAmount = float.Parse(data["shoreline_foam_amount"]);
+
+        LoadPanel();
+    }
+
     public void OceanToggleChange(bool isOn)
     {
         internalData.oceanActive = isOn;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
+using Newtonsoft.Json;
 
 public class PostProcessPanel : MonoBehaviour, IPanel
 {
@@ -90,6 +91,44 @@ public class PostProcessPanel : MonoBehaviour, IPanel
         temperatureSlider.value = data.temperature;
         tintSlider.value = data.tint;
         hueShiftSlider.value = data.hueShift;
+    }
+
+    public string PanelName()
+    {
+        return "PostProcess";
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
+        data["chromatic_aberration_strengh"] = chromaticAberrationIntensityValue.ToString();
+        data["vignette_strength"] = vignetteIntensityValue.ToString();
+        Color col = vignetteColor;
+        float[] colorFloat = new float[4]{col.r, col.g, col.b, col.a};
+        data["vignette_color"] = JsonConvert.SerializeObject(colorFloat);
+        data["contrast"] = contrastValue.ToString();
+        data["exposure"] = exposureValue.ToString();
+        data["saturation"] = saturationValue.ToString();
+        data["temperature"] = temperatureValue.ToString();
+        data["tint"] = tintValue.ToString();
+        data["hue_shift"] = hueShiftValue.ToString();
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        chromaticAberationIntensitySlider.value = float.Parse(data["chromatic_aberration_strengh"]);
+        vignetteIntensitySlider.value = float.Parse(data["vignette_strength"]);
+        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(data["vignette_color"]);
+        colorPicker.color = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);
+        exposureSlider.value = float.Parse(data["exposure"]);
+        constrastSlider.value = float.Parse(data["contrast"]);
+        saturationSlider.value = float.Parse(data["saturation"]);
+        temperatureSlider.value = float.Parse(data["temperature"]);
+        tintSlider.value = float.Parse(data["tint"]);
+        hueShiftSlider.value = float.Parse(data["hue_shift"]);
     }
 
     public void ChromaticAberationIntensitySliderChange(float value)

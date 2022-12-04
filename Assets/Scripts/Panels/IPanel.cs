@@ -32,4 +32,19 @@ public interface IPanel
     {
 
     }
+
+    string PanelName()
+    {
+        return "Default";
+    }
+
+    Dictionary<string, string> ToDictionary()
+    {
+        return new Dictionary<string, string>();
+    }
+
+    void FromDictionary(Dictionary<string, string> data)
+    {
+
+    }
 }

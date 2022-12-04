@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Newtonsoft.Json;
 
 public class SkyPanel : MonoBehaviour, IPanel
 {
@@ -207,6 +208,64 @@ public class SkyPanel : MonoBehaviour, IPanel
 
         return JsonUtility.ToJson(data);
     }
+
+    public string PanelName()
+    {
+        return "Sky";
+    }
+
+    public Dictionary<string, string> ToDictionary()
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
+        data["light_terrain"] = internalData.lightTerrain.ToString();
+        data["sun_height"] = internalData.sunHeight.ToString();
+        data["sun_direction"] = internalData.sunDirection.ToString();
+        data["automatic_color"] = internalData.automaticColor.ToString();
+        Color col = internalData.sunColor;
+        float[] colorFloat = new float[4]{col.r, col.g, col.b, col.a};        
+        data["sun_color"] = JsonConvert.SerializeObject(colorFloat);;
+        data["cloud_active"] = internalData.cloudActive.ToString();
+        data["cloud_xoffset"] = internalData.cloudXoffset.ToString();
+        data["cloud_yoffset"] = internalData.cloudYOffset.ToString();
+        data["cloud_scale"] = internalData.cloudScale.ToString();
+        data["cloud_iterations"] = internalData.cloudIterations.ToString();
+        data["cloud_start"] = internalData.cloudStart.ToString();
+        data["cloud_end"] = internalData.cloudEnd.ToString();
+        data["wind_speed"] = internalData.windSpeed.ToString();
+        data["wind_direction"] = internalData.windDirection.ToString();
+        data["advanced_skybox"] = internalData.advancedSkybox.ToString();
+        data["cloud_type"] = CloudPresetDropdown.value.ToString();
+        data["cloud_brightness"] = internalData.cloudBrightness.ToString();
+
+        return data;
+    }
+
+    public void FromDictionary(Dictionary<string, string> data)
+    {
+        internalData.lightTerrain = bool.Parse(data["light_terrain"]);
+        internalData.sunHeight = float.Parse(data["sun_height"]);
+        internalData.sunDirection = float.Parse(data["sun_direction"]);
+        internalData.automaticColor = bool.Parse(data["automatic_color"]);
+
+        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(data["sun_color"]);
+        internalData.sunColor = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);;
+        internalData.cloudActive = bool.Parse(data["cloud_active"]);
+        internalData.cloudXoffset = float.Parse(data["cloud_xoffset"]);
+        internalData.cloudYOffset = float.Parse(data["cloud_yoffset"]);
+        internalData.cloudScale = float.Parse(data["cloud_scale"]);
+        internalData.cloudIterations = float.Parse(data["cloud_iterations"]);
+        internalData.cloudStart = float.Parse(data["cloud_start"]);
+        internalData.cloudEnd = float.Parse(data["cloud_end"]);
+        internalData.windSpeed = float.Parse(data["wind_speed"]);
+        internalData.windDirection = float.Parse(data["wind_direction"]);
+        internalData.advancedSkybox = bool.Parse(data["advanced_skybox"]);
+        internalData.cloudBrightness = float.Parse(data["cloud_brightness"]);
+        CloudPresetDropdown.value = int.Parse(data["cloud_type"]);
+
+        LoadPanel();
+    }
+
     public void LightToggleChange(bool isOn)
     {
         materialController.ApplyLighting(isOn);
@@ -383,9 +442,11 @@ public class SkyPanel : MonoBehaviour, IPanel
     public void AdvancedSkyboxToggleChange(bool isOn)
     {
         if(isOn) {
+            internalData.advancedSkybox = true;
             RenderSettings.skybox = advancedSkyboxMaterial;
             currentSkybox = advancedSkyboxMaterial;
         } else {
+            internalData.advancedSkybox = false;
             RenderSettings.skybox = basicSkyboxMaterial;
             currentSkybox = basicSkyboxMaterial;
         }
