@@ -23,6 +23,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private BrushDataScriptable erosionBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
     [SerializeField] private BrushDataScriptable setHeightBrushData;
+    [SerializeField] private BrushDataScriptable slopeBrushData;
 
     [Header("Settings")]
     [SerializeField] private SettingsDataScriptable settingsData;
@@ -69,6 +70,11 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider setHeightRotationSlider;
     [SerializeField] private Slider setHeightStrengthSlider;
     [SerializeField] private Slider setHeightHeightSlider;
+
+    [Header("Slope Sliders")]
+    [SerializeField] private Slider slopeRadiusSlider;
+    [SerializeField] private Slider slopeRotationSlider;
+    [SerializeField] private Slider slopeStrengthSlider;
 
     [Header("Other")]
     [SerializeField] private Texture2D busyCursor;
@@ -274,6 +280,10 @@ public class CameraController : MonoBehaviour
                     strengthSlider = erosionStrengthSlider;
                     rotationSlider = erosionRotationSlider;
                     radiusSlider = erosionRadiusSlider;
+                } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope){
+                    strengthSlider = slopeStrengthSlider;
+                    rotationSlider = slopeRotationSlider;
+                    radiusSlider = slopeRadiusSlider;
                 }
             } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
                 strengthSlider = paintStrengthSlider;
@@ -427,6 +437,16 @@ public class CameraController : MonoBehaviour
                         TerrainModifier modifier = manager.TerrainModifier;
 
                         modifier.ErodeTerrain(raycastTarget.point, operation);
+                    } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope){
+                        TerrainModifier modifier = manager.TerrainModifier;
+
+                        if(modifier1) {
+                            //set slope end point
+                            modifier.SetSlopeEndpoint(raycastTarget.point);
+                        } else {
+                            //add slope
+                            modifier.ModifySlope(raycastTarget.point, operation);
+                        }
                     }
 
                 } else if(internalData.mode == InternalDataScriptable.Modes.Paint) {
@@ -449,6 +469,9 @@ public class CameraController : MonoBehaviour
             stampApplied = false;
 
             if(internalData.mode == InternalDataScriptable.Modes.Terrain) {
+                if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope) {
+                    manager.TerrainModifier.ResetSlope();
+                }
                 materialController.ApplyTextures();
 
                 if(internalData.oceanActive)
@@ -491,6 +514,10 @@ public class CameraController : MonoBehaviour
                     radius = erosionBrushData.brushRadius / (currentTerrain.terrainData.size.x);
                     rotation = erosionBrushData.brushRotation;
                     shape = erosionBrushData.brush;
+                } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope){
+                    radius = slopeBrushData.brushRadius / (currentTerrain.terrainData.size.x);
+                    rotation = slopeBrushData.brushRotation;
+                    shape = slopeBrushData.brush;
                 }
             } else if (internalData.mode == InternalDataScriptable.Modes.Paint) {
                 radius = paintBrushData.brushRadius / (currentTerrain.terrainData.size.x);

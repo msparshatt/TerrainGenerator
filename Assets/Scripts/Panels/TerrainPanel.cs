@@ -16,9 +16,11 @@ public class TerrainPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject sculptBrushScrollView;
     [SerializeField] private GameObject stampBrushScrollView;
     [SerializeField] private GameObject erosionBrushScrollView;
+    [SerializeField] private GameObject slopeBrushScrollView;
     [SerializeField] private GameObject sculptBrushScrollViewContents;
     [SerializeField] private GameObject stampBrushScrollViewContents;
     [SerializeField] private GameObject erosionBrushScrollViewContents;
+    [SerializeField] private GameObject slopeBrushScrollViewContents;
     [SerializeField] private GameObject setHeightBrushScrollView;
     [SerializeField] private GameObject setHeightBrushScrollViewContents;
 
@@ -56,16 +58,25 @@ public class TerrainPanel : MonoBehaviour, IPanel
     [SerializeField] private Slider erodeRotationSlider;
     [SerializeField] private RawImage erodeBrushImage;
 
+    [Header("Slope UI")]
+    [SerializeField] private Slider slopeRadiusSlider;
+    [SerializeField] private Slider slopeStrengthSlider;
+    [SerializeField] private Slider slopeRotationSlider;
+    [SerializeField] private RawImage slopeBrushImage;
+
     [Header("Data Objects")]
     [SerializeField] private BrushDataScriptable brushData;
     [SerializeField] private BrushDataScriptable setHeightBrushData;
     [SerializeField] private BrushDataScriptable stampBrushData;
     [SerializeField] private BrushDataScriptable erodeBrushData;
+    [SerializeField] private BrushDataScriptable slopeBrushData;
 
     [SerializeField] private BrushDataScriptable defaultBrushData;
     [SerializeField] private BrushDataScriptable defaultSetHeightBrushData;
     [SerializeField] private BrushDataScriptable defaultStampBrushData;
     [SerializeField] private BrushDataScriptable defaultErodeBrushData;
+    [SerializeField] private BrushDataScriptable defaultSlopeBrushData;
+
     [SerializeField] private SettingsDataScriptable settingsData;
     [SerializeField] private InternalDataScriptable internalData;
     [SerializeField] private ErosionDataScriptable erosionData;
@@ -87,15 +98,18 @@ public class TerrainPanel : MonoBehaviour, IPanel
     private List<GameObject> stampBrushIcons;
     private List<GameObject> erodeBrushIcons;
     private List<GameObject> setHeightBrushIcons;
+    private List<GameObject> slopeBrushIcons;
 
     private int brushIndex;
     private int stampBrushIndex;
     private int erodeBrushIndex;
     private int setHeightBrushIndex;
+    private int slopeBrushIndex;
     private int selectedSculptBrushIndex;
     private int selectedSetHeightBrushIndex;
     private int selectedStampBrushIndex;
     private int selectedErodeBrushIndex;
+    private int selectedSlopeBrushIndex;
 
 
     private GameResources gameResources;
@@ -119,6 +133,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
         SetupIconIndices(erodeBrushIcons, internalData.customErosionBrushIndices);
         setHeightBrushIcons = UIHelper.SetupPanel(gameResources.setHeightBrushes, setHeightBrushScrollViewContents.transform, SelectBrushIcon);   
         SetupIconIndices(setHeightBrushIcons, internalData.customSetHeightBrushIndices);
+        slopeBrushIcons = UIHelper.SetupPanel(gameResources.slopeBrushes, slopeBrushScrollViewContents.transform, SelectBrushIcon);   
+        SetupIconIndices(slopeBrushIcons, internalData.customSlopeBrushIndices);
 
         ResetPanel();
     }
@@ -320,6 +336,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
                 erosionBrushScrollView.SetActive(true);
             } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.SetHeight) {
                 setHeightBrushScrollView.SetActive(true);
+            } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope) {
+                slopeBrushScrollView.SetActive(true);
             }
 
             brushImage.color = settingsData.selectedColor;
@@ -338,11 +356,13 @@ public class TerrainPanel : MonoBehaviour, IPanel
         stampBrushImage.color = settingsData.deselectedColor;
         erodeBrushImage.color = settingsData.deselectedColor;
         setHeightBrushImage.color = settingsData.deselectedColor;
+        slopeBrushImage.color = settingsData.deselectedColor;
 
         sculptBrushScrollView.SetActive(false);
         stampBrushScrollView.SetActive(false);
         erosionBrushScrollView.SetActive(false);
         setHeightBrushScrollView.SetActive(false);
+        slopeBrushScrollView.SetActive(false);
     }
 
     public void SelectBrushIcon(int buttonIndex)
@@ -408,8 +428,20 @@ public class TerrainPanel : MonoBehaviour, IPanel
             brushIcons = setHeightBrushIcons;
 
             setHeightBrushImage.texture = setHeightBrushData.brush;
-        }
+        } else if(terrainMode == InternalDataScriptable.TerrainModes.Slope) {
+            brushes = gameResources.slopeBrushes;
+            customBrushes = internalData.customSlopeBrushes;
+            selectedSlopeBrushIndex = buttonIndex;
+            buttonIndex = internalData.customSlopeBrushIndices[buttonIndex];
 
+            slopeBrushData.brush = gameResources.setHeightBrushes[buttonIndex];
+            slopeBrushImage.texture = setHeightBrushData.brush;
+            slopeBrushIndex = buttonIndex;
+
+            brushIcons = slopeBrushIcons;
+
+            slopeBrushImage.texture = slopeBrushData.brush;
+        }
 
         if(buttonIndex >= (brushes.Count - customBrushes.Count)) {
             brushDeleteButton.interactable = true;
@@ -440,6 +472,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
             stampBrushData.brushRadius = (int)value;
         } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
             erodeBrushData.brushRadius = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope) {
+            slopeBrushData.brushRadius = (int)value;
         }
     }
 
@@ -453,6 +487,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
             stampBrushData.brushStrength = value;
         } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
             erodeBrushData.brushStrength = value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope) {
+            slopeBrushData.brushStrength = value;
         }
     }
 
@@ -466,6 +502,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
             stampBrushData.brushRotation = (int)value;
         } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Erode) {
             erodeBrushData.brushRotation = (int)value;
+        } else if(internalData.terrainMode == InternalDataScriptable.TerrainModes.Slope) {
+            slopeBrushData.brushRotation = (int)value;
         }
     }
 

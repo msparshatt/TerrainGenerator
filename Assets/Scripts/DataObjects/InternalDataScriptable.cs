@@ -6,7 +6,7 @@ using UnityEngine;
 public class InternalDataScriptable : ScriptableObject
 {
     public enum Modes {System, Materials, Terrain, Paint, Stamp, Sky, Water, Erode};
-    public enum TerrainModes {Sculpt, SetHeight, Stamp, Erode};
+    public enum TerrainModes {Sculpt, SetHeight, Stamp, Erode, Slope};
 
     public bool sliderChanged = false;  //used to update the base textures after one of the sliders has changed value
     public bool ProcGenOpen = false;    //is the procedural generation panel open
@@ -23,6 +23,7 @@ public class InternalDataScriptable : ScriptableObject
     public List<string> customStampBrushes;
     public List<string> customErosionBrushes;
     public List<string> customSetHeightBrushes;
+    public List<string> customSlopeBrushes;
     public List<string> customTextures;
 
     public List<int> customMaterialIndices;
@@ -32,6 +33,7 @@ public class InternalDataScriptable : ScriptableObject
     public List<int> customStampBrushIndices;
     public List<int> customSetHeightBrushIndices;
     public List<int> customErosionBrushIndices;
+    public List<int> customSlopeBrushIndices;
 
     //sculpt panel
 

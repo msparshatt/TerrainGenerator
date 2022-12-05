@@ -20,10 +20,15 @@ public class TerrainModifier : MonoBehaviour
     private int erosionIterations = 16;
 
     private Terrain terrain;
+    private Vector3 slopeEndpoint;
+    private Vector3 slopeStartPoint;
+    private float slopeGradient = 0;
+    private float slopeDistance = 0;
 
     public void Start()
     {
         terrain = gameObject.GetComponent<Terrain>();
+        slopeEndpoint = new Vector3();
     }
 
     public void SculptTerrain(SculptMode mode, Vector3 location, Operation sculptOperation)
@@ -143,6 +148,70 @@ public class TerrainModifier : MonoBehaviour
         sculptOperation.AddSubOperation(new SculptSubOperation(terrain, rectangle.topLeft, rectangle.size, changes));        
     }
 
+    public void SetSlopeEndpoint(Vector3 location) 
+    {
+        TerrainData terrainData = terrain.terrainData;
+        Vector3 terrainSize = terrainData.size;
+
+        Vector3 tempCoord = (location - terrain.GetPosition()); //get target position relative to the terrain
+        Vector2 locationInTerrain = TranslateCoordinates(new Vector2(tempCoord.x, tempCoord.z), new Vector2(terrainSize.x, terrainSize.z), new Vector2(terrainData.heightmapResolution, terrainData.heightmapResolution));
+
+        float height = terrainData.GetHeight((int)locationInTerrain.x, (int)locationInTerrain.y) / 1000;
+
+        slopeEndpoint = new Vector3(locationInTerrain.x, locationInTerrain.y, height);
+        Debug.Log("Endpoint set " + slopeEndpoint.z);
+    }
+
+    public void ModifySlope(Vector3 location, Operation sculptOperation)
+    {
+        TerrainData terrainData = terrain.terrainData;
+
+        if(slopeGradient == 0) {
+            Vector3 terrainSize = terrainData.size;
+
+            Vector3 tempCoord = (location - terrain.GetPosition()); //get target position relative to the terrain
+            Vector2 locationInTerrain = TranslateCoordinates(new Vector2(tempCoord.x, tempCoord.z), new Vector2(terrainSize.x, terrainSize.z), new Vector2(terrainData.heightmapResolution, terrainData.heightmapResolution));
+
+            float startHeight = terrainData.GetHeight((int)locationInTerrain.x, (int)locationInTerrain.y) / 1000;
+
+            Vector2 slopeVector = new Vector2(locationInTerrain.x, locationInTerrain.y) - new Vector2(slopeEndpoint.x, slopeEndpoint.y);
+            slopeDistance = slopeVector.magnitude;
+
+            slopeGradient = (slopeEndpoint.z - startHeight) / slopeDistance;
+
+            Debug.Log("Start Set " + startHeight + " " + slopeGradient);
+        }
+
+        ModifyRectangle rectangle = new ModifyRectangle(location, setHeightBrushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
+        float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
+        float[,] changes = new float[rectangle.size.y, rectangle.size.x];
+
+        for (int x = 0; x < rectangle.size.x; x++)
+        {
+            for (int y = 0; y < rectangle.size.y; y++)
+            {                   
+                float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -setHeightBrushData.brushRotation, setHeightBrushData.brushStrength);
+
+                float distance = (new Vector2(rectangle.topLeft.x + x, rectangle.topLeft.y + y) - new Vector2(slopeEndpoint.x, slopeEndpoint.y)).magnitude;
+                float heightChange = 0;
+                if(distance < slopeDistance) {
+                    heightChange = (slopeEndpoint.z - slopeGradient * distance) - heights[y,x];
+                    //Debug.Log(heightChange);
+                }
+
+                heights[y, x] += (heightChange * Time.smoothDeltaTime * maskValue) * 20;
+                changes[y,x] =  (heightChange * Time.smoothDeltaTime * maskValue);
+            }
+        }
+
+        terrainData.SetHeights(rectangle.topLeft.x, rectangle.topLeft.y, heights);        
+    }
+
+    public void ResetSlope()
+    {
+        slopeGradient = 0;
+        slopeDistance = 0;
+    }
     private float CalculateAverageHeight(ModifyRectangle rectangle, float[,] heights)
     {
         //Calculate the average height
