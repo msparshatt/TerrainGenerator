@@ -12,7 +12,7 @@ public class ErosionPanel : MonoBehaviour, IPanel
     [SerializeField] private TerrainPanel terrainPanel;
 
     public void FromJson(string dataString)
-    {
+    {        
         terrainPanel.LoadErodeSettings(dataString);
     }
 }

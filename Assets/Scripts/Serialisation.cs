@@ -144,15 +144,22 @@ public class Serialisation : MonoBehaviour
         MaterialsPanel materials = materialsPanel.GetComponent<MaterialsPanel>();   
 
         for(int index = 0; index < MaterialSettings.NUMBER_MATERIALS; index++) {
-            materialSettings.useTexture[index] = data.useTexture[index];
+            if(data.useTexture == null) {
+                materialSettings.useTexture[index] = true;
 
-            materialSettings.colors[index] = data.colors[index];
+                materialSettings.colors[index] = Color.white;
+
+            } else {
+                materialSettings.useTexture[index] = data.useTexture[index];
+
+                materialSettings.colors[index] = data.colors[index];
+            }
+
             if(data.baseTexture[index] == -1) {
                 materials.SelectMaterialIcon(index, materials.AddBaseTexture(data.baseTexture_colors[index]));
             } else {
                 materials.SelectMaterialIcon(index, data.baseTexture[index]);
             }
-
             if(index > 0)
             {
                 materialSettings.mixTypes[index] = data.mixType[index];

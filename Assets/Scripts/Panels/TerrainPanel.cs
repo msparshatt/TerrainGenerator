@@ -183,23 +183,31 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
     public void FromJson(string json)
     {
-        BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
+        if(json != null && json != "") {
+            BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
 
-        radiusSlider.value = data.brushRadius;
-        rotationSlider.value = data.brushRotation;
-        strengthSlider.value = data.brushStrength;
-        SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Sculpt);
+            radiusSlider.value = data.brushRadius;
+            rotationSlider.value = data.brushRotation;
+            strengthSlider.value = data.brushStrength;
+            SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Sculpt);
+        } else {
+            ResetPanel();
+        }
     }
 
     public void LoadStampSettings(string json)
     {
-        BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
+        if(json != null && json != "") {
+            BrushSaveData_v1 data = JsonUtility.FromJson<BrushSaveData_v1>(json);
 
-        stampRadiusSlider.value = data.brushRadius;
-        stampRotationSlider.value = data.brushRotation;
-        stampStrengthSlider.value = data.brushStrength;
+            stampRadiusSlider.value = data.brushRadius;
+            stampRotationSlider.value = data.brushRotation;
+            stampStrengthSlider.value = data.brushStrength;
 
-        SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Stamp);        
+            SelectBrushIcon(data.brushIndex, InternalDataScriptable.TerrainModes.Stamp);        
+        } else {
+            ResetPanel();
+        }
     }
 
     public void LoadErodeSettings(string json)

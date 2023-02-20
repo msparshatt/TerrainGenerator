@@ -113,17 +113,18 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
     public void FromJson(string json)
     {
-        
-        MaterialSaveData_v1 data = JsonUtility.FromJson<MaterialSaveData_v1>(json);
+        if(json != null && json != "") {
+            MaterialSaveData_v1 data = JsonUtility.FromJson<MaterialSaveData_v1>(json);
 
-        materialSettings.ambientOcclusion = data.ambientOcclusion;
-        materialSettings.currentMaterialIndices = data.currentMaterialIndices;
-        materialSettings.materialScale = data.materialScale;
-        materialSettings.useTexture = data.useTexture;
-        materialSettings.mixTypes = data.mixTypes;
-        materialSettings.mixFactors = data.mixFactors;
-        materialSettings.mixOffsets = data.mixOffsets;
-        materialSettings.colors = data.colors;
+            materialSettings.ambientOcclusion = data.ambientOcclusion;
+            materialSettings.currentMaterialIndices = data.currentMaterialIndices;
+            materialSettings.materialScale = data.materialScale;
+            materialSettings.useTexture = data.useTexture;
+            materialSettings.mixTypes = data.mixTypes;
+            materialSettings.mixFactors = data.mixFactors;
+            materialSettings.mixOffsets = data.mixOffsets;
+            materialSettings.colors = data.colors;
+        }
     }
 
     public string PanelName()

@@ -111,14 +111,18 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void FromJson(string json)
     {
-        PaintSaveData_v1 data = JsonUtility.FromJson<PaintSaveData_v1>(json);
-        radiusSlider.value = data.brushRadius;
-        rotationSlider.value = data.brushRotation;
-        strengthSlider.value = data.brushStrength;
+        if(json != null && json != "") {
+            PaintSaveData_v1 data = JsonUtility.FromJson<PaintSaveData_v1>(json);
+            radiusSlider.value = data.brushRadius;
+            rotationSlider.value = data.brushRotation;
+            strengthSlider.value = data.brushStrength;
 
-        paintScaleSlider.value = data.paintScale;
+            paintScaleSlider.value = data.paintScale;
 
-        SelectBrushIcon(data.brushIndex);
+            SelectBrushIcon(data.brushIndex);
+        } else {
+            ResetPanel();
+        }
     }
 
     public string PanelName()
