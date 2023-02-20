@@ -16,6 +16,7 @@ public class TerrainModifier : MonoBehaviour
     [SerializeField] private ComputeShader erosionShader;
 
     [SerializeField] private BrushDataScriptable stampBrushData;
+    [SerializeField] private BrushDataScriptable slopeBrushData;
 
     private int erosionIterations = 16;
 
@@ -182,7 +183,7 @@ public class TerrainModifier : MonoBehaviour
             Debug.Log("Start Set " + startHeight + " " + slopeGradient);
         }
 
-        ModifyRectangle rectangle = new ModifyRectangle(location, setHeightBrushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
+        ModifyRectangle rectangle = new ModifyRectangle(location, slopeBrushData, terrain, new Vector2Int(terrainData.heightmapResolution, terrainData.heightmapResolution));
         float[,] heights = terrainData.GetHeights(rectangle.topLeft.x, rectangle.topLeft.y, rectangle.size.x, rectangle.size.y);
         float[,] changes = new float[rectangle.size.y, rectangle.size.x];
 
@@ -190,7 +191,7 @@ public class TerrainModifier : MonoBehaviour
         {
             for (int y = 0; y < rectangle.size.y; y++)
             {                   
-                float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -setHeightBrushData.brushRotation, setHeightBrushData.brushStrength);
+                float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -slopeBrushData.brushRotation, slopeBrushData.brushStrength);
 
                 float distance = (new Vector2(rectangle.topLeft.x + x, rectangle.topLeft.y + y) - new Vector2(slopeEndpoint.x, slopeEndpoint.y)).magnitude;
                 float heightChange = 0;
@@ -199,8 +200,9 @@ public class TerrainModifier : MonoBehaviour
                     //Debug.Log(heightChange);
                 }
 
-                heights[y, x] += (heightChange * Time.smoothDeltaTime * maskValue) * 20;
-                changes[y,x] =  (heightChange * Time.smoothDeltaTime * maskValue);
+                float change = (heightChange * Time.smoothDeltaTime * maskValue) * 20;
+                heights[y, x] += change;
+                changes[y,x] =  change;
             }
         }
 
