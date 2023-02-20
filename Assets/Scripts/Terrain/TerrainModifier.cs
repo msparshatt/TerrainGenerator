@@ -29,7 +29,7 @@ public class TerrainModifier : MonoBehaviour
     public void Start()
     {
         terrain = gameObject.GetComponent<Terrain>();
-        slopeEndpoint = new Vector3();
+        slopeEndpoint = new Vector3(-1, -1, -1);
     }
 
     public void SculptTerrain(SculptMode mode, Vector3 location, Operation sculptOperation)
@@ -166,6 +166,10 @@ public class TerrainModifier : MonoBehaviour
     public void ModifySlope(Vector3 location, Operation sculptOperation)
     {
         TerrainData terrainData = terrain.terrainData;
+
+        //don't do anything if the endpoint hasn't been set
+        if(slopeEndpoint.x < 0)
+            return;
 
         if(slopeGradient == 0) {
             Vector3 terrainSize = terrainData.size;
