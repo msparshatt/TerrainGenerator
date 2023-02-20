@@ -152,6 +152,7 @@ public class TerrainPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Stamp);
         SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Erode);
         SelectBrushIcon(0, InternalDataScriptable.TerrainModes.SetHeight);
+        SelectBrushIcon(0, InternalDataScriptable.TerrainModes.Slope);
 
         sculptBrushScrollView.SetActive(false);
         stampBrushScrollView.SetActive(false);
@@ -161,9 +162,6 @@ public class TerrainPanel : MonoBehaviour, IPanel
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
-        setHeightRadiusSlider.value = defaultBrushData.brushRadius;
-        setHeightRotationSlider.value = defaultBrushData.brushRotation;
-        setHeightStrengthSlider.value = defaultBrushData.brushStrength;
         setHeightRadiusSlider.value = defaultSetHeightBrushData.brushRadius;
         setHeightRotationSlider.value = defaultSetHeightBrushData.brushRotation;
         setHeightStrengthSlider.value = defaultSetHeightBrushData.brushStrength;
@@ -174,6 +172,9 @@ public class TerrainPanel : MonoBehaviour, IPanel
         erodeRadiusSlider.value = defaultErodeBrushData.brushRadius;
         erodeRotationSlider.value = defaultErodeBrushData.brushRotation;
         erodeStrengthSlider.value = defaultErodeBrushData.brushStrength;
+        slopeRadiusSlider.value = defaultSlopeBrushData.brushRadius;
+        slopeRotationSlider.value = defaultSlopeBrushData.brushRotation;
+        slopeStrengthSlider.value = defaultSlopeBrushData.brushStrength;
 
         modeDropdown.value = 0;
         ModeChange(0);
