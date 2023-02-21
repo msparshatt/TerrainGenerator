@@ -1,8 +1,11 @@
 ---
-title: "Terrain Generator Manual V0.8"
+title: "Terrain Generator Manual V0.10"
 geometry: "top=1cm"
 ---
 
+![Cover image](Screenshots/cover.png)
+
+\new
 # Controls
 
 You can switch between QWERTY and AZERTY controls in the settings panel.
@@ -57,7 +60,7 @@ There are 4 cameras which can be selected using the four numbered buttons at the
 
 # System tab
 
-![System tab image](Screenshots/system.png)
+![System tab image](Screenshots/system_panel.png)
 
 ## New
 Controls for creating a new terrain
@@ -86,7 +89,7 @@ Export the terrain. Note this will only export the terrain and won't export any 
 \newpage
 
 # Materials tab
-![Material tab image](Screenshots/materials.png)
+![Material tab image](Screenshots/materials_panel.png)
 
 This allows you to mix up to 5 materials based on the material settings
 
@@ -122,7 +125,7 @@ Used when using the **Random** option to provide an offset for the perlin noise 
 
 ## Material buttons
 
-![Material selector image](Screenshots/material_selector.png)
+![Material selector image](Screenshots/materials_textures.png)
 
 Click on the material picture in order to bring up the list of available materials.
 
@@ -132,8 +135,19 @@ New materials can be imported by clicking on the import button. See [Importing b
 
 \newpage
 
-# Sculpt tab
-![Sculpt tab image](Screenshots/sculpt.png)
+# Terrain Tab
+
+This tab is for modifying the terrain's height map.
+
+- **Mode drop down** Select the terrain Modification mode
+- **Show Contour Lines** Displays lines showing the height of the terrain
+
+![Contour lines image](Screenshots/terrain_contour_lines.png)
+
+\newpage
+
+## Raise/Lower Mode
+![Raise/Lower mode image](Screenshots/terrain_sculpt.png)
 
 Use this mode to sculpt the terrain.
 
@@ -147,9 +161,9 @@ The sculpt controls are
 - Control + Left Click - flatten the terrain
 
 
-## Brush buttons
+### Brush buttons
 
-![Brush selector image](Screenshots/brush_selector.png)
+![Raise/Lower brush selector image](Screenshots/terrain_sculpt_brushes.png)
 
 Click on the brush picture in order to bring up the list of available brushes.
 
@@ -158,8 +172,33 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 
 \newpage
 
-# Stamp tab
-![Stamp tab image](Screenshots/stamppanel.png)
+## Set Height Mode
+
+![Set height mode image](Screenshots/terrain_setheight.png)
+
+- **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
+- **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controledd with control and the mousewheel)
+- **Height** The destination height
+- **Level** Sets the whole terrain to the destination height
+
+The Set Height controls are
+
+- **Left Click** Move the height towards the destination height
+- **Shift + Left Click** Set the destination height
+
+### Brush buttons
+
+![Set height brush selector image](Screenshots/terrain_setheight_brushes.png)
+
+Click on the brush picture in order to bring up the list of available brushes.
+
+New brushes can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
+
+\newpage
+
+## Stamp Mode
+![Stamp mode image](Screenshots/terrain_stamp.png)
 
 - **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
 - **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
@@ -170,9 +209,9 @@ The stamp controls are
 - **Left click** Raise terrain
 - **Shift + Left click** Lower terrain
 
-## Brush buttons
+### Brush buttons
 
-![Brush selector image](Screenshots/stampbrush_selector.png)
+![Brush selector image](Screenshots/terrain_stamp_brushes.png)
 
 Click on the brush picture in order to bring up the list of available brushes.
 
@@ -180,19 +219,19 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 
 \newpage
 
-# Erosion Tab
+## Erosion Mode
 
-![Erosion controls image](Screenshots/erosionpanel.png)
+![Erosion mode image](Screenshots/terrain_erosion.png)
 
 Erodes the terrain under the brush.
 
 - **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
 - **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
-- **Rotation** Controls the rotation of the paint brush (Can be controled with control and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controlled with control and the mousewheel)
 
 The erosion control is left click to erode the terrain.
 
-## Erosion settings
+### Erosion settings
 
 - Capacity - how much sediment the water can hold
 - Erosion sp - How fast terrain is eroded
@@ -203,8 +242,32 @@ The erosion control is left click to erode the terrain.
 - Start water - The amount of water each particle contains at the start
 - Inertia - How closely does the water particle follow the terrain (lower inertia will follow the terrain more closely while higer inertia will try to maintain a constant velocity)
 
+### Brush buttons
 
-![Erosion brush selector image](Screenshots/erosionbrush_selector.png)
+![Erosion brush selector image](Screenshots/terrain_erosion_brushes.png)
+
+Click on the brush picture in order to bring up the list of available brushes.
+
+New brushes can be imported by clicking on the import button. See [Importing brushes, materials and textures](#importing-brushes-materials-and-textures)
+
+\newpage
+
+## Slope Mode
+
+![Slope mode image](Screenshots/terrain_slope.png)
+
+Creates a slope between a start point and a destination point
+
+- **Radius** The radius of the paint brush (Can be controlled using the mousewheel)
+- **Strength** Controls the painting strength (Can be controlled with shift and the mousewheel)
+- **Rotation** Controls the rotation of the paint brush (Can be controlled with control and the mousewheel)
+
+- **Left Click** Modify the terrain
+- **Shift + Left Click** Set the slope endpoint
+
+### Brush buttons
+
+![Slope brush selector image](Screenshots/terrain_slope_brushes.png)
 
 Click on the brush picture in order to bring up the list of available brushes.
 
@@ -213,7 +276,7 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 \newpage
 
 # Paint Tab
-![Paint tab image](Screenshots/paintpanel.png)
+![Paint tab image](Screenshots/paint_panel.png)
 
 Paint textures or colors over the terrain
 
@@ -236,7 +299,7 @@ The paint controls are
 
 ## Brush buttons
 
-![Brush selector image](Screenshots/paintbrush_selector.png)
+![Brush selector image](Screenshots/paint_brushes.png)
 
 Click on the brush picture in order to bring up the list of available brushes.
 
@@ -244,7 +307,7 @@ New brushes can be imported by clicking on the import button. See [Importing bru
 
 ## Texture buttons
 
-![Texture selector image](Screenshots/texture_selector.png)
+![Texture selector image](Screenshots/paint_textures.png)
 
 Click on the texture picture in order to bring up the list of available textures.
 
@@ -252,7 +315,7 @@ New textures can be imported by clicking on the import button. See [Importing br
 
 ## Mask
 
-![Masked painting image](Screenshots/paintmask.png)
+![Masked painting image](Screenshots/paint_mask.png)
 
 It's possible to place a mask so that only certain areas will be painted to. This mask can be set by either the height or steepness of the map. When masking is turned on the paintable areas will appear slightly brighter and the blocked areas slightly darker.
 
@@ -262,7 +325,7 @@ It's possible to place a mask so that only certain areas will be painted to. Thi
 
 ## Lighting
 
-![Lighting controls image](Screenshots/skypanel_light.png)
+![Lighting controls image](Screenshots/sky_light.png)
 
 - **Light terrain** Should the terrain be lit up
 - **Height** The height of the sun
@@ -271,7 +334,7 @@ It's possible to place a mask so that only certain areas will be painted to. Thi
 - **Color Picker** Used to control the color of the sun when in manual mode
 
 ## Skybox
-![Advanced skybox image](Screenshots/skypanel_advanced.png)
+![Advanced skybox image](Screenshots/sky_advanced.png)
 
 This allows you to turn on a procedurally generated skybox which will change depending on the height of the sun.
 
@@ -280,7 +343,7 @@ This allows you to turn on a procedurally generated skybox which will change dep
 
 ## Clouds
 
-![Cloud controls image](Screenshots/skypanel_clouds.png)
+![Cloud controls image](Screenshots/sky_clouds.png)
 
 Adds a layer of clouds using simple perlin noise. The color of the clouds is affected by the sun color.
 
@@ -299,7 +362,7 @@ Adds a layer of clouds using simple perlin noise. The color of the clouds is aff
 
 # Water Tab
 
-![Water controls image](Screenshots/waterpanel.png)
+![Water controls image](Screenshots/water_panel.png)
 
 - **Ocean** Turns on the ocean
 - **Height** Controls the height of the ocean
@@ -341,7 +404,7 @@ Allows you to control the exposure and coloring of the scene
 
 ## Base
 
-![Procedural generation base tab image](Screenshots/proc-base.png)
+![Procedural generation base tab image](Screenshots/procgen_base.png)
 
 ### Perlin
 
@@ -350,7 +413,7 @@ Controls the settings for the perlin noise.
 - Xoffset & Yoffset: the position within the noise.
 - Scale: the size of the noise
 - Iterations: how many layers of perlin noise to add.
-- Factor: How much to change the affect of each successive iteraion
+- Factor: How much to change the effect of each successive iteration
 
 ### Voronoi
 
@@ -367,7 +430,7 @@ The amount of Perlin vs Voronoi noise to use. Amplitude controls the height of t
 
 ## Features
 
-![Procedural generation feature tab image](Screenshots/proc-features.png)
+![Procedural generation feature tab image](Screenshots/procgen_features.png)
 
 ### Mountains
 - Type dropdown: The type of noise to use to create the mountains
@@ -393,7 +456,7 @@ Adds flattened areas to the heightmap. Which areas to flatten is determined usin
 \newpage
 
 ## Modifiers
-![Procedural generation modifiers tab image](Screenshots/proc-modifiers.png)
+![Procedural generation modifiers tab image](Screenshots/procgen_modifiers.png)
 
 ### Height
 
