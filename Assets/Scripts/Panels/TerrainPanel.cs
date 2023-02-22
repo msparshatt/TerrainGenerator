@@ -178,6 +178,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
         modeDropdown.value = 0;
         ModeChange(0);
+        contourToggle.isOn = false;
+        materialController.ToggleContourMask(false);
 
         internalData.terrainMode = InternalDataScriptable.TerrainModes.Sculpt;
     }
