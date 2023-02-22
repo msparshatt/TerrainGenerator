@@ -349,15 +349,13 @@ This allows you to turn on a procedurally generated skybox which will change dep
 Adds a layer of clouds using simple perlin noise. The color of the clouds is affected by the sun color.
 
 - **Clouds** Turn on the cloud layer
+- **Preset** Select a preset cloud type
 - **X offset, Y offset** Applies and offset to the noise function
 - **Iterations** The number of times to run the noise function
 - **Scale** The scale of the noise function
 - **Start, End** Control the density of the clouds
 - **Wind direction** The direction the clouds should move in degrees. 0 Will move them 
 - **Wind Speed** The speed of clouds movement
-
-## Skybox
-- **Advanced Skybox** - switches to a procedural skybox which changes color depending on the height of the sun
 
 \newpage
 
