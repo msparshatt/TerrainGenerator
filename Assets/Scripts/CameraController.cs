@@ -250,8 +250,7 @@ public class CameraController : MonoBehaviour
         if(!EventSystem.current.IsPointerOverGameObject()) {
             float value = input.Get<float>();
 
-            if (Application.platform == RuntimePlatform.WindowsPlayer)
-                value *= -1;
+            value *= -1; //ensure that rolling the wheel forwards increases the value
 
             if(value > 0) {
                 value = 1;
