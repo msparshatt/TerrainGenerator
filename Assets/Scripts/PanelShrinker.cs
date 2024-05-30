@@ -7,8 +7,10 @@ using TMPro;
 public class PanelShrinker : MonoBehaviour
 {
     [SerializeField] private float shrunkHeight;
-    [SerializeField] private TMP_Text shrinkButtonText;
+    [SerializeField] private Image shrinkButtonImage;
     [SerializeField] private GameObject[] elementList;
+    [SerializeField] private Sprite collapsedSprite;
+    [SerializeField] private Sprite expandedSprite;
 
     private float baseHeight;
     private float baseWidth;
@@ -33,7 +35,7 @@ public class PanelShrinker : MonoBehaviour
                 elementList[index].SetActive(true);
             }
 
-            shrinkButtonText.text = "V";
+            shrinkButtonImage.sprite = expandedSprite;
         } else {
             //shrink
             rt.sizeDelta = new Vector2(baseWidth, shrunkHeight);
@@ -42,7 +44,7 @@ public class PanelShrinker : MonoBehaviour
                 elementList[index].SetActive(false);
             }
 
-            shrinkButtonText.text = ">";
+            shrinkButtonImage.sprite = collapsedSprite;
         }
     }
 }
