@@ -58,13 +58,19 @@ public class MainBar : MonoBehaviour
 
     public void SwitchCamera(int camera)
     {
+        HighlightCamera(camera);
+        cameraController.SwitchCamera(camera);   
+    }
+
+    public void HighlightCamera(int camera)
+    {
         for(int i = 0; i < cameraButtons.Length; i++) {
             cameraButtons[i].GetComponent<Image>().color = unselectedColor;
         }
 
         cameraButtons[camera].GetComponent<Image>().color = selectedColor;
-        cameraController.SwitchCamera(camera);   
     }
+
     private void ShowPanel(int index)
     {
         panels[index].SetActive(true);

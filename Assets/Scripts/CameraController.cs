@@ -356,13 +356,19 @@ public class CameraController : MonoBehaviour
     public void OnSwitchTab(InputValue input)
     {
         float value = input.Get<float>();
-        
         if (value > 0) {
             //move to previous tab
             mainBar.SelectPreviousPanel();
         } else {
             mainBar.SelectNextPanel();
         }
+    }
+
+    public void OnSwitchCamera(InputValue input)
+    {
+        int camera = (int)input.Get<float>() - 1;
+        mainBar.HighlightCamera(camera);
+        SwitchCamera(camera);
     }
 
     void Update()

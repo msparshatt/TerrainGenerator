@@ -130,6 +130,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SwitchCamera",
+                    "type": "Button",
+                    "id": "75948b88-bd04-4e7b-a051-0a5039a2e631",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -462,6 +471,50 @@
                     "action": "SwitchTab",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "52e0cce7-c54c-4758-86ac-aca9cbeb8cc4",
+                    "path": "<Keyboard>/numpad1",
+                    "interactions": "",
+                    "processors": "Scale",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e49e8d51-8da1-47cb-9e89-3110bd749d2f",
+                    "path": "<Keyboard>/numpad2",
+                    "interactions": "",
+                    "processors": "Scale(factor=2)",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e9078318-6a88-477a-aeab-d25cdf15cec1",
+                    "path": "<Keyboard>/numpad3",
+                    "interactions": "",
+                    "processors": "Scale(factor=3)",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cd212a7d-60fc-4d43-819c-58c0340ce7f0",
+                    "path": "<Keyboard>/numpad4",
+                    "interactions": "",
+                    "processors": "Scale(factor=4)",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -1101,6 +1154,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "SwitchCamera",
+                    "type": "Button",
+                    "id": "1030b096-0ab1-4f2c-b538-c76b80ad99b1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1398,6 +1460,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Screenshot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f156e4a-83b5-4fff-a8b7-553faa02991f",
+                    "path": "<Keyboard>/numpad1",
+                    "interactions": "",
+                    "processors": "Scale",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "72be330c-8d98-4c0d-86c7-43b6627bf93d",
+                    "path": "<Keyboard>/numpad2",
+                    "interactions": "",
+                    "processors": "Scale(factor=2)",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5913892e-9337-430c-948c-c17477b9334d",
+                    "path": "<Keyboard>/numpad3",
+                    "interactions": "",
+                    "processors": "Scale(factor=3)",
+                    "groups": "",
+                    "action": "SwitchCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1a7a696e-701d-4384-bc9f-5e40797a9f13",
+                    "path": "<Keyboard>/numpad4",
+                    "interactions": "",
+                    "processors": "Scale(factor=4)",
+                    "groups": "",
+                    "action": "SwitchCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
