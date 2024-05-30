@@ -353,6 +353,18 @@ public class CameraController : MonoBehaviour
         audio.Play();
     }
 
+    public void OnSwitchTab(InputValue input)
+    {
+        float value = input.Get<float>();
+        
+        if (value > 0) {
+            //move to previous tab
+            mainBar.SelectPreviousPanel();
+        } else {
+            mainBar.SelectNextPanel();
+        }
+    }
+
     void Update()
     {
         transform.Rotate(new Vector3(-rotation.y, 0f, 0f), Space.Self); 

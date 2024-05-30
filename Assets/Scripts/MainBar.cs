@@ -36,6 +36,26 @@ public class MainBar : MonoBehaviour
         }
     }
 
+    public void SelectPreviousPanel()
+    {
+        int newPanel = selectedPanel - 1;
+
+        if(newPanel < 0)
+            newPanel = panels.Length - 1;
+
+        ButtonClick(newPanel);
+    }
+
+    public void SelectNextPanel()
+    {
+        int newPanel = selectedPanel + 1;
+
+        if(newPanel > panels.Length - 1)
+            newPanel = 0;
+
+        ButtonClick(newPanel);
+    }
+
     public void SwitchCamera(int camera)
     {
         for(int i = 0; i < cameraButtons.Length; i++) {
