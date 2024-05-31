@@ -138,7 +138,7 @@ public class TerrainModifier : MonoBehaviour
             for (int y = 0; y < rectangle.size.y; y++)
             {                   
                 float maskValue = rectangle.GetMaskValue(new Vector2(x, y), -setHeightBrushData.brushRotation, setHeightBrushData.brushStrength);
-                float heightChange = setHeightBrushData.brushHeight - heights[y,x];
+                float heightChange = (setHeightBrushData.brushHeight - heights[y,x]) * 5;
 
                 heights[y, x] += (heightChange * Time.smoothDeltaTime * maskValue);
                 changes[y,x] =  (heightChange * Time.smoothDeltaTime * maskValue);
