@@ -20,6 +20,7 @@ public class MainBar : MonoBehaviour
     {
         HideAllPanels();
         ShowPanel(0);
+        SetButtonsActive(true);
         internalData.mode = (InternalDataScriptable.Modes)0;
         SwitchCamera(0);
     }
@@ -69,6 +70,17 @@ public class MainBar : MonoBehaviour
         }
 
         cameraButtons[camera].GetComponent<Image>().color = selectedColor;
+    }
+
+    public void SetButtonsActive(bool enabled = true)
+    {
+        for(int i = 0; i < buttons.Length; i++) {
+            buttons[i].interactable = enabled;
+        }
+
+        for(int i = 0; i < cameraButtons.Length; i++) {
+            cameraButtons[i].interactable = enabled;
+        }
     }
 
     private void ShowPanel(int index)

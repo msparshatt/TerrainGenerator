@@ -21,6 +21,7 @@ public class SystemPanel : MonoBehaviour, IPanel
     [SerializeField] private GameObject saveChangesButton;
     [SerializeField] private GameObject proceduralPanel;
     [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private MainBar mainBar;
 
     [Header("Export settings")]
     [SerializeField] private Dropdown scaleDropdown;
@@ -88,6 +89,8 @@ public class SystemPanel : MonoBehaviour, IPanel
     {
         proceduralPanel.SetActive(!proceduralPanel.activeSelf);
         internalData.ProcGenOpen = true;
+
+        mainBar.SetButtonsActive(false);
 
         if(proceduralPanel.activeSelf == false)
             proceduralPanel.GetComponent<ProceduralControlPanel>().CancelButtonClick();

@@ -100,6 +100,7 @@ public class ProceduralControlPanel : MonoBehaviour, IPanel
     public  InternalDataScriptable internalData;
     public ComputeShader proceduralGenerationShader;
     public ComputeShader erosionShader;
+    public MainBar mainBar;
 
     public Texture2D busyCursor;
     public RawImage heightmapImage;
@@ -231,6 +232,7 @@ public class ProceduralControlPanel : MonoBehaviour, IPanel
         heightmapController.RevertChanges();
         internalData.ProcGenOpen = false;
         gameObject.SetActive(false);
+        mainBar.SetButtonsActive(true);
     }
 
     public void ApplyButtonClick()
@@ -251,6 +253,7 @@ public class ProceduralControlPanel : MonoBehaviour, IPanel
 
         internalData.ProcGenOpen = false;
         gameObject.SetActive(false);
+        mainBar.SetButtonsActive(true);
     }
 
     public void RedrawButtonClick()
