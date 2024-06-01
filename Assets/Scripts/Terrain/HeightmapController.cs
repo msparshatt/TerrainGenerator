@@ -22,7 +22,6 @@ public class HeightmapController : MonoBehaviour
     public void Start()
     {
         thisTerrain = gameObject.GetComponent<Terrain>();
-        originalData = CopyTerrain(thisTerrain.terrainData);
 
         exportHeightmap = ExportHeightmap.instance;
         exportTerrain = ExportTerrain.instance;
@@ -32,12 +31,13 @@ public class HeightmapController : MonoBehaviour
 
     public void SetupChanges()
     {
-        copyData = CopyTerrain(originalData);
+        originalData = thisTerrain.terrainData;
 
+        copyData = CopyTerrain(originalData);
         copyData.size = new Vector3(1000, 1000, 1000);
 
         thisTerrain.terrainData = copyData;
-        thisTerrain.GetComponent<TerrainCollider>().terrainData = copyData;    
+
         thisTerrain.materialTemplate.SetVector("_CursorLocation", new Vector4(0f, 0f, 0f, 0f));            
     }
 
