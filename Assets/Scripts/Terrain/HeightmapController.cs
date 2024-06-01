@@ -12,6 +12,7 @@ public class HeightmapController : MonoBehaviour
     private ExportTerrain exportTerrain;
 
     private TerrainData originalData;
+    private TerrainData startingData;
 
     //copy used for procedural generation
     private TerrainData copyData;
@@ -27,12 +28,17 @@ public class HeightmapController : MonoBehaviour
         exportTerrain = ExportTerrain.instance;
         exportTerrain.terrainObject = thisTerrain;
         exportTerrain.busyCursor = busyCursor;
+
+        originalData = thisTerrain.terrainData;
+    }
+
+    public void OnApplicationQuit()
+    {
+        CreateFlatTerrain(HeightmapResolution());
     }
 
     public void SetupChanges()
     {
-        originalData = thisTerrain.terrainData;
-
         copyData = CopyTerrain(originalData);
         copyData.size = new Vector3(1000, 1000, 1000);
 
