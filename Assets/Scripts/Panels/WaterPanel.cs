@@ -126,7 +126,7 @@ public class WaterPanel : MonoBehaviour, IPanel
         internalData.waveDirection = float.Parse(data["wave_direction"]);
         internalData.waveSpeed = float.Parse(data["wave_speed"]);
         internalData.waveHeight = float.Parse(data["wave_height"]);
-        internalData.waveChoppyness = float.Parse(data["foam_amount"]);
+        internalData.waveChoppyness = float.Parse(data["wave_choppyness"]);
         internalData.foamAmount = float.Parse(data["foam_amount"]);
         internalData.shoreLineActive = bool.Parse(data["shoreline_active"]);
         internalData.shorelineFoamAmount = float.Parse(data["shoreline_foam_amount"]);
