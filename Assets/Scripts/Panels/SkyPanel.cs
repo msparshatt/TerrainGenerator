@@ -40,6 +40,7 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     [Header("Skybox")]
     [SerializeField] private Toggle advancedSkyboxToggle;
+    [SerializeField] private Slider sunSizeSlider;
     [SerializeField] private Material basicSkyboxMaterial;
     [SerializeField] private Material advancedSkyboxMaterial;
     [SerializeField] private Color skyColor;
@@ -109,7 +110,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.windSpeed = defaultData.windSpeed;
         internalData.windDirection = defaultData.windDirection;
         internalData.cloudBrightness = defaultData.cloudBrightness;
-
+        internalData.sunSize = defaultData.sunSize;
 
         advancedSkyboxToggle.isOn = false;
         CloudPresetDropdown.value = 0;
@@ -125,6 +126,7 @@ public class SkyPanel : MonoBehaviour, IPanel
 
         sunColorPicker.color = internalData.sunColor;
         autoColorToggle.isOn = internalData.automaticColor;
+        
 
         CloudActiveToggle.isOn = internalData.cloudActive;
         CloudXOffsetSlider.value = internalData.cloudXoffset;
@@ -137,6 +139,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         WindSpeedSlider.value = internalData.windSpeed;
         BrightnessSlider.value = internalData.cloudBrightness;
         advancedSkyboxToggle.isOn = internalData.advancedSkybox;
+        sunSizeSlider.value = internalData.sunSize;
     }
 
     public void FromJson(string dataString)
@@ -210,6 +213,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         data["wind_speed"] = internalData.windSpeed.ToString();
         data["wind_direction"] = internalData.windDirection.ToString();
         data["advanced_skybox"] = internalData.advancedSkybox.ToString();
+        data["sun_size"] = internalData.sunSize.ToString();
         data["cloud_type"] = CloudPresetDropdown.value.ToString();
         data["cloud_brightness"] = internalData.cloudBrightness.ToString();
 
@@ -235,6 +239,7 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.windSpeed = float.Parse(data["wind_speed"]);
         internalData.windDirection = float.Parse(data["wind_direction"]);
         internalData.advancedSkybox = bool.Parse(data["advanced_skybox"]);
+        internalData.sunSize = float.Parse(data["sun_size"]);
         internalData.cloudBrightness = float.Parse(data["cloud_brightness"]);
         CloudPresetDropdown.value = int.Parse(data["cloud_type"]);
 
@@ -430,5 +435,6 @@ public class SkyPanel : MonoBehaviour, IPanel
     public void SunSizeSliderChange(float value)
     {
         advancedSkyboxMaterial.SetFloat("_SunSize", value / 100);
+        internalData.sunSize = value;
     }
 }

@@ -48,6 +48,7 @@ public class InternalDataScriptable : ScriptableObject
     public float sunDirection;
     public bool automaticColor;
     public Color sunColor;
+    public float sunSize;
     public bool cloudActive;
     public float cloudXoffset;
     public float cloudYOffset;
