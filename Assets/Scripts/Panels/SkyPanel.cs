@@ -108,6 +108,8 @@ public class SkyPanel : MonoBehaviour, IPanel
         internalData.cloudEnd = defaultData.cloudEnd;
         internalData.windSpeed = defaultData.windSpeed;
         internalData.windDirection = defaultData.windDirection;
+        internalData.cloudBrightness = defaultData.cloudBrightness;
+
 
         advancedSkyboxToggle.isOn = false;
         CloudPresetDropdown.value = 0;
