@@ -73,9 +73,6 @@ public class Controller : MonoBehaviour
         sculptBrushData.brushStrength = 0.05f;
         sculptBrushData.brushRotation = 0;
 
-        paintBrushData.brushRadius = 50;
-        paintBrushData.brushStrength = 0.05f;
-        paintBrushData.brushRotation = 0;
         paintBrushData.textureScale = 1.0f;
         paintBrushData.useTexture = true;
         paintBrushData.color = Color.white;

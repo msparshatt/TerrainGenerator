@@ -96,10 +96,6 @@ public class PaintPanel : MonoBehaviour, IPanel
         SelectBrushIcon(0);
         SelectTextureIcon(1);
 
-        paintBrushData.brushRadius = defaultBrushData.brushRadius;
-        paintBrushData.brushRotation = defaultBrushData.brushRotation;
-        paintBrushData.brushStrength = defaultBrushData.brushStrength;
-
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
@@ -134,7 +130,7 @@ public class PaintPanel : MonoBehaviour, IPanel
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
 
-        data["paint_scale"] = internalData.paintScale.ToString();
+        data["paint_scale"] = paintBrushData.textureScale.ToString();
         data["brush_index"] = brushIndex.ToString();
         data["brush_radius"] = paintBrushData.brushRadius.ToString();
         data["brush_rotation"] = paintBrushData.brushRotation.ToString();
@@ -156,7 +152,6 @@ public class PaintPanel : MonoBehaviour, IPanel
     
     public void LoadPanel()
     {
-        paintScaleSlider.value = internalData.paintScale;
     }
 
     // Update is called once per frame
@@ -247,7 +242,6 @@ public class PaintPanel : MonoBehaviour, IPanel
     public void PaintScaleSliderChange(float value)
     {
         paintBrushData.textureScale = value;
-        internalData.paintScale = value;
     }
 
     public void PaintResetTilingButtonClick()
