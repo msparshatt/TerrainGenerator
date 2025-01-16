@@ -275,6 +275,11 @@ public class TerrainPanel : MonoBehaviour, IPanel
         data["set_height_brush_index"] = setHeightBrushIndex.ToString();
         data["set_height_brush_height"] = setHeightBrushData.brushHeight.ToString();
 
+        data["slope_brush_radius"] = slopeBrushData.brushRadius.ToString();
+        data["slope_brush_rotation"] = slopeBrushData.brushRotation.ToString();
+        data["slope_brush_strength"] = slopeBrushData.brushStrength.ToString();
+        data["slope_brush_index"] = slopeBrushIndex.ToString();
+
         return data;
     }
 
@@ -312,6 +317,12 @@ public class TerrainPanel : MonoBehaviour, IPanel
         setHeightHeightSlider.value = float.Parse(data["set_height_brush_height"]);
 
         SelectBrushIcon(int.Parse(data["set_height_brush_index"]), InternalDataScriptable.TerrainModes.SetHeight);        
+
+        slopeRadiusSlider.value = float.Parse(data["slope_brush_radius"]);
+        slopeRotationSlider.value = float.Parse(data["slope_brush_rotation"]);
+        slopeStrengthSlider.value = float.Parse(data["slope_brush_strength"]);
+
+        SelectBrushIcon(int.Parse(data["slope_brush_index"]), InternalDataScriptable.TerrainModes.Slope);        
     }
 
     public void OnDisable()
