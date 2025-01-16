@@ -105,6 +105,8 @@ public class PaintPanel : MonoBehaviour, IPanel
         filterFactorSlider.value = defaultBrushData.filterFactor;
     }
 
+    //*************************************************************************************
+    //code for loading legacy saves
     public void FromJson(string json)
     {
         if(json != null && json != "") {
@@ -120,6 +122,11 @@ public class PaintPanel : MonoBehaviour, IPanel
             ResetPanel();
         }
     }
+
+    public void LoadPanel()
+    {
+    }
+    //*************************************************************************************
 
     public string PanelName()
     {
@@ -150,10 +157,6 @@ public class PaintPanel : MonoBehaviour, IPanel
         SelectBrushIcon(int.Parse(data["brush_index"]));
     }
     
-    public void LoadPanel()
-    {
-    }
-
     // Update is called once per frame
     void Update()
     {
