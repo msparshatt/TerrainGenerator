@@ -167,9 +167,23 @@ public class HeightmapController : MonoBehaviour
 
     protected void CreateTerrain(float[,] heights)
     {
-        Debug.Log("Creating Terrain " + thisTerrain.terrainData.heightmapResolution);
+        int resolution = thisTerrain.terrainData.heightmapResolution;
+        Debug.Log("Creating Terrain " + resolution);
         if(thisTerrain != null) {
-            thisTerrain.terrainData.SetHeights(0,0, heights);
+
+            if(heights.GetLength(0) > resolution) {
+                float[,] newHeights = new float[resolution, resolution];
+
+                for(int i = 0; i < resolution; i++) {
+                    for(int j = 0; j < resolution; j++) {
+                        newHeights[i,j] = heights[i,j];
+                    }
+                }
+
+                thisTerrain.terrainData.SetHeights(0,0, newHeights);
+            } else {
+                thisTerrain.terrainData.SetHeights(0,0, heights);
+            }
         }
     }
 
