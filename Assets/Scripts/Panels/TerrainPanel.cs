@@ -245,6 +245,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
 
+        data["contours_on"] = contourToggle.isOn.ToString();
+
         data["sculpt_brush_radius"] = brushData.brushRadius.ToString();
         data["sculpt_brush_rotation"] = brushData.brushRotation.ToString();
         data["sculpt_brush_strength"] = brushData.brushStrength.ToString();
@@ -285,6 +287,8 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
     public void FromDictionary(Dictionary<string, string> data)
     {
+        contourToggle.isOn = bool.Parse(data["contours_on"]);
+
         radiusSlider.value = float.Parse(data["sculpt_brush_radius"]);
         rotationSlider.value = float.Parse(data["sculpt_brush_rotation"]);
         strengthSlider.value = float.Parse(data["sculpt_brush_strength"]);
