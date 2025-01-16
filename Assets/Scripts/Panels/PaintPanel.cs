@@ -77,10 +77,6 @@ public class PaintPanel : MonoBehaviour, IPanel
         SetupIconIndices(brushIcons, internalData.customPaintBrushIndices);        
         controller = gameState.GetComponent<Controller>();
 
-        paintBrushData.filter = filterToggle.isOn;
-        paintBrushData.filterType = (PaintBrushDataScriptable.MixTypes)(filterTypeDropdown.value + 1);
-        paintBrushData.filterFactor = filterFactorSlider.value;
-
         colorPicker.Awake();
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
         colorPicker.color = Color.white;
@@ -107,6 +103,10 @@ public class PaintPanel : MonoBehaviour, IPanel
         radiusSlider.value = defaultBrushData.brushRadius;
         rotationSlider.value = defaultBrushData.brushRotation;
         strengthSlider.value = defaultBrushData.brushStrength;
+
+        filterToggle.isOn = defaultBrushData.filter;
+        filterTypeDropdown.value = (int)defaultBrushData.filterType - 1;
+        filterFactorSlider.value = defaultBrushData.filterFactor;
     }
 
     public void FromJson(string json)
