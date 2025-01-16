@@ -176,6 +176,15 @@ public class TerrainPanel : MonoBehaviour, IPanel
         slopeRotationSlider.value = defaultSlopeBrushData.brushRotation;
         slopeStrengthSlider.value = defaultSlopeBrushData.brushStrength;
 
+        lifetimeSlider.value = defaultErosionData.lifetime;
+        sedimentCapacityFactorSlider.value = defaultErosionData.sedimentCapacityFactor;
+        inertiaSlider.value = defaultErosionData.inertia;
+        depositSpeedSlider.value = defaultErosionData.depositSpeed;
+        erodeSpeedSlider.value = defaultErosionData.erodeSpeed;
+        startSpeedSlider.value = defaultErosionData.startSpeed;
+        evaporateSpeedSlider.value = defaultErosionData.evaporateSpeed;
+        startWaterSlider.value = defaultErosionData.startWater;
+
         modeDropdown.value = 0;
         ModeChange(0);
         contourToggle.isOn = false;
