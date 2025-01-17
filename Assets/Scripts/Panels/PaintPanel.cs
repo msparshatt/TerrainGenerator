@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using SimpleFileBrowser;
 using UnityEngine.InputSystem;
 using TMPro;
+using Newtonsoft.Json;
+
 
 public class PaintPanel : MonoBehaviour, IPanel
 {
@@ -33,6 +35,7 @@ public class PaintPanel : MonoBehaviour, IPanel
     [SerializeField] private Toggle textureToggle;
 
     [Header("Color Elements")]
+    [SerializeField] private Toggle colorToggle;
     [SerializeField] private ColorPicker colorPicker;
 
     [Header("Elements")]
@@ -79,7 +82,6 @@ public class PaintPanel : MonoBehaviour, IPanel
 
         colorPicker.Awake();
         colorPicker.onColorChanged += delegate {ColorPickerChange(); };
-        colorPicker.color = Color.white;
         
         ResetPanel();
     }
@@ -103,6 +105,11 @@ public class PaintPanel : MonoBehaviour, IPanel
         filterToggle.isOn = defaultBrushData.filter;
         filterTypeDropdown.value = (int)defaultBrushData.filterType - 1;
         filterFactorSlider.value = defaultBrushData.filterFactor;
+
+        colorPicker.color = Color.white;
+
+        textureToggle.isOn = true;
+        colorToggle.isOn = false;
     }
 
     //*************************************************************************************
@@ -143,6 +150,16 @@ public class PaintPanel : MonoBehaviour, IPanel
         data["brush_rotation"] = paintBrushData.brushRotation.ToString();
         data["brush_strength"] = paintBrushData.brushStrength.ToString();
 
+        data["texture_index"] = textureIndex.ToString();
+        data["use_texture"] = textureToggle.isOn.ToString();
+
+        Color col = paintBrushData.color;
+        float[] colorFloat = new float[4]{col.r, col.g, col.b, col.a};        
+        data["paint_color"] = JsonConvert.SerializeObject(colorFloat);;
+
+        data["filter_on"] = filterToggle.isOn.ToString();
+        data["filter_type"] = filterTypeDropdown.value.ToString();
+        data["filter_factor"] = filterFactorSlider.value.ToString();
         return data;
     }
 
@@ -155,6 +172,18 @@ public class PaintPanel : MonoBehaviour, IPanel
         paintScaleSlider.value = float.Parse(data["paint_scale"]);
 
         SelectBrushIcon(int.Parse(data["brush_index"]));
+        SelectTextureIcon(int.Parse(data["texture_index"]));
+
+        textureToggle.isOn = bool.Parse(data["use_texture"]);
+        colorToggle.isOn = !bool.Parse(data["use_texture"]);
+
+        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(data["paint_color"]);
+        paintBrushData.color = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);
+        colorPicker.color = paintBrushData.color;
+       
+        filterToggle.isOn = bool.Parse(data["filter_on"]);
+        filterTypeDropdown.value = int.Parse(data["filter_type"]);
+        filterFactorSlider.value = float.Parse(data["filter_factor"]);
     }
     
     // Update is called once per frame
@@ -183,7 +212,7 @@ public class PaintPanel : MonoBehaviour, IPanel
         selectedTextureIndex = buttonIndex;
         int index = internalData.customTextureIndices[buttonIndex];
         paintBrushData.paintTexture = (Texture2D)gameResources.textures[index];
-        textureIndex = buttonIndex;
+        textureIndex = index;
 
         if(index >= (gameResources.icons.Count - internalData.customTextures.Count)) {
             textureDeleteButton.interactable = true;
