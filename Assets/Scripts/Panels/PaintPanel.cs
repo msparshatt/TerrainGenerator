@@ -106,7 +106,7 @@ public class PaintPanel : MonoBehaviour, IPanel
         filterTypeDropdown.value = (int)defaultBrushData.filterType - 1;
         filterFactorSlider.value = defaultBrushData.filterFactor;
 
-        colorPicker.color = Color.white;
+        colorPicker.color = defaultBrushData.color;
 
         textureToggle.isOn = true;
         colorToggle.isOn = false;
