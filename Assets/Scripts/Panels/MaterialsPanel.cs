@@ -101,6 +101,7 @@ public class MaterialsPanel : MonoBehaviour, IPanel
 
         scaleSlider.value = 1;
         materialSettings.materialScale = 1;
+        aoToggle.isOn = false;
 
         for(int index = 1; index < MaterialSettings.NUMBER_MATERIALS; index++) {
             mixFactorSliders[index].value = 0;
