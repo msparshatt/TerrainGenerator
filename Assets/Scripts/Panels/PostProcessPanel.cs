@@ -108,16 +108,21 @@ public class PostProcessPanel : MonoBehaviour, IPanel
 
     public void FromDictionary(Dictionary<string, string> data)
     {
-        chromaticAberationIntensitySlider.value = float.Parse(data["chromatic_aberration_strengh"]);
-        vignetteIntensitySlider.value = float.Parse(data["vignette_strength"]);
-        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(data["vignette_color"]);
+        IPanel parent = (IPanel)this;
+
+        chromaticAberationIntensitySlider.value = parent.TryReadValue(data, "chromatic_aberration_strengh", 0f);
+        vignetteIntensitySlider.value = parent.TryReadValue(data, "vignette_strength", 0f);
+
+        float[] defaultColor = new float[4]{Color.black.r, Color.black.g, Color.black.b, Color.black.a};        
+        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(parent.TryReadValue(data, "vignette_color", JsonConvert.SerializeObject(defaultColor)));
         colorPicker.color = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);
-        exposureSlider.value = float.Parse(data["exposure"]);
-        constrastSlider.value = float.Parse(data["contrast"]);
-        saturationSlider.value = float.Parse(data["saturation"]);
-        temperatureSlider.value = float.Parse(data["temperature"]);
-        tintSlider.value = float.Parse(data["tint"]);
-        hueShiftSlider.value = float.Parse(data["hue_shift"]);
+
+        exposureSlider.value = parent.TryReadValue(data, "exposure", 0f);
+        constrastSlider.value = parent.TryReadValue(data, "contrast", 0f);
+        saturationSlider.value = parent.TryReadValue(data, "saturation", 0f);
+        temperatureSlider.value = parent.TryReadValue(data, "temperature", 0f);
+        tintSlider.value = parent.TryReadValue(data, "tint", 0f);
+        hueShiftSlider.value = parent.TryReadValue(data, "hue_shift", 0f);
     }
 
     public void ChromaticAberationIntensitySliderChange(float value)

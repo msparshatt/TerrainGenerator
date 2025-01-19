@@ -121,15 +121,17 @@ public class WaterPanel : MonoBehaviour, IPanel
 
     public void FromDictionary(Dictionary<string, string> data)
     {
-        internalData.oceanActive = bool.Parse(data["ocean_active"]);
-        internalData.oceanHeight = float.Parse(data["ocean_height"]);
-        internalData.waveDirection = float.Parse(data["wave_direction"]);
-        internalData.waveSpeed = float.Parse(data["wave_speed"]);
-        internalData.waveHeight = float.Parse(data["wave_height"]);
-        internalData.waveChoppyness = float.Parse(data["wave_choppyness"]);
-        internalData.foamAmount = float.Parse(data["foam_amount"]);
-        internalData.shoreLineActive = bool.Parse(data["shoreline_active"]);
-        internalData.shorelineFoamAmount = float.Parse(data["shoreline_foam_amount"]);
+        IPanel parent = (IPanel)this;
+
+        internalData.oceanActive = parent.TryReadValue(data, "ocean_active", internalData.oceanActive);
+        internalData.oceanHeight = parent.TryReadValue(data, "ocean_height", internalData.oceanHeight);
+        internalData.waveDirection = parent.TryReadValue(data, "wave_direction", internalData.waveDirection);
+        internalData.waveSpeed = parent.TryReadValue(data, "wave_speed", internalData.waveSpeed);
+        internalData.waveHeight = parent.TryReadValue(data, "wave_height", internalData.waveHeight);
+        internalData.waveChoppyness = parent.TryReadValue(data, "wave_choppyness", internalData.waveChoppyness);
+        internalData.foamAmount = parent.TryReadValue(data, "foam_amount", internalData.foamAmount);
+        internalData.shoreLineActive = parent.TryReadValue(data, "shoreline_active", internalData.shoreLineActive);
+        internalData.shorelineFoamAmount = parent.TryReadValue(data, "shoreline_foam_amount", internalData.shorelineFoamAmount);
 
         LoadPanel();
     }

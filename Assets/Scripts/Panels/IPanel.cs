@@ -42,4 +42,36 @@ public interface IPanel
     {
 
     }
+
+    public string TryReadValue(Dictionary<string, string> dictionary, string key, string defaultValue)
+    {
+        if(dictionary.ContainsKey(key))
+            return dictionary[key];
+        else
+            return defaultValue;
+    }
+
+    public bool TryReadValue(Dictionary<string, string> dictionary, string key, bool defaultValue)
+    {
+        if(dictionary.ContainsKey(key))
+            return bool.Parse(dictionary[key]);
+        else
+            return defaultValue;
+    }
+
+    public float TryReadValue(Dictionary<string, string> dictionary, string key, float defaultValue)
+    {
+        if(dictionary.ContainsKey(key))
+            return float.Parse(dictionary[key]);
+        else
+            return defaultValue;
+    }
+
+    public int TryReadValue(Dictionary<string, string> dictionary, string key, int defaultValue)
+    {
+        if(dictionary.ContainsKey(key))
+            return int.Parse(dictionary[key]);
+        else
+            return defaultValue;
+    }
 }

@@ -165,25 +165,28 @@ public class PaintPanel : MonoBehaviour, IPanel
 
     public void FromDictionary(Dictionary<string, string> data)
     {
-        radiusSlider.value = int.Parse(data["brush_radius"]);
-        rotationSlider.value = float.Parse(data["brush_rotation"]);
-        strengthSlider.value = float.Parse(data["brush_strength"]);
+        IPanel parent = (IPanel)this;
 
-        paintScaleSlider.value = float.Parse(data["paint_scale"]);
+        radiusSlider.value = parent.TryReadValue(data, "brush_radius", defaultBrushData.brushRadius);
+        rotationSlider.value = parent.TryReadValue(data, "brush_rotation", defaultBrushData.brushRotation);
+        strengthSlider.value = parent.TryReadValue(data, "brush_strength", defaultBrushData.brushStrength);
 
-        SelectBrushIcon(int.Parse(data["brush_index"]));
-        SelectTextureIcon(int.Parse(data["texture_index"]));
+        paintScaleSlider.value = parent.TryReadValue(data, "paint_scale", defaultBrushData.textureScale);
 
-        textureToggle.isOn = bool.Parse(data["use_texture"]);
-        colorToggle.isOn = !bool.Parse(data["use_texture"]);
+        SelectBrushIcon(parent.TryReadValue(data, "brush_index", 0));
+        SelectTextureIcon(parent.TryReadValue(data, "texture_index", 0));
 
-        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(data["paint_color"]);
+        textureToggle.isOn = parent.TryReadValue(data, "use_texture", defaultBrushData.useTexture);
+        colorToggle.isOn = !textureToggle.isOn;
+
+        float[] defaultColor = new float[4]{defaultBrushData.color.r, defaultBrushData.color.g, defaultBrushData.color.b, defaultBrushData.color.a};        
+        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(parent.TryReadValue(data, "paint_color", JsonConvert.SerializeObject(defaultColor)));
         paintBrushData.color = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);
         colorPicker.color = paintBrushData.color;
        
-        filterToggle.isOn = bool.Parse(data["filter_on"]);
-        filterTypeDropdown.value = int.Parse(data["filter_type"]);
-        filterFactorSlider.value = float.Parse(data["filter_factor"]);
+        filterToggle.isOn = parent.TryReadValue(data, "filter_on", defaultBrushData.filter);
+        filterTypeDropdown.value = parent.TryReadValue(data, "filter_type", (int)defaultBrushData.filterType - 1);
+        filterFactorSlider.value = parent.TryReadValue(data, "filter_factor", defaultBrushData.filterFactor);
     }
     
     // Update is called once per frame

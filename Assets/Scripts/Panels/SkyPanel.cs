@@ -222,26 +222,30 @@ public class SkyPanel : MonoBehaviour, IPanel
 
     public void FromDictionary(Dictionary<string, string> data)
     {
-        internalData.lightTerrain = bool.Parse(data["light_terrain"]);
-        internalData.sunHeight = float.Parse(data["sun_height"]);
-        internalData.sunDirection = float.Parse(data["sun_direction"]);
-        internalData.automaticColor = bool.Parse(data["automatic_color"]);
+        IPanel parent = (IPanel)this;
 
-        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(data["sun_color"]);
-        internalData.sunColor = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);;
-        internalData.cloudActive = bool.Parse(data["cloud_active"]);
-        internalData.cloudXoffset = float.Parse(data["cloud_xoffset"]);
-        internalData.cloudYOffset = float.Parse(data["cloud_yoffset"]);
-        internalData.cloudScale = float.Parse(data["cloud_scale"]);
-        internalData.cloudIterations = float.Parse(data["cloud_iterations"]);
-        internalData.cloudStart = float.Parse(data["cloud_start"]);
-        internalData.cloudEnd = float.Parse(data["cloud_end"]);
-        internalData.windSpeed = float.Parse(data["wind_speed"]);
-        internalData.windDirection = float.Parse(data["wind_direction"]);
-        internalData.advancedSkybox = bool.Parse(data["advanced_skybox"]);
-        internalData.sunSize = float.Parse(data["sun_size"]);
-        internalData.cloudBrightness = float.Parse(data["cloud_brightness"]);
-        CloudPresetDropdown.value = int.Parse(data["cloud_type"]);
+        internalData.lightTerrain = parent.TryReadValue(data, "light_terrain", defaultData.lightTerrain);
+        internalData.sunHeight = parent.TryReadValue(data, "sun_height", defaultData.sunHeight);
+        internalData.sunDirection = parent.TryReadValue(data, "sun_direction", defaultData.sunDirection);
+        internalData.automaticColor = parent.TryReadValue(data, "automatic_color", defaultData.automaticColor);
+
+        float[] defaultColor = new float[4]{defaultData.sunColor.r, defaultData.sunColor.g, defaultData.sunColor.b, defaultData.sunColor.a};        
+        float[] colorFloat = JsonConvert.DeserializeObject<float[]>(parent.TryReadValue(data, "sun_color", JsonConvert.SerializeObject(defaultColor)));
+        internalData.sunColor = new Color(colorFloat[0], colorFloat[1], colorFloat[2], colorFloat[3]);
+
+        internalData.cloudActive = parent.TryReadValue(data, "cloud_active", defaultData.cloudActive);
+        internalData.cloudXoffset = parent.TryReadValue(data, "cloud_xoffset", defaultData.cloudXoffset);
+        internalData.cloudYOffset = parent.TryReadValue(data, "cloud_yoffset", defaultData.cloudYOffset);
+        internalData.cloudScale = parent.TryReadValue(data, "cloud_scale", defaultData.cloudScale);
+        internalData.cloudIterations = parent.TryReadValue(data, "cloud_iterations", defaultData.cloudIterations);
+        internalData.cloudStart = parent.TryReadValue(data, "cloud_start", defaultData.cloudStart);
+        internalData.cloudEnd = parent.TryReadValue(data, "cloud_end", defaultData.cloudEnd);
+        internalData.windSpeed = parent.TryReadValue(data, "wind_speed", defaultData.windSpeed);
+        internalData.windDirection = parent.TryReadValue(data, "wind_direction", defaultData.windDirection);
+        internalData.advancedSkybox = parent.TryReadValue(data, "advanced_skybox", false);
+        internalData.sunSize = parent.TryReadValue(data, "sun_size", defaultData.sunSize);
+        internalData.cloudBrightness = parent.TryReadValue(data, "cloud_brightness", defaultData.cloudBrightness);
+        CloudPresetDropdown.value = parent.TryReadValue(data, "cloud_type", 0);
 
         LoadPanel();
     }

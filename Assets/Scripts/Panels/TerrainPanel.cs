@@ -297,47 +297,46 @@ public class TerrainPanel : MonoBehaviour, IPanel
 
     public void FromDictionary(Dictionary<string, string> data)
     {
-        contourToggle.isOn = bool.Parse(data["contours_on"]);
-        modeDropdown.value = int.Parse(data["terrain_mode"]);
+        IPanel parent = (IPanel)this;
+        contourToggle.isOn = parent.TryReadValue(data, "contours_on", false);
+        modeDropdown.value = parent.TryReadValue(data, "terrain_mode", 0);
 
-        radiusSlider.value = float.Parse(data["sculpt_brush_radius"]);
-        rotationSlider.value = float.Parse(data["sculpt_brush_rotation"]);
-        strengthSlider.value = float.Parse(data["sculpt_brush_strength"]);
-        SelectBrushIcon(int.Parse(data["sculpt_brush_index"]), InternalDataScriptable.TerrainModes.Sculpt);
+        radiusSlider.value = parent.TryReadValue(data, "sculpt_brush_radius", defaultBrushData.brushRadius);
+        rotationSlider.value = parent.TryReadValue(data, "sculpt_brush_rotation", defaultBrushData.brushRotation);
+        strengthSlider.value = parent.TryReadValue(data, "sculpt_brush_strength", defaultBrushData.brushStrength);
+        SelectBrushIcon(parent.TryReadValue(data, "sculpt_brush_index", 0), InternalDataScriptable.TerrainModes.Sculpt);
 
-        stampRadiusSlider.value = float.Parse(data["stamp_brush_radius"]);
-        stampRotationSlider.value = float.Parse(data["stamp_brush_rotation"]);
-        stampStrengthSlider.value = float.Parse(data["stamp_brush_strength"]);
+        stampRadiusSlider.value = parent.TryReadValue(data, "stamp_brush_radius", defaultStampBrushData.brushRadius);
+        stampRotationSlider.value = parent.TryReadValue(data, "stamp_brush_rotation", defaultStampBrushData.brushRotation);
+        stampStrengthSlider.value = parent.TryReadValue(data, "stamp_brush_strength", defaultStampBrushData.brushStrength);
+        SelectBrushIcon(parent.TryReadValue(data, "stamp_brush_index", 0), InternalDataScriptable.TerrainModes.Stamp);
 
-        SelectBrushIcon(int.Parse(data["stamp_brush_index"]), InternalDataScriptable.TerrainModes.Stamp);        
+        erodeRadiusSlider.value = parent.TryReadValue(data, "erode_brush_radius", defaultBrushData.brushRadius);
+        erodeRotationSlider.value = parent.TryReadValue(data, "erode_brush_rotation", defaultBrushData.brushRotation);
+        erodeStrengthSlider.value = parent.TryReadValue(data, "erode_brush_strength", defaultBrushData.brushStrength);
+        SelectBrushIcon(parent.TryReadValue(data, "erode_brush_index", 0), InternalDataScriptable.TerrainModes.Erode);
 
-        erodeRadiusSlider.value = float.Parse(data["erode_brush_radius"]);
-        erodeRotationSlider.value = float.Parse(data["erode_brush_rotation"]);
-        erodeStrengthSlider.value = float.Parse(data["erode_brush_strength"]);
+        lifetimeSlider.value = parent.TryReadValue(data, "erode_lifetime", defaultErosionData.lifetime);
+        sedimentCapacityFactorSlider.value = parent.TryReadValue(data, "erode_sediment_capacity_factor", defaultErosionData.sedimentCapacityFactor);
+        inertiaSlider.value = parent.TryReadValue(data, "erode_inertia", defaultErosionData.inertia);
+        depositSpeedSlider.value = parent.TryReadValue(data, "erode_deposit_speed", defaultErosionData.depositSpeed);
+        erodeSpeedSlider.value = parent.TryReadValue(data, "erode_speed", defaultErosionData.erodeSpeed);
+        startSpeedSlider.value = parent.TryReadValue(data, "erode_start_speed", defaultErosionData.startSpeed);
+        evaporateSpeedSlider.value = parent.TryReadValue(data, "erode_evaporate_speed", defaultErosionData.evaporateSpeed);
+        startWaterSlider.value = parent.TryReadValue(data, "erode_start_water", defaultErosionData.startWater);
 
-        lifetimeSlider.value = float.Parse(data["erode_lifetime"]);
-        sedimentCapacityFactorSlider.value = float.Parse(data["erode_sediment_capacity_factor"]);
-        inertiaSlider.value = float.Parse(data["erode_inertia"]);
-        depositSpeedSlider.value = float.Parse(data["erode_deposit_speed"]);
-        erodeSpeedSlider.value = float.Parse(data["erode_speed"]);
-        startSpeedSlider.value = float.Parse(data["erode_start_speed"]);
-        evaporateSpeedSlider.value = float.Parse(data["erode_evaporate_speed"]);
-        startWaterSlider.value = float.Parse(data["erode_start_water"]);
+        setHeightRadiusSlider.value = parent.TryReadValue(data, "set_height_brush_radius", defaultSetHeightBrushData.brushRadius);
+        setHeightRotationSlider.value = parent.TryReadValue(data, "set_height_brush_rotation", defaultSetHeightBrushData.brushRotation);
+        setHeightStrengthSlider.value = parent.TryReadValue(data, "set_height_brush_strength", defaultSetHeightBrushData.brushStrength);
+        setHeightHeightSlider.value = parent.TryReadValue(data, "set_height_brush_height", defaultSetHeightBrushData.brushHeight);
 
-        SelectBrushIcon(int.Parse(data["erode_brush_index"]), InternalDataScriptable.TerrainModes.Erode);
+        SelectBrushIcon(parent.TryReadValue(data, "set_height_brush_index", 0), InternalDataScriptable.TerrainModes.SetHeight);        
 
-        setHeightRadiusSlider.value = float.Parse(data["set_height_brush_radius"]);
-        setHeightRotationSlider.value = float.Parse(data["set_height_brush_rotation"]);
-        setHeightStrengthSlider.value = float.Parse(data["set_height_brush_strength"]);
-        setHeightHeightSlider.value = float.Parse(data["set_height_brush_height"]);
+        slopeRadiusSlider.value = parent.TryReadValue(data, "slope_brush_radius", defaultSlopeBrushData.brushRadius);
+        slopeRotationSlider.value = parent.TryReadValue(data, "slope_brush_rotation", defaultSlopeBrushData.brushRotation);
+        slopeStrengthSlider.value = parent.TryReadValue(data, "slope_brush_strength", defaultSlopeBrushData.brushStrength);
 
-        SelectBrushIcon(int.Parse(data["set_height_brush_index"]), InternalDataScriptable.TerrainModes.SetHeight);        
-
-        slopeRadiusSlider.value = float.Parse(data["slope_brush_radius"]);
-        slopeRotationSlider.value = float.Parse(data["slope_brush_rotation"]);
-        slopeStrengthSlider.value = float.Parse(data["slope_brush_strength"]);
-
-        SelectBrushIcon(int.Parse(data["slope_brush_index"]), InternalDataScriptable.TerrainModes.Slope);        
+        SelectBrushIcon(parent.TryReadValue(data, "slope_brush_index", 0), InternalDataScriptable.TerrainModes.Slope);        
     }
 
     public void OnDisable()
